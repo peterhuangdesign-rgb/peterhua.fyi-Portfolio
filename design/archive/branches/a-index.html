@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Peter Huang — Index</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500&family=Darker+Grotesque:wght@300;500;600&display=swap">
+<link rel="stylesheet" href="shared/core.css">
+<style>
+/* Branch A — List / Index. Two indexes on one page: Design set large, Research set as a reading list. Slide-over for detail. */
+.wrap{position:relative;z-index:1;min-height:100vh;display:grid;grid-template-rows:auto 1fr auto;
+  padding-block:max(20px,env(safe-area-inset-top,0px)) max(20px,env(safe-area-inset-bottom,0px));padding-left:var(--gut);padding-right:var(--gutR)}
+header{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.hr{display:flex;align-items:center;gap:20px}
+main{display:grid;align-content:center;gap:44px;padding-block:40px;max-width:1000px}
+.sec{display:flex;align-items:baseline;gap:10px;margin:0 0 6px}
+.sec span{font-variant-numeric:tabular-nums;color:var(--graphite)}
+ol{list-style:none;margin:0;padding:0}
+li{border-top:1px solid var(--rule)} li:last-child{border-bottom:1px solid var(--rule)}
+.row{all:unset;box-sizing:border-box;cursor:pointer;width:100%;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:baseline;gap:24px;position:relative;min-height:44px}
+.row::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--lichen);transform:scaleX(var(--hold,0));transform-origin:left}
+.row .t{transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.row:hover .t,.row:focus-visible .t{transform:translateX(10px)}
+.row:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
+.row .k{font:500 12px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--graphite);white-space:nowrap}
+.big .row{padding:12px 0 10px} .big .t{font:300 clamp(44px,6.4vw,92px)/.92 var(--display)}
+.small .row{padding:12px 0} .small .t{font:500 clamp(22px,2.4vw,32px)/1.05 var(--display)}
+footer{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;font-size:14px;color:var(--graphite)}
+.sys{position:fixed;z-index:4;right:var(--gutR);bottom:max(20px,env(safe-area-inset-bottom,0px));display:grid;justify-items:end;gap:8px}
+@media (max-width:700px){.role{display:none}.row{grid-template-columns:1fr;gap:4px}.row .k{order:-1}.sys{display:none}}
+</style>
+</head>
+<body>
+<canvas class="fog" id="gl" aria-hidden="true"></canvas>
+<div class="wrap">
+  <header><p class="name">Peter Huang</p><span class="hr"><span class="role">UX research &amp; design</span><button class="btn" id="pbtn">Profile</button></span></header>
+  <main>
+    <section aria-labelledby="h-d"><h2 class="sec label" id="h-d">Design <span>3</span></h2><ol class="big" id="ld"></ol></section>
+    <section aria-labelledby="h-r"><h2 class="sec label" id="h-r">Research <span>3</span></h2><ol class="small" id="lr"></ol></section>
+  </main>
+  <footer><a href="mailto:ph2344@nyu.edu">ph2344@nyu.edu</a><span>Irvine, CA</span></footer>
+</div>
+<div class="sys" id="sys"></div>
+<script src="shared/core.js"></script>
+<script>
+const {DATA,caseHTML,profileHTML,Sheet,Fog,holdToOpen,spec}=Presence;
+const row=p=>`<li><button class="row" data-id="${p.id}"><span class="t">${p.t}</span><span class="k">${p.tag}</span></button></li>`;
+document.getElementById('ld').innerHTML=DATA.design.map(row).join('');
+document.getElementById('lr').innerHTML=DATA.research.map(row).join('');
+const S=Fog(document.getElementById('gl'));
+const open=b=>{const p=DATA.all.find(x=>x.id===b.dataset.id);S.revT=1;Sheet.open(caseHTML(p),p.kind==='design'?'Design':'Research',b,()=>S.revT=0)};
+holdToOpen(document.querySelector('main'),'.row',open);
+document.getElementById('pbtn').onclick=e=>{S.revT=1;Sheet.open(profileHTML(),'Profile',e.currentTarget,()=>S.revT=0)};
+spec(document.getElementById('sys'));
+</script>
+</body>
+</html>

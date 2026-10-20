@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Motion Concept</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500&display=swap">
+<style>
+/* Low-fidelity storyboards: grey wireframes, one loop per direction, beats underneath. */
+:root{--bg:#F1F2F3;--fg:#17191C;--mute:#7A8089;--line:#C9CDD2;--hi:#17191C;--body:"Onest",ui-sans-serif,sans-serif;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#141618;--fg:#E4E6E8;--mute:#8C929A;--line:#3A3E44;--hi:#E4E6E8;color-scheme:dark}}
+*{box-sizing:border-box;border-radius:0}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 15px/1.5 var(--body);
+  padding:28px max(20px,env(safe-area-inset-right,0px)) 40px max(20px,env(safe-area-inset-left,0px))}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+figure{margin:0;display:grid;gap:10px;min-width:0}
+canvas{width:100%;aspect-ratio:4/3;border:1px solid var(--line);display:block;max-width:100%}
+figcaption{display:grid;gap:6px}
+h2{margin:0;font:500 18px/1.2 var(--body)}
+ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+li{border-top:2px solid var(--line);padding-top:6px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);transition:color .2s,border-color .2s}
+li.on{border-color:var(--hi);color:var(--fg)}
+</style>
+</head>
+<body>
+<div class="grid">
+  <figure><canvas id="c0"></canvas><figcaption><h2>01 Presence</h2><ol><li>Rest</li><li>Hold</li><li>Fog parts</li></ol></figcaption></figure>
+  <figure><canvas id="c1"></canvas><figcaption><h2>02 Surface</h2><ol><li>Press</li><li>Heal</li><li>Next state</li></ol></figcaption></figure>
+  <figure><canvas id="c2"></canvas><figcaption><h2>03 Recurrence</h2><ol><li>Scroll time</li><li>Loop</li><li>Rings grow</li></ol></figcaption></figure>
+</div>
+<script>
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const col=()=>{const s=getComputedStyle(document.documentElement);return{fg:s.getPropertyValue('--fg').trim(),mute:s.getPropertyValue('--mute').trim(),line:s.getPropertyValue('--line').trim(),bg:s.getPropertyValue('--bg').trim()}};
+const cv=[0,1,2].map(i=>document.getElementById('c'+i));const LOOP=9;
+const ease=x=>x<0?0:x>1?1:x*x*(3-2*x);const seg=(t,a,b)=>ease((t-a)/(b-a));
+function fit(c){const d=Math.min(devicePixelRatio||1,2),r=c.getBoundingClientRect();c.width=r.width*d;c.height=r.height*d;const g=c.getContext('2d');g.setTransform(d,0,0,d,0,0);return[g,r.width,r.height]}
+function cursor(g,x,y,C){g.fillStyle=C.fg;g.beginPath();g.moveTo(x,y);g.lineTo(x+9,y+12);g.lineTo(x+3,y+11);g.lineTo(x,y+16);g.closePath();g.fill()}
+function beats(i,t){const b=t<3?0:t<6?1:2;document.querySelectorAll('figure')[i].querySelectorAll('li').forEach((l,k)=>l.classList.toggle('on',k===b))}
+
+function presence(g,W,H,t,C){
+  g.strokeStyle=C.line;for(let i=0;i<5;i++){const y=H*.22+i*H*.13;g.beginPath();g.moveTo(W*.08,y);g.lineTo(W*.92,y);g.stroke();
+    g.fillStyle=C.line;g.fillRect(W*.08,y+H*.03,W*(.28+((i*37)%5)*.06),H*.06)}
+  const rest=[W*.62,H*.36];const row=[W*.3,H*.48];
+  let x,y;if(t<1){x=W*.85-(W*.85-rest[0])*seg(t,0,1);y=H*.8-(H*.8-rest[1])*seg(t,0,1)}else if(t<3){x=rest[0];y=rest[1]}else{const k=seg(t,3,3.6);x=rest[0]+(row[0]-rest[0])*k;y=rest[1]+(row[1]-rest[1])*k}
+  const lens=t<3?20+50*seg(t,1.2,3):20;g.setLineDash([3,4]);g.strokeStyle=C.mute;g.beginPath();g.arc(x,y,lens,0,7);g.stroke();g.setLineDash([]);
+  for(let r=8;r<lens;r+=9){g.strokeStyle=C.line;g.beginPath();g.arc(x+3,y-2,r,0,7);g.stroke()}
+  if(t>3.6){const k=seg(t,3.7,5.6);g.fillStyle=C.fg;g.fillRect(W*.08,H*.22+3*H*.13-2,(W*.84)*k,2)}
+  if(t>5.8){const k=seg(t,5.8,6.8);g.fillStyle=C.bg;g.fillRect(W-(W*.48)*k,0,W*.48*k,H);g.strokeStyle=C.fg;g.strokeRect(W-(W*.48)*k+.5,.5,W*.48,H-1);
+    g.fillStyle=C.fg;g.fillRect(W-(W*.48)*k+16,H*.18,W*.3,H*.08);g.fillStyle=C.line;g.fillRect(W-(W*.48)*k+16,H*.32,W*.22,H*.04);g.fillRect(W-(W*.48)*k+16,H*.45,W*.38,H*.32)}
+  cursor(g,x,y,C)}
+
+function flow(g,W,H,t,C){
+  g.fillStyle=C.bg;g.strokeStyle=C.line;g.strokeRect(W*.4+.5,.5,W*.6-1,H-1);
+  g.fillStyle=C.fg;g.fillRect(14,H*.3,W*.24,H*.09);g.fillStyle=C.line;g.fillRect(14,H*.44,W*.3,H*.035);
+  for(let i=0;i<5;i++){g.strokeStyle=C.line;g.strokeRect(14+i*16,H*.82,14,14);if(i===(t>6?1:0)){g.fillStyle=C.fg;g.fillRect(14+i*16,H*.82,14,14)}}
+  const heal=t<3?0:seg(t,3,5.5);const sw=t>6?seg(t,6,7.5):0;
+  const path=[];for(let k=0;k<20;k++){const u=k/19;path.push([W*(.5+.4*u),H*(.3+.4*Math.sin(u*3))])}
+  for(let i=0;i<10;i++){g.strokeStyle=C.line;g.beginPath();for(let x=W*.4;x<=W;x+=5){const y0=H*(i+.5)/10;let y=y0+Math.sin(x*.02+i+sw*6)*8;
+    if(t<3||heal<1){const hit=Math.max(0,Math.min(1,t/2.5));path.forEach(([px,py],k)=>{if(k/19>hit)return;const dx=x-px,dy=y0-py;y+=Math.exp(-(dx*dx+dy*dy)/500)*14*(1-heal)})}
+    x===W*.4?g.moveTo(x,y):g.lineTo(x,y)}g.stroke()}
+  const k=Math.min(1,t/2.5);const cp=path[Math.floor(k*19)];cursor(g,t<3?cp[0]:W*.9,t<3?cp[1]:H*.85,C)}
+
+function connection(g,W,H,t,C){
+  const pos=t<3?seg(t,.5,2.5):t<6?1+seg(t,3,5.5)*4:5+seg(t,6,7);const R=H*.2,sp=R*1.86,cx=W*.62;const visits=[1,1,1,1,1];if(t>5.6)visits[0]=2;if(t>7)visits[1]=2;
+  g.fillStyle=C.fg;g.fillRect(14,H*.16,W*.08,H*.2);g.fillRect(14,H*.44,W*.22,H*.06);g.fillStyle=C.line;g.fillRect(14,H*.55,W*.26,H*.03);
+  for(let k=-2;k<=2;k++){const j=Math.round(pos)+k,y=H/2+(j-pos)*sp,i=((j%5)+5)%5;const act=1-Math.min(1,Math.abs(j-pos));
+    g.strokeStyle=act>.5?C.fg:C.line;g.beginPath();g.arc(cx,y,R,0,7);g.stroke();
+    for(let n=0;n<visits[i];n++){g.strokeStyle=C.line;g.beginPath();g.arc(cx,y,R*Math.pow(.76,n+1),0,7);g.stroke()}
+    g.fillStyle=C.mute;g.font='11px sans-serif';g.fillText(String(i+1),cx+R+8,y+4)}
+  g.fillStyle=C.mute;g.fillRect(W-14,H*.2,4,H*.6);g.fillStyle=C.fg;g.fillRect(W-15,H*.2+((pos%5)/5)*H*.6,6,10);
+  cursor(g,W*.85,H*.75,C)}
+
+let s=3;const r=()=>(s=(s*16807)%2147483647)/2147483647;
+const NET={p:[[.25,.3],[.5,.42],[.72,.28],[.62,.7]],e:[]};for(let i=0;i<22;i++)NET.p.push([.12+r()*.76,.12+r()*.76]);
+for(let i=0;i<NET.p.length;i++){const d=NET.p.map((q,j)=>[Math.hypot(q[0]-NET.p[i][0],q[1]-NET.p[i][1]),j]).sort((a,b)=>a[0]-b[0]);NET.e.push([i,d[1][1]],[i,d[2][1]])}
+NET.e.sort((a,b)=>Math.hypot(NET.p[a[0]][0]-.5,NET.p[a[0]][1]-.5)-Math.hypot(NET.p[b[0]][0]-.5,NET.p[b[0]][1]-.5));
+const fns=[presence,flow,connection];let ctx=cv.map(fit);addEventListener('resize',()=>ctx=cv.map(fit));
+const t0=performance.now();
+function frame(now){const t=reduce?7.5:(Math.max(0,now-t0)/1000)%LOOP;const C=col();ctx.forEach(([g,W,H],i)=>{g.clearRect(0,0,W,H);g.lineWidth=1;fns[i](g,W,H,t,C,NET);beats(i,t)});if(!reduce)requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

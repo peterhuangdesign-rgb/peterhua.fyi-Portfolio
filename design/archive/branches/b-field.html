@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Peter Huang — Field</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500&family=Darker+Grotesque:wght@300;500;600&display=swap">
+<link rel="stylesheet" href="shared/core.css">
+<style>
+/* Branch B — spatial survey. The fog is a map; projects are survey markers in two regions. The lens finds them; a plain index sits in the corner. */
+html,body{height:100%;overflow:hidden}
+header{position:fixed;z-index:3;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:baseline;gap:16px;pointer-events:none;
+  padding:max(20px,env(safe-area-inset-top,0px)) var(--gutR) 0 var(--gut)}
+#map{position:fixed;inset:0;z-index:2}
+.region{position:absolute;font:500 13px/1 var(--body);letter-spacing:.5em;text-transform:uppercase;color:var(--graphite);pointer-events:none;white-space:nowrap}
+.mk{all:unset;box-sizing:border-box;position:absolute;cursor:pointer;display:grid;grid-template-columns:16px auto;column-gap:12px;align-items:center;min-height:44px;padding-right:8px;
+  opacity:calc(.78 + .22*var(--near,0))}
+.mk .pin{width:12px;height:12px;background:var(--ink);justify-self:center;position:relative}
+.mk.research .pin{background:var(--mist);border:2px solid var(--lichen)}
+.mk.me .pin{background:transparent;border:1px solid var(--ink);width:14px;height:14px}
+.mk .pin::after{content:"";position:absolute;left:50%;top:50%;width:72px;height:72px;margin:-36px 0 0 -36px;border:1px solid var(--lichen);
+  transform:scale(calc(.2 + .8*var(--near,0)));opacity:calc(var(--near,0)*.8);transition:opacity .2s}
+.mk .nm{font:500 clamp(24px,2.5vw,36px)/1 var(--display);white-space:nowrap}
+.mk .tg{grid-column:2;font:500 11px/1.4 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--graphite)}
+.mk:hover .nm,.mk:focus-visible .nm{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:6px}
+.mk:focus-visible{outline:2px solid var(--lichen);outline-offset:4px}
+.mk.seen .pin{outline:1px solid var(--ink);outline-offset:4px}
+.index{position:fixed;z-index:3;left:var(--gut);bottom:max(20px,env(safe-area-inset-bottom,0px));display:grid;gap:10px;font-size:14px}
+.index ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:auto auto;gap:2px 28px}
+.index button{all:unset;cursor:pointer;min-height:28px;display:flex;align-items:center;gap:8px;color:var(--graphite)}
+.index button:hover,.index button:focus-visible{color:var(--ink)}
+.index button:focus-visible{outline:2px solid var(--lichen);outline-offset:2px}
+.index i{width:8px;height:8px;background:var(--ink)} .index .r i{background:var(--mist);border:2px solid var(--lichen)}
+.index a{font-size:14px}
+.sys{position:fixed;z-index:4;right:var(--gutR);bottom:max(20px,env(safe-area-inset-bottom,0px));display:grid;justify-items:end;gap:8px}
+@media (max-width:760px){.index{display:none}.sys{display:none}.role{display:none}.mk .nm{font-size:26px}}
+</style>
+</head>
+<body>
+<canvas class="fog" id="gl" aria-hidden="true"></canvas>
+<header><p class="name">Peter Huang</p><span class="role">UX research &amp; design</span></header>
+<nav id="map" aria-label="Projects map"></nav>
+<div class="index"><span class="label">Index</span><ol id="idx"></ol><a href="mailto:ph2344@nyu.edu">ph2344@nyu.edu</a></div>
+<div class="sys" id="sys"></div>
+<script src="shared/core.js"></script>
+<script>
+const {DATA,caseHTML,profileHTML,Sheet,Fog,spec}=Presence;
+/* survey positions as % of viewport: [desktop, phone] */
+const POS={
+  "r-design":[[10,17],[6,13]],"r-research":[[56,17],[6,52]],
+  chorvivo:[[13,28],[8,20]], wayfarer:[[30,46],[36,29]], glenergy:[[12,64],[10,38]],
+  connection:[[58,30],[8,59]], "students-ai":[[72,49],[30,68]], pilipino:[[55,68],[8,77]],
+  me:[[38,82],[48,88]]
+};
+const map=document.getElementById('map');
+const reg=(id,txt)=>{const s=document.createElement('span');s.className='region';s.dataset.id=id;s.textContent=txt;map.appendChild(s)};
+reg('r-design','Design');reg('r-research','Research');
+const items=[...DATA.all.map(p=>({id:p.id,kind:p.kind,nm:p.short,tg:p.tag})),{id:'me',kind:'me',nm:'Off the clock',tg:'Profile'}];
+const els=items.map(it=>{const b=document.createElement('button');b.className='mk '+it.kind;b.dataset.id=it.id;
+  b.innerHTML=`<span class="pin" aria-hidden="true"></span><span class="nm">${it.nm}</span><span class="tg">${it.tg}</span>`;
+  b.setAttribute('aria-label',`${it.kind==='me'?'Profile':(DATA.all.find(p=>p.id===it.id).t)}, ${it.tg}`);map.appendChild(b);return b});
+const place=()=>{const ph=innerWidth<=760;map.querySelectorAll('[data-id]').forEach(el=>{const [x,y]=POS[el.dataset.id][ph?1:0];
+  el.style.left=x+'%';el.style.top=y+'%';const w=el.offsetWidth;if(el.getBoundingClientRect().right>innerWidth-12)el.style.left=(innerWidth-w-12)+'px'})};
+place();addEventListener('resize',place);document.fonts&&document.fonts.ready.then(place);
+
+const S=Fog(document.getElementById('gl'),{blob:false});
+const open=b=>{const id=b.dataset.id;const mk=map.querySelector(`.mk[data-id="${id}"]`);mk.classList.add('seen');S.revT=1;
+  if(id==='me')Sheet.open(profileHTML(),'Profile',b,()=>S.revT=0);
+  else{const p=DATA.all.find(x=>x.id===id);Sheet.open(caseHTML(p),p.kind==='design'?'Design':'Research',b,()=>S.revT=0)}};
+els.forEach(b=>b.onclick=()=>open(b));
+
+/* index fallback */
+document.getElementById('idx').innerHTML=items.map(it=>`<li class="${it.kind==='research'?'r':''}"><button data-id="${it.id}"><i></i>${it.nm}</button></li>`).join('');
+document.getElementById('idx').addEventListener('click',e=>{const b=e.target.closest('button');if(b)open(b)});
+document.getElementById('idx').addEventListener('pointerover',e=>{const b=e.target.closest('button');if(!b)return;const r=map.querySelector(`.mk[data-id="${b.dataset.id}"] .pin`).getBoundingClientRect();
+  S.tx=(r.left+6)/innerWidth;S.ty=1-(r.top+6)/innerHeight;S.px=r.left+6;S.py=r.top+6;S.last=performance.now()});
+
+/* lens proximity */
+S.frame=()=>{const lx=S.mx*innerWidth,ly=(1-S.my)*innerHeight,R=90+200*S.lens;
+  els.forEach(b=>{const p=b.firstElementChild.getBoundingClientRect();const d=Math.hypot(p.left+6-lx,p.top+6-ly);
+    const near=Math.max(0,Math.min(1,1-(d-R*.3)/R));b.style.setProperty('--near',near.toFixed(3))})};
+spec(document.getElementById('sys'));
+</script>
+</body>
+</html>

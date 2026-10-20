@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Peter Huang — Presence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500&family=Darker+Grotesque:wght@300;500;600&display=swap">
+<style>
+/* Layout: one quiet column of projects over a living fog; a case opens as a right-hand sheet. */
+:root{
+  --fog:#DADDD7; --mist:#EEF0EB; --ink:#15181A; --graphite:#585E62; --lichen:#5F6E2E;
+  --display:"Darker Grotesque","Albert Sans",ui-sans-serif,sans-serif;
+  --body:"Albert Sans",ui-sans-serif,sans-serif;
+  --gut:max(20px, env(safe-area-inset-left,0px));
+  --gutR:max(20px, env(safe-area-inset-right,0px));
+  color-scheme:light;
+}
+*{box-sizing:border-box;border-radius:0}
+html,body{margin:0;height:100%}
+body{background:var(--mist);color:var(--ink);font:400 16px/1.5 var(--body);overflow-x:hidden}
+::selection{background:var(--lichen);color:var(--mist)}
+canvas#gl{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0}
+.wrap{position:relative;z-index:1;min-height:100%;display:grid;grid-template-rows:auto 1fr auto;
+  padding-block:max(20px,env(safe-area-inset-top,0px)) max(20px,env(safe-area-inset-bottom,0px));
+  padding-left:var(--gut);padding-right:var(--gutR)}
+header{display:flex;justify-content:space-between;align-items:baseline;gap:16px}
+.name{font:600 22px/1 var(--display);letter-spacing:.01em;margin:0}
+.role{font:500 12px/1 var(--body);text-transform:uppercase;letter-spacing:.14em;color:var(--graphite)}
+main{display:flex;align-items:center;padding-block:48px}
+ol{list-style:none;margin:0;padding:0;width:100%;max-width:980px}
+li{border-top:1px solid color-mix(in srgb,var(--ink) 22%,transparent)}
+li:last-child{border-bottom:1px solid color-mix(in srgb,var(--ink) 22%,transparent)}
+.row{all:unset;box-sizing:border-box;cursor:pointer;width:100%;display:grid;grid-template-columns:1fr auto;align-items:baseline;gap:24px;
+  padding:14px 0 12px;position:relative;min-height:44px}
+.row .t{font:300 clamp(40px,6.4vw,92px)/.92 var(--display);letter-spacing:-.005em;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.row .k{font:500 12px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--graphite);font-variant-numeric:tabular-nums}
+.row::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--lichen);
+  transform:scaleX(var(--hold,0));transform-origin:left}
+.row:hover .t,.row:focus-visible .t{transform:translateX(10px)}
+.row:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
+.hr{display:flex;align-items:center;gap:20px}
+.me{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:16px 24px;border-top:1px solid var(--ink);padding-top:20px}
+.me li b{display:block;font:500 24px/1.05 var(--display)} .me li span{font-size:13px;color:var(--graphite)}
+.fig.portrait{aspect-ratio:4/5;width:160px}
+@media (max-width:520px){.role{display:none}.me{grid-template-columns:1fr}}
+footer{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:14px;color:var(--graphite)}
+footer a{color:var(--ink);text-underline-offset:4px}
+
+/* case sheet */
+.sheet{position:fixed;z-index:5;top:0;right:0;bottom:0;width:min(600px,100%);background:var(--mist);
+  border-left:1px solid var(--ink);overflow:auto;
+  padding:max(24px,env(safe-area-inset-top,0px)) var(--gutR) 32px 32px;
+  transform:translateX(24px);opacity:0;pointer-events:none;transition:opacity .45s ease-out,transform .6s cubic-bezier(.2,.7,.2,1)}
+.sheet.on{opacity:1;transform:none;pointer-events:auto}
+.sheet h2{font:500 clamp(48px,6vw,80px)/.9 var(--display);margin:56px 0 12px;text-wrap:balance}
+.sheet .line{font-size:18px;margin:0 0 32px;max-width:40ch}
+dl{display:grid;grid-template-columns:96px 1fr;gap:10px 16px;margin:0 0 32px;font-size:15px}
+dt{font:500 12px/1.6 var(--body);text-transform:uppercase;letter-spacing:.14em;color:var(--graphite)}
+dd{margin:0}
+.fig{aspect-ratio:4/3;max-width:100%;border:1px solid var(--ink);display:grid;place-items:end start;padding:12px;
+  background:repeating-linear-gradient(135deg,transparent 0 11px,color-mix(in srgb,var(--ink) 12%,transparent) 11px 12px);
+  font:500 12px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--graphite)}
+.btn{all:unset;box-sizing:border-box;cursor:pointer;min-height:44px;padding:0 16px;display:inline-flex;align-items:center;
+  border:1px solid var(--ink);font:500 13px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;background:var(--mist);color:var(--ink)}
+.btn:hover{background:var(--ink);color:var(--mist)}
+.btn:focus-visible{outline:2px solid var(--lichen);outline-offset:3px}
+
+/* spec strip */
+.spec{position:fixed;z-index:4;right:var(--gutR);bottom:76px;width:168px;background:var(--mist);border:1px solid var(--ink);padding:12px;
+  font:500 11px/1.3 var(--body);letter-spacing:.06em;display:grid;gap:8px}
+.spec[hidden]{display:none}
+.sw{display:grid;grid-template-columns:22px 1fr;gap:8px;align-items:center;text-transform:uppercase}
+.sw i{width:22px;height:22px;border:1px solid var(--ink)}
+.spec .ty{border-top:1px solid var(--ink);padding-top:8px;display:grid;gap:2px}
+.spec .ty b{font:600 26px/1 var(--display)}
+.spec .ty span{font:400 13px/1.2 var(--body)}
+.specbtn{position:fixed;z-index:4;right:var(--gutR);bottom:max(20px,env(safe-area-inset-bottom,0px))}
+@media (max-width:700px){.row{grid-template-columns:1fr}.row .k{order:-1;display:none}.sheet{padding-left:var(--gut)}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<canvas id="gl" aria-hidden="true"></canvas>
+<div class="wrap">
+  <header><p class="name">Peter Huang</p><span class="hr"><span class="role">UX research &amp; design</span><button class="btn" id="pbtn">Profile</button></span></header>
+  <main>
+    <ol id="list"></ol>
+  </main>
+  <footer><a href="mailto:ph2344@nyu.edu">ph2344@nyu.edu</a><span>Irvine, CA</span></footer>
+</div>
+
+<aside class="sheet" id="sheet" role="dialog" aria-modal="false" aria-labelledby="s-title">
+  <button class="btn" id="close">Close</button>
+  <h2 id="s-title"></h2>
+  <p class="line" id="s-line"></p>
+  <dl id="s-meta"></dl>
+  <div class="fig" id="s-fig">[ prototype capture ]</div>
+  <ul class="me" id="s-me" hidden></ul>
+</aside>
+
+<aside class="spec" id="spec" aria-label="Design system">
+  <div class="sw"><i style="background:#DADDD7"></i>Fog DADDD7</div>
+  <div class="sw"><i style="background:#EEF0EB"></i>Mist EEF0EB</div>
+  <div class="sw"><i style="background:#15181A"></i>Ink 15181A</div>
+  <div class="sw"><i style="background:#585E62"></i>Graphite 585E62</div>
+  <div class="sw"><i style="background:#5F6E2E"></i>Lichen 5F6E2E</div>
+  <div class="ty"><b>Darker Grotesque</b><span>Albert Sans 400 / 500</span></div>
+</aside>
+<button class="btn specbtn" id="specbtn" aria-controls="spec" aria-expanded="true">System</button>
+
+<script>
+const P=[
+ {t:"Wayfarer",full:"Wayfarer",k:"Usability",line:"An audio-first walking journal.",m:[["Role","Solo researcher, designer"],["Method","Guerrilla interviews, in-context usability tests, n=3"],["Outcome","1st of 12 teams, CUXD Design-a-thon 2026"]]},
+ {t:"Connection Study",full:"Technology Mediating Connection",k:"Interviews",line:"How technology shapes closeness.",m:[["Role","Researcher"],["Method","Semi-structured interviews, n=7, thematic coding"],["Outcome","[ key finding ]"]]},
+ {t:"Glenergy",full:"Glenergy",k:"Experiment",line:"Behavior change without manipulation.",m:[["Role","Researcher, designer"],["Method","Behavioral experiment"],["Outcome","[ key finding ]"]]},
+ {t:"Chorvivo",full:"Chorvivo",k:"Product",line:"Rehearsal capture for choreographers.",m:[["Role","Head of design"],["Method","Customer discovery, flows, design system"],["Outcome","MVP in build"]]},
+ {t:"Antara",full:"Antara",k:"Concept",line:"A contemplative game.",m:[["Role","Designer"],["Method","Concept, sound"],["Outcome","In progress"]]}
+];
+const ME=[["Jazz piano","Self-taught, Bill Evans"],["Game audio","Music for a friend's game"],["Climbing","Ongoing practice"],["Running","Ongoing practice"],["Photography","[ add a set ]"],["Contemplation","Meditation, breathwork"],["Music therapy","Volunteer"],["Older adults","Event design, volunteer"]];
+const list=document.getElementById('list');
+P.forEach((p,i)=>{const li=document.createElement('li');li.innerHTML=`<button class="row" data-i="${i}"><span class="t">${p.t}</span><span class="k">${p.k}</span></button>`;list.appendChild(li)});
+
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const S={bx:.8,by:.5,mx:.5,my:.5,tx:.5,ty:.5,last:performance.now(),lens:0,rev:0,revT:0};
+addEventListener('pointermove',e=>{S.tx=e.clientX/innerWidth;S.ty=1-e.clientY/innerHeight;S.last=performance.now()});
+
+/* hold to open */
+const sheet=document.getElementById('sheet');let holdRAF=0,holdRow=null,opener=null;
+function openPro(from){document.getElementById('s-title').textContent='Off the clock';document.getElementById('s-line').textContent='Psychology graduate, NYU 2026. Based in Irvine.';
+  document.getElementById('s-meta').innerHTML='';const f=document.getElementById('s-fig');f.textContent='[ portrait ]';f.classList.add('portrait');
+  const me=document.getElementById('s-me');me.hidden=false;me.innerHTML=ME.map(([a,b])=>`<li><b>${a}</b><span>${b}</span></li>`).join('');
+  opener=from;sheet.classList.add('on');S.revT=1;document.getElementById('close').focus({preventScroll:true})}
+function open(i,from){const p=P[i];document.getElementById('s-me').hidden=true;const f=document.getElementById('s-fig');f.textContent='[ prototype capture ]';f.classList.remove('portrait');document.getElementById('s-title').textContent=p.full;document.getElementById('s-line').textContent=p.line;
+  document.getElementById('s-meta').innerHTML=p.m.map(([a,b])=>`<dt>${a}</dt><dd>${b}</dd>`).join('');
+  opener=from;sheet.classList.add('on');S.revT=1;document.getElementById('close').focus({preventScroll:true})}
+function close(){sheet.classList.remove('on');S.revT=0;opener&&opener.focus({preventScroll:true})}
+document.getElementById('close').onclick=close;document.getElementById('pbtn').onclick=e=>{cancelHold();openPro(e.currentTarget)};addEventListener('keydown',e=>{if(e.key==='Escape'&&sheet.classList.contains('on'))close()});
+list.addEventListener('click',e=>{const b=e.target.closest('.row');if(b){cancelHold();open(+b.dataset.i,b)}});
+list.addEventListener('pointerover',e=>{const b=e.target.closest('.row');if(!b||b===holdRow||e.pointerType!=='mouse')return;cancelHold();holdRow=b;const t0=performance.now();
+  const step=now=>{const k=Math.min(1,(now-t0)/1200);b.style.setProperty('--hold',k);if(k<1)holdRAF=requestAnimationFrame(step);else{const r=b;cancelHold();open(+r.dataset.i,r)}};
+  holdRAF=requestAnimationFrame(step)});
+list.addEventListener('pointerout',e=>{const b=e.target.closest('.row');if(b&&!b.contains(e.relatedTarget))cancelHold()});
+function cancelHold(){cancelAnimationFrame(holdRAF);if(holdRow)holdRow.style.setProperty('--hold',0);holdRow=null}
+
+/* spec toggle */
+const spec=document.getElementById('spec'),sb=document.getElementById('specbtn');
+if(innerWidth<900){spec.hidden=true;sb.setAttribute('aria-expanded','false')}
+sb.onclick=()=>{spec.hidden=!spec.hidden;sb.setAttribute('aria-expanded',String(!spec.hidden))};
+
+/* fog shader */
+const c=document.getElementById('gl'),gl=c.getContext('webgl',{antialias:false,premultipliedAlpha:false});
+const fs=`precision highp float;uniform vec2 r;uniform float t,lens,rev,bs;uniform vec2 m,b;
+float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+1.),f.x),f.y);}
+float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<5;i++){v+=a*n(p);p=p*2.03+vec2(1.7,9.2);a*=.5;}return v;}
+void main(){vec2 uv=gl_FragCoord.xy/r;float as=r.x/r.y;vec2 p=uv*vec2(as,1.);float tt=t*.012;
+ float f=fbm(p*2.+vec2(tt,-tt*.6)+fbm(p*1.2-tt)*.9);
+ vec3 mist=vec3(.933,.941,.922),fog=vec3(.835,.85,.82),gr=vec3(.345,.369,.384),li=vec3(.373,.431,.18);
+ vec3 col=mix(mist,fog,smoothstep(.32,.78,f));
+ float e=fbm(p*1.4+vec2(0.,tt*.4));float ln=abs(fract(e*16.)-.5);float c1=1.-smoothstep(.02,.06,ln);
+ float major=1.-smoothstep(.02,.05,abs(fract(e*4.)-.5));
+ vec2 mp=m*vec2(as,1.);float d=length(p-mp);float R=.07+.2*lens;float L=1.-smoothstep(R*.7,R,d);
+ float M=max(L,rev*smoothstep(1.-rev*1.4,1.-rev*1.4+.25,uv.x+(f-.5)*.3));
+ col=mix(col,mist,M*.65);col=mix(col,gr,c1*M*.32);col=mix(col,li,major*M*.42);
+ vec2 dv=p-b*vec2(as,1.);dv+=(vec2(fbm(p*1.7+tt*3.),fbm(p*1.7+5.-tt*3.))-.5)*.22;dv.x*=1.5;dv.y*=.75;
+ float g=exp(-dot(dv,dv)/(.05+.05*bs));vec3 peach=vec3(.86,.78,.71),inkc=vec3(.07,.08,.09);
+ col=mix(col,peach,smoothstep(.02,.45,g)*.4*(1.-g));col=mix(col,inkc,pow(g,1.5)*(.62+.2*bs)*(1.-rev*.7));
+ col+=(h(gl_FragCoord.xy+fract(t*.37))-.5)*.055;gl_FragColor=vec4(col,1.);}`;
+const vs='attribute vec2 a;void main(){gl_Position=vec4(a,0,1);}';
+function sh(t,s){const o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);if(!gl.getShaderParameter(o,gl.COMPILE_STATUS))console.error(gl.getShaderInfoLog(o));return o}
+if(gl){const pr=gl.createProgram();gl.attachShader(pr,sh(gl.VERTEX_SHADER,vs));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,fs));gl.linkProgram(pr);gl.useProgram(pr);
+ gl.bindBuffer(gl.ARRAY_BUFFER,gl.createBuffer());gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
+ const a=gl.getAttribLocation(pr,'a');gl.enableVertexAttribArray(a);gl.vertexAttribPointer(a,2,gl.FLOAT,false,0,0);
+ const U={};['r','t','lens','rev','m','b','bs'].forEach(k=>U[k]=gl.getUniformLocation(pr,k));
+ const size=()=>{const d=Math.min(devicePixelRatio||1,1.5);c.width=innerWidth*d;c.height=innerHeight*d;gl.viewport(0,0,c.width,c.height)};size();addEventListener('resize',size);
+ const t0=performance.now();
+ const frame=now=>{const k=reduce?1:.08;S.mx+=(S.tx-S.mx)*k;S.my+=(S.ty-S.my)*k;
+   const still=Math.max(0,Math.min(1,(now-S.last-250)/2600));const goal=still*still*(3-2*still);S.lens+=(goal-S.lens)*(goal>S.lens?.03:.15);
+   S.rev+=(S.revT-S.rev)*(reduce?1:.045);
+   const wide=innerWidth>900;const gx=wide?.8+(S.mx-.5)*.08:.78,gy=wide?Math.max(.25,Math.min(.72,S.my)):.86;S.bx+=(gx-S.bx)*(reduce?1:.006);S.by+=(gy-S.by)*(reduce?1:.006);
+   gl.uniform2f(U.r,c.width,c.height);gl.uniform1f(U.t,reduce?40:(now-t0)/1000);gl.uniform1f(U.lens,S.lens);gl.uniform1f(U.rev,S.rev);gl.uniform2f(U.m,S.mx,S.my);gl.uniform2f(U.b,S.bx,S.by);gl.uniform1f(U.bs,S.lens);
+   gl.drawArrays(gl.TRIANGLES,0,3);if(!document.hidden)requestAnimationFrame(frame)};
+ requestAnimationFrame(frame);document.addEventListener('visibilitychange',()=>{if(!document.hidden)requestAnimationFrame(frame)});
+}
+</script>
+</body>
+</html>

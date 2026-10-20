@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Peter Huang — Recurrence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geologica:wght@100;200;400&family=Rethink+Sans:wght@400;500&display=swap">
+<style>
+/* Layout: reading column left, an endless column of spheres right. Scrolling is time; the column never ends. */
+:root{
+  --void:#060608; --bone:#E8E4DC; --dust:#8F8C87; --ember:#E3A35C; --lumen:#5E7FE6; --line:#2A2A2E;
+  --display:"Geologica","Rethink Sans",ui-sans-serif,sans-serif; --body:"Rethink Sans",ui-sans-serif,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box;border-radius:0}
+[hidden]{display:none!important}
+html,body{margin:0;height:100%}
+body{background:var(--void);color:var(--bone);font:400 16px/1.5 var(--body);display:grid;grid-template-columns:minmax(340px,40%) 1fr;overflow:hidden}
+::selection{background:var(--ember);color:var(--void)}
+.col{display:grid;grid-template-rows:auto 1fr auto;gap:28px;min-width:0;overflow:auto;position:relative;z-index:1;
+  padding:max(28px,env(safe-area-inset-top,0px)) 36px max(24px,env(safe-area-inset-bottom,0px)) max(28px,env(safe-area-inset-left,0px))}
+header{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.name{margin:0;font:400 19px/1 var(--display);letter-spacing:.01em}
+.btn{all:unset;box-sizing:border-box;cursor:pointer;min-height:44px;padding:0 16px;display:inline-flex;align-items:center;border:1px solid var(--bone);
+  font:500 12px/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--bone);background:var(--void)}
+.btn:hover,.btn[aria-pressed="true"]{background:var(--bone);color:var(--void)} .btn:focus-visible{outline:2px solid var(--ember);outline-offset:3px}
+.view{align-self:center;display:grid;gap:16px;transition:opacity .45s ease-out,transform .6s cubic-bezier(.2,.7,.2,1)}
+.view.out{opacity:0;transform:translateY(8px)}
+.num{font:100 clamp(120px,15vw,230px)/.78 var(--display);letter-spacing:-.04em;font-variant-numeric:tabular-nums;color:var(--bone);margin:0 0 8px}
+.view h1{margin:0;font:200 clamp(40px,4.4vw,68px)/.95 var(--display);letter-spacing:-.02em;text-wrap:balance}
+.line{margin:0;font-size:18px;max-width:32ch;color:var(--bone)}
+dl{margin:10px 0 0;display:grid;grid-template-columns:auto 1fr;gap:8px 18px;font-size:14px}
+dt{font:500 11px/1.7 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--dust)} dd{margin:0}
+nav{display:flex;border:1px solid var(--line);width:max-content;max-width:100%}
+nav button{all:unset;box-sizing:border-box;cursor:pointer;min-width:44px;min-height:44px;display:grid;place-items:center;font:400 13px/1 var(--body);
+  font-variant-numeric:tabular-nums;color:var(--dust);border-right:1px solid var(--line)}
+nav button:last-child{border-right:0}
+nav button[aria-current="true"]{color:var(--void);background:var(--bone)}
+nav button:hover{color:var(--bone)} nav button[aria-current="true"]:hover{color:var(--void)}
+nav button:focus-visible{outline:2px solid var(--ember);outline-offset:2px}
+.clock{font:400 12px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--dust);font-variant-numeric:tabular-nums}
+.foot{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap}
+.foot a{color:var(--bone);text-underline-offset:4px;font-size:14px}
+.spec{display:grid;grid-template-columns:repeat(5,22px) auto;gap:6px;align-items:center;font:500 11px/1.35 var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--dust)}
+.spec i{width:22px;height:22px;border:1px solid var(--line)} .spec span{padding-left:10px}
+.stage{position:relative;min-width:0;touch-action:none;cursor:ns-resize}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+/* profile */
+.pro{display:grid;gap:22px}
+.pro .portrait{width:132px;aspect-ratio:4/5;border:1px solid var(--line);display:grid;place-items:end start;padding:8px;font:500 10px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--dust);
+  background:repeating-linear-gradient(0deg,transparent 0 5px,#ffffff10 5px 6px)}
+.pro ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:14px 24px}
+.pro li b{display:block;font:400 17px/1.2 var(--display)} .pro li span{font-size:13px;color:var(--dust)}
+@media (max-width:860px){
+  body{display:flex;flex-direction:column-reverse;overflow:auto;height:auto}
+  .stage{height:56vh;min-height:320px;flex:none} .col{overflow:visible;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+  .num{font-size:110px} .pro ul{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="col">
+  <header><p class="name">Peter Huang</p><button class="btn" id="pbtn" aria-pressed="false">Profile</button></header>
+  <div>
+    <article class="view" id="work" aria-live="polite">
+      <p class="num" id="w-n" aria-hidden="true">1</p>
+      <h1 id="w-t"></h1>
+      <p class="line" id="w-l"></p>
+      <dl id="w-m"></dl>
+    </article>
+    <article class="view pro" id="pro" hidden>
+      <div class="portrait">[ portrait ]</div>
+      <h1>Peter Huang</h1>
+      <p class="line">Psychology graduate studying how people pay attention.</p>
+      <ul id="pro-l"></ul>
+    </article>
+  </div>
+  <div style="display:grid;gap:22px">
+    <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap"><nav id="nav" aria-label="Projects"></nav><span class="clock" id="clock">Cycle 1 · 00:00</span></div>
+    <div class="foot">
+      <a href="mailto:ph2344@nyu.edu">ph2344@nyu.edu</a>
+      <div class="spec" aria-label="Design system">
+        <i style="background:#060608"></i><i style="background:#E8E4DC"></i><i style="background:#8F8C87"></i><i style="background:#E3A35C"></i><i style="background:#5E7FE6"></i>
+        <span>Geologica<br>Rethink Sans</span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="stage" id="stage" aria-hidden="true"><canvas id="gl"></canvas></div>
+
+<script>
+const P=[
+ {t:"Wayfarer",l:"An audio-first walking journal.",m:[["Role","Solo researcher, designer"],["Method","In-context usability tests, n=3"],["Outcome","1st of 12 teams, CUXD 2026"]]},
+ {t:"Connection Study",l:"How technology shapes closeness.",m:[["Role","Researcher"],["Method","Interviews, n=7, thematic coding"],["Outcome","[ key finding ]"]]},
+ {t:"Glenergy",l:"Behavior change without manipulation.",m:[["Role","Researcher, designer"],["Method","Behavioral experiment"],["Outcome","[ key finding ]"]]},
+ {t:"Chorvivo",l:"Rehearsal capture for choreographers.",m:[["Role","Head of design"],["Method","Customer discovery, design system"],["Outcome","MVP in build"]]},
+ {t:"Antara",l:"A contemplative game.",m:[["Role","Designer"],["Method","Concept, sound"],["Outcome","In progress"]]}
+];
+const ME=[["Jazz piano","Self-taught, Bill Evans"],["Game audio","Music for a friend's game"],["Climbing","Ongoing practice"],["Running","Ongoing practice"],["Photography","[ add a set ]"],["Contemplation","Meditation, breathwork"],["Music therapy","Volunteer"],["Older adults","Event design, volunteer"]];
+document.getElementById('pro-l').innerHTML=ME.map(([a,b])=>`<li><b>${a}</b><span>${b}</span></li>`).join('');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const mod=(a,n)=>((a%n)+n)%n;
+const S={pos:0,target:0,act:0,visits:[1,0,0,0,0],lx:.3,ly:.8,tlx:.3,tly:.8,born:performance.now()};
+
+/* nav */
+const nav=document.getElementById('nav');const nums=P.map((p,i)=>{const b=document.createElement('button');b.textContent=i+1;b.setAttribute('aria-label',p.t);
+  b.onclick=()=>{showWork();const cur=mod(Math.round(S.target),5);let d=mod(i-cur,5);if(d>2)d-=5;S.target=Math.round(S.target)+d;if(reduce)S.pos=S.target};nav.appendChild(b);return b});
+const work=document.getElementById('work'),pro=document.getElementById('pro'),pbtn=document.getElementById('pbtn');
+let swapT=0;
+function fill(i){const p=P[i];document.getElementById('w-n').textContent=i+1;document.getElementById('w-t').textContent=p.t;document.getElementById('w-l').textContent=p.l;
+  document.getElementById('w-m').innerHTML=p.m.map(([a,b])=>`<dt>${a}</dt><dd>${b}</dd>`).join('');nums.forEach((b,k)=>b.setAttribute('aria-current',String(k===i)))}
+function swapTo(fn){if(reduce){fn();return}const el=pro.hidden?work:pro;el.classList.add('out');clearTimeout(swapT);swapT=setTimeout(()=>{fn();(pro.hidden?work:pro).classList.remove('out')},300)}
+function showWork(){if(pro.hidden)return;swapTo(()=>{pro.hidden=true;work.hidden=false;pbtn.setAttribute('aria-pressed','false')})}
+pbtn.onclick=()=>{if(pro.hidden)swapTo(()=>{work.hidden=true;pro.hidden=false;pbtn.setAttribute('aria-pressed','true')});else showWork()};
+fill(0);
+
+/* time input: wheel, drag, keys — the column never ends */
+let snapT=0;const snap=()=>{clearTimeout(snapT);snapT=setTimeout(()=>S.target=Math.round(S.target),170)};
+addEventListener('wheel',e=>{if(e.target.closest('.col')&&e.target.closest('.col').scrollHeight>innerHeight+4&&innerWidth<=860)return;
+  e.preventDefault();S.target+=Math.max(-.5,Math.min(.5,e.deltaY*.0018));snap()},{passive:false});
+const stage=document.getElementById('stage');let drag=null;
+stage.addEventListener('pointerdown',e=>{drag={y:e.clientY,t:S.target};stage.setPointerCapture(e.pointerId)});
+stage.addEventListener('pointermove',e=>{const r=stage.getBoundingClientRect();S.tlx=(e.clientX-r.left)/r.width;S.tly=1-(e.clientY-r.top)/r.height;
+  if(drag){S.target=drag.t+(drag.y-e.clientY)/r.height*2.6}});
+stage.addEventListener('pointerup',()=>{drag=null;S.target=Math.round(S.target)});
+addEventListener('keydown',e=>{if(e.key==='ArrowDown'||e.key==='ArrowRight'){e.preventDefault();S.target=Math.round(S.target)+1}
+  if(e.key==='ArrowUp'||e.key==='ArrowLeft'){e.preventDefault();S.target=Math.round(S.target)-1}});
+
+/* clock */
+const clock=document.getElementById('clock');
+setInterval(()=>{const s=Math.floor((performance.now()-S.born)/1000);clock.textContent=`Cycle ${Math.floor(Math.round(S.pos)/5)+1} · ${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`},1000);
+
+/* shader */
+const c=document.getElementById('gl'),gl=c.getContext('webgl',{antialias:false});
+const fs=`precision highp float;uniform vec2 r,L;uniform float t,pos;uniform float V[5];
+float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float vis(float k){float v=0.;for(int i=0;i<5;i++){if(abs(float(i)-k)<.5)v=V[i];}return v;}
+void main(){vec2 uv=gl_FragCoord.xy/r;float as=r.x/r.y;vec2 p=vec2((uv.x-.5)*as,uv.y-.5);
+ float R=min(.2,.34*as);float sp=R*1.86;vec3 col=vec3(.024,.024,.031);
+ vec3 bone=vec3(.91,.89,.86),dust=vec3(.56,.55,.53),ember=vec3(.89,.64,.36),lumen=vec3(.37,.5,.9);
+ float base=floor(pos+.5);float ang=t*.05;vec2 ld=normalize(vec2(-.7+(L.x-.5)*.8,.6+(L.y-.5)*.6));
+ /* dot column trailing above the present */
+ float cy=(base-pos)*-sp;float above=p.y-(cy+R*.2);
+ vec2 g=fract(p*vec2(95.,95.))-.5;float dots=1.-smoothstep(.12,.2,length(g));
+ float band=step(abs(p.x+R*.15),R*.95)*smoothstep(0.,.08,above)*(1.-smoothstep(.1,.55,above));
+ col+=bone*dots*band*.35;
+ for(int k=-2;k<=2;k++){float j=base+float(k);float y=(j-pos)*-sp;vec2 cc=vec2(0.,y);vec2 q=(p-cc)/R;float d=length(q);
+  float act=1.-smoothstep(.0,1.3,abs(j-pos));float pi=mod(j,5.);float st=mod(pi,3.);
+  if(d<1.){float z=sqrt(1.-d*d);float shd=.35+.65*max(dot(normalize(vec3(q,z)),normalize(vec3(ld,.5))),0.);
+   float tex;
+   if(st<.5){vec2 gg=fract(p*vec2(110.))-.5;tex=1.-smoothstep(.14,.24,length(gg));}
+   else if(st<1.5){tex=.35+.65*h(floor(gl_FragCoord.xy*.7)+floor(t*8.));}
+   else{tex=1.-smoothstep(.0,.18,abs(fract(length(q-vec2(.55,-.35))*14.-t*.15)-.5)-.32);}
+   float fill=tex*shd*(.18+.55*act)*(1.-smoothstep(.85,1.,d)*.4);
+   vec3 c0=mix(dust,bone,shd)*fill;
+   float rings=0.;float vv=vis(pi);for(int n=0;n<8;n++){if(float(n)<vv){float rr=pow(.76,float(n)+1.);rings+=1.-smoothstep(.0,.012,abs(d-rr));}}
+   c0+=bone*rings*(.25+.45*act);
+   col=mix(col,c0+col*.2,smoothstep(1.,.985,d));}
+  float edge=smoothstep(.05,.0,abs(d-1.))+smoothstep(.25,.0,abs(d-1.))*.25;
+  vec2 qn=q/max(d,.001);float face=max(dot(qn,ld),0.);float below=smoothstep(.2,-.9,qn.y);
+  vec3 rim=mix(ember*face,lumen*.9,below*(1.-face*.6));
+  col+=rim*edge*(.25+.85*act);}
+ col+=(h(gl_FragCoord.xy+fract(t*.3))-.5)*.05;gl_FragColor=vec4(max(col,0.),1.);}`;
+const vs='attribute vec2 a;void main(){gl_Position=vec4(a,0,1);}';
+function sh(t,s){const o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);if(!gl.getShaderParameter(o,gl.COMPILE_STATUS))console.error(gl.getShaderInfoLog(o));return o}
+if(gl){const pr=gl.createProgram();gl.attachShader(pr,sh(gl.VERTEX_SHADER,vs));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,fs));gl.linkProgram(pr);gl.useProgram(pr);
+ gl.bindBuffer(gl.ARRAY_BUFFER,gl.createBuffer());gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
+ const a=gl.getAttribLocation(pr,'a');gl.enableVertexAttribArray(a);gl.vertexAttribPointer(a,2,gl.FLOAT,false,0,0);
+ const U={};['r','L','t','pos','V'].forEach(k=>U[k]=gl.getUniformLocation(pr,k));
+ const size=()=>{const d=Math.min(devicePixelRatio||1,1.5);c.width=stage.clientWidth*d;c.height=stage.clientHeight*d;gl.viewport(0,0,c.width,c.height)};
+ new ResizeObserver(size).observe(stage);size();
+ const t0=performance.now();
+ const frame=now=>{S.pos+=(S.target-S.pos)*(reduce?1:.085);S.lx+=(S.tlx-S.lx)*.04;S.ly+=(S.tly-S.ly)*.04;
+   const a=mod(Math.round(S.pos),5);if(a!==S.act){S.act=a;S.visits[a]=Math.min(8,S.visits[a]+1);fill(a);showWork()}
+   gl.uniform2f(U.r,c.width,c.height);gl.uniform2f(U.L,S.lx,S.ly);gl.uniform1f(U.t,reduce?20:(now-t0)/1000);gl.uniform1f(U.pos,S.pos);gl.uniform1fv(U.V,S.visits);
+   gl.drawArrays(gl.TRIANGLES,0,3);if(!document.hidden)requestAnimationFrame(frame)};
+ requestAnimationFrame(frame);document.addEventListener('visibilitychange',()=>{if(!document.hidden)requestAnimationFrame(frame)});
+}
+</script>
+</body>
+</html>

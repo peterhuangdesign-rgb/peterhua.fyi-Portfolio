@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Peter Huang — Read</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500&family=Darker+Grotesque:wght@300;500;600&display=swap">
+<link rel="stylesheet" href="shared/core.css">
+<style>
+/* Branch C — Split Pane. Fixed index on the left tracks where you are; the work reads top to bottom on the right; cases expand in place. The fog thins as you read. */
+.rail{position:fixed;z-index:3;top:0;left:0;bottom:0;width:min(34vw,420px);display:grid;grid-template-rows:auto 1fr auto;gap:28px;
+  padding:max(28px,env(safe-area-inset-top,0px)) 28px max(24px,env(safe-area-inset-bottom,0px)) var(--gut)}
+.me-h .name{font-size:clamp(34px,3.4vw,52px);line-height:.9}
+.me-h .role{display:block;margin-top:12px}
+nav{display:grid;grid-template-columns:2px minmax(0,1fr);gap:0 18px;align-content:center}
+.track{grid-row:1/-1;background:var(--rule);position:relative}
+.track i{position:absolute;left:0;top:0;width:2px;height:100%;background:var(--ink);transform-origin:top;transform:scaleY(var(--p,0))}
+nav .grp{display:grid;gap:2px;margin-bottom:18px}
+nav .label{margin-bottom:4px}
+nav a{display:flex;align-items:center;min-height:32px;text-decoration:none;color:var(--graphite);font:500 21px/1.1 var(--display);transition:color .2s,transform .4s cubic-bezier(.2,.7,.2,1)}
+nav a:hover{color:var(--ink)} nav a.on{color:var(--ink);transform:translateX(6px)}
+.rail-foot{display:grid;gap:14px;font-size:14px}
+.rail-foot .spec{border:0;padding:0;background:transparent;grid-template-columns:repeat(5,22px) auto;align-items:center;width:auto}
+.rail-foot .sw{display:block;font-size:0} .rail-foot .sw i{display:block} .rail-foot .ty{border:0;padding:0 0 0 10px} .rail-foot .ty b{font-size:16px}
+main{position:relative;z-index:1;margin-left:min(34vw,420px);padding:max(28px,env(safe-area-inset-top,0px)) var(--gutR) 30vh 40px;width:min(840px,calc(100% - min(34vw,420px)))}
+.group-h{margin:0 0 8px;padding-top:12vh} .group-h:first-child{padding-top:0}
+article{padding:28px 0 36px;border-top:1px solid var(--rule);scroll-margin-top:24px}
+article>h2{margin:0 0 10px;font:300 clamp(48px,5.6vw,84px)/.9 var(--display);text-wrap:balance}
+article.r>h2{font:500 clamp(32px,3.4vw,48px)/.98 var(--display)}
+.line{margin:0 0 18px;font-size:18px;max-width:44ch}
+.row{display:flex;flex-wrap:wrap;gap:12px 28px;align-items:center}
+.tag{font:500 12px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--graphite)}
+.more{padding-top:24px}
+.more:not([hidden]){animation:in .5s ease-out}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.more .c-meta{margin-top:0}
+#profile .c-t{margin-top:0}
+@media (max-width:860px){
+  .rail{position:sticky;top:0;width:auto;height:auto;bottom:auto;grid-template-rows:auto;gap:12px;padding-right:var(--gutR);padding-bottom:12px;background:var(--mist);border-bottom:1px solid var(--rule)}
+  .me-h .name{font-size:30px} .me-h .role{margin-top:6px}
+  nav{grid-template-columns:1fr;overflow-x:auto} .track{display:none} nav .grp{display:flex;gap:16px;margin:0;grid-row:auto} nav{display:flex;gap:16px} #nav{display:flex;gap:16px} nav .label{display:none}
+  nav a{white-space:nowrap;font-size:18px;min-height:44px} nav a.on{transform:none;text-decoration:underline;text-underline-offset:6px}
+  .rail-foot{display:none}
+  main{margin-left:0;padding-left:var(--gut);padding-top:20px;width:auto}
+}
+@media (prefers-reduced-motion:reduce){.more:not([hidden]){animation:none}}
+</style>
+</head>
+<body>
+<canvas class="fog" id="gl" aria-hidden="true"></canvas>
+<aside class="rail">
+  <div class="me-h"><p class="name">Peter<br>Huang</p><span class="role">UX research &amp; design</span></div>
+  <nav aria-label="Sections"><span class="track" aria-hidden="true"><i id="prog"></i></span><div id="nav"></div></nav>
+  <div class="rail-foot"><a href="mailto:ph2344@nyu.edu">ph2344@nyu.edu</a><div id="sys"></div></div>
+</aside>
+<main id="main"></main>
+<script src="shared/core.js"></script>
+<script>
+const {DATA,caseHTML,profileHTML,wireProfile,Fog,spec,reduce}=Presence;
+const main=document.getElementById('main');
+const art=p=>`<article id="${p.id}" class="${p.kind==='research'?'r':''}" aria-labelledby="${p.id}-h">
+  <h2 id="${p.id}-h">${p.t}</h2><p class="line">${p.line}</p>
+  <div class="row"><span class="tag">${p.tag}</span><button class="btn" aria-expanded="false" aria-controls="${p.id}-m">Read case</button></div>
+  <div class="more" id="${p.id}-m" hidden>${caseHTML(p,{noTitle:true})}</div></article>`;
+main.innerHTML=`<h2 class="group-h label">Design</h2>${DATA.design.map(art).join('')}
+  <h2 class="group-h label">Research</h2>${DATA.research.map(art).join('')}
+  <h2 class="group-h label">Profile</h2><article id="profile" aria-label="Profile">${profileHTML({h:'h3'})}</article>`;
+wireProfile(document.getElementById('profile'));
+main.addEventListener('click',e=>{const b=e.target.closest('[aria-controls]');if(!b)return;const m=document.getElementById(b.getAttribute('aria-controls'));
+  const on=b.getAttribute('aria-expanded')!=='true';b.setAttribute('aria-expanded',String(on));b.textContent=on?'Close case':'Read case';m.hidden=!on;
+  if(!on)b.closest('article').scrollIntoView({block:'start',behavior:reduce?'auto':'smooth'})});
+
+/* index */
+const grp=(name,list)=>`<div class="grp"><span class="label">${name}</span>${list.map(p=>`<a href="#${p.id}" data-id="${p.id}">${p.short}</a>`).join('')}</div>`;
+document.getElementById('nav').innerHTML=grp('Design',DATA.design)+grp('Research',DATA.research)+`<div class="grp"><a href="#profile" data-id="profile">Off the clock</a></div>`;
+const links=[...document.querySelectorAll('#nav a')];
+document.getElementById('nav').addEventListener('click',e=>{const a=e.target.closest('a');if(!a)return;e.preventDefault();
+  const t=document.getElementById(a.dataset.id);t.scrollIntoView({behavior:reduce?'auto':'smooth'});t.setAttribute('tabindex','-1');t.focus({preventScroll:true})});
+const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting)links.forEach(a=>{const on=a.dataset.id===en.target.id;a.classList.toggle('on',on);if(on)a.setAttribute('aria-current','true');else a.removeAttribute('aria-current')})}),{rootMargin:'-40% 0px -55% 0px'});
+document.querySelectorAll('main article').forEach(a=>io.observe(a));
+links[0].classList.add('on');
+
+/* fog thins as you read */
+const S=Fog(document.getElementById('gl'),{blob:true,blobAt:S=>innerWidth>1200?[.94,.55]:[.9,.04]});
+const prog=document.getElementById('prog');
+const onScroll=()=>{const max=document.documentElement.scrollHeight-innerHeight;const p=max>0?scrollY/max:0;S.thinT=Math.min(.85,p*1.1);S.blob=innerWidth>1200?Math.max(0,1-p*3):0;prog.style.setProperty('--p',p.toFixed(3))};
+addEventListener('scroll',onScroll,{passive:true});onScroll();
+spec(document.getElementById('sys'),{toggle:false});
+</script>
+</body>
+</html>

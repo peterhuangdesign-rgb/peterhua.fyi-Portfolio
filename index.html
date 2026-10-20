@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en" data-theme="land">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Peter Huang — UX research &amp; design</title>
+<meta name="description" content="Peter Huang: UX researcher with a background in psychology, digital media, and design. NYU, B.S. Applied Psychology. Based in Orange County, California.">
+<meta property="og:title" content="Peter Huang — UX research &amp; design">
+<meta property="og:description" content="How we design safer systems and more pleasurable experiences.">
+<meta property="og:type" content="website">
+<script>try{let t=localStorage.getItem('ph-theme');t={light:'land',dark:'sea',fx:'sky'}[t]||t;if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500&family=Darker+Grotesque:wght@300;500;600&display=swap">
+<link rel="stylesheet" href="shared/core.css">
+<link rel="stylesheet" href="site/app.css">
+</head>
+<body>
+<canvas class="fog" id="gl" aria-hidden="true"></canvas>
+<header class="rail">
+  <a class="home-link" href="#home" aria-label="Peter Huang, home"><span class="sig" aria-hidden="true"></span><span class="role">UX research &amp; design</span></a>
+  <nav aria-label="Main"><ul class="nav4" id="nav4"></ul></nav>
+  <nav class="sub" id="sub" aria-label="In this section" hidden><span class="track" aria-hidden="true"><i id="prog"></i></span><ol id="sub-list"></ol></nav>
+  <div class="rail-foot"><a id="rail-mail" href="#contact"></a><a id="rail-cv" href="#" target="_blank" rel="noopener">Résumé (PDF)</a><button class="replay" id="replay" type="button">Replay intro</button></div>
+  <div class="themes" role="group" aria-label="Theme"></div>
+</header>
+<main id="main" tabindex="-1"></main>
+<section class="story" id="story" hidden aria-label="Introduction"></section>
+<script src="shared/core.js"></script>
+<script src="site/app.js"></script>
+</body>
+</html>
