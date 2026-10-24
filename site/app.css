@@ -286,3 +286,12 @@ a:hover .arr,a:focus-visible .arr{background:var(--ink);color:var(--mist)}
 .m-in{color:var(--graphite);text-transform:lowercase;letter-spacing:0;font-weight:500;margin-right:.5em}
 .pf-mission{margin:24px 0 0}
 .theme-switch *,.theme-switch *::before,.theme-switch *::after{transition:none!important}
+
+/* context line under a title: kind / field / detail. Own line, lowercase, graphite, no tracking. */
+.ctx{margin:8px 0 0;font:500 15px/1.4 var(--body);color:var(--graphite);text-transform:lowercase;letter-spacing:0}
+.fw .ctx,.work .ctx{margin-top:10px}
+.fw .ctx+.fw-p,.work .ctx+.line{margin-top:8px}
+.case .ctx{margin:0 0 12px;font-size:16px}
+.case .c-t+.ctx{margin-top:-4px}
+.cv-role{margin:2px 0 0;font-size:15px}
+.xp .ctx,.cv .ctx{margin:2px 0 8px;font-size:14px}

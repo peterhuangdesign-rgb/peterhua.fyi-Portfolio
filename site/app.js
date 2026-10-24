@@ -2,7 +2,7 @@
    Every visit opens on #home: who Peter is in a few lines, then three featured projects.
    The scroll story (#story) is optional, opened from the "Read my story" button on Profile. */
 (function(){
-const {wireCase,DATA,CONTACT,THEMES,THEME_ALIAS,caseHTML,metaIn,profileHTML,resumeHTML,wireProfile,Fog,reduce,esc}=Presence;
+const {wireCase,DATA,CONTACT,THEMES,THEME_ALIAS,caseHTML,ctxHTML,metaIn,profileHTML,resumeHTML,wireProfile,Fog,reduce,esc}=Presence;
 const $=id=>document.getElementById(id);
 const main=$("main"),nav4=$("nav4"),sub=$("sub"),subList=$("sub-list"),prog=$("prog"),story=$("story");
 const byId=id=>DATA.all.find(p=>p.id===id);
@@ -48,7 +48,7 @@ document.addEventListener("click",async e=>{const a=e.target.closest('[data-cta=
    To add a pair, write both words without their first letter: ["ianist","…"] is pianist / h….
    Keep each h-word no wider than "human factors" so it never wraps.
    Screen readers get one label. Pause button for motion that repeats; reduced motion shows the name, still. */
-const PAIRS=[["eter","uang"],["sychology","uman factors"],["atience","umility"]];
+const PAIRS=[["eter","uang"],["sychology","uman factors"],["resence","umility"]];
 const ARR=`<span class="arr" aria-hidden="true"><svg viewBox="0 0 18 18"><path d="M3 9H15M10 4L15 9L10 14"/></svg></span>`;
 const roll=list=>`<span class="phm-w"><span class="phm-r">${list.map((w,i)=>`<span${i?' class="lt"':""}>${w}</span>`).join("")}</span></span>`;
 const PHM_LABEL="Peter Huang. The p and h also stand for "+PAIRS.slice(1).map(([a,b])=>`p${a} and h${b}`).join(", ")+".";
@@ -86,7 +86,7 @@ function typeIntro(root){
 const idxRows=list=>`<ol class="idx">${list.map(p=>`<li><a href="#${p.id}"><span class="t">${esc(p.t)}</span><span class="k">${esc(p.tag)}</span></a></li>`).join("")}</ol>`;
 const workBlock=p=>`<article class="work${p.kind==="research"?" r":""}" id="w-${p.id}" data-id="${p.id}"><a href="#${p.id}">
   <div class="work-h"><h2>${esc(p.t)}</h2>${ARR}</div>
-  <p class="line">${metaIn(p.tag)} ${esc(p.line||"")}</p>
+  ${ctxHTML(p.ctx)}${p.line?`<p class="line">${esc(p.line)}</p>`:""}
   ${p.hero?`<img class="work-img" src="${p.hero.src}" alt="" loading="lazy"${p.hero.w?` width="${p.hero.w}" height="${p.hero.h}"`:""}>`:""}</a></article>`;
 /* Featured work: three projects, one after another, research first. Chorvivo is under wraps: Profile > Work only.
    kind = research, design, or both; format = what it was (startup, paper, design-a-thon).
@@ -102,7 +102,7 @@ const FEATURED=[
 const featBlocks=()=>FEATURED.map((f,i)=>{const p=byId(f.id);if(!p)return"";
   return `<article class="fw"><a href="#${p.id}">
     <div class="fw-h"><span class="fw-t">${esc(p.t)}</span>${ARR}</div>
-    <p class="fw-p">${metaIn([f.kind,f.format,f.year].filter(Boolean).join(" / "))} ${esc(f.line)}</p>
+    ${ctxHTML(p.ctx)}<p class="fw-p">${esc(f.line)}</p>
     ${f.img?`<img class="fw-img" src="${f.img}" alt="${esc(f.alt||"")}" loading="lazy"${f.w?` width="${f.w}" height="${f.h}"`:""}>`:""}</a></article>`}).join("");
 const PAGES={
   home:()=>`<div class="hi"><div class="hi-txt"><h1 class="ph1 greet">Hello! I’m Peter Huang.</h1>
