@@ -13,16 +13,16 @@ const store={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},s
 const S=Fog($("gl"),{blob:true,blobAt:()=>[.95,.5]});
 /* per-page background strength: thin 1 = plain page colour, calm 1 = lens subdued */
 const BG={story:[.45,0],home:[.72,0],research:[.84,.3],design:[.84,.3],page:[.97,1]};
-function setBg(k){const [t,c]=BG[k]||BG.page;S.thinT=t;S.calmT=c;S.blob=k==="home"&&innerWidth>1560?1:0}
+function setBg(k){const [t,c]=BG[k]||BG.page;S.thinT=t;S.calmT=c;S.blob=k==="home"&&innerWidth>1560?1:0;S.pause=!BG[k]||k==="page";S.wake&&S.wake()}
 
 /* ---------- themes: Land ⇄ Sea, one toggle ----------
    The button shows the swatch of the theme it switches TO. */
 const themesEl=document.querySelector(".themes");
 const TNAMES={land:"Land",sea:"Sea"};
-const tbtn=document.createElement("button");tbtn.className="th";tbtn.type="button";tbtn.innerHTML=`<i aria-hidden="true"></i>`;themesEl.appendChild(tbtn);
+const tbtn=document.createElement("button");tbtn.className="th";tbtn.type="button";tbtn.innerHTML=`<i aria-hidden="true"></i><span class="th-l" aria-hidden="true"></span>`;themesEl.appendChild(tbtn);
 tbtn.onclick=()=>setTheme(document.documentElement.dataset.theme==="sea"?"land":"sea",true);
 function setTheme(id,save){id=THEME_ALIAS[id]||id;if(!THEMES[id])id="land";document.documentElement.dataset.theme=id;S.theme=THEMES[id];
-  const next=id==="sea"?"land":"sea";tbtn.dataset.t=next;tbtn.setAttribute("aria-label",`Switch to ${TNAMES[next]} theme`);tbtn.title=`${TNAMES[next]} theme`;
+  const next=id==="sea"?"land":"sea";tbtn.dataset.t=next;tbtn.setAttribute("aria-label",`Switch to ${TNAMES[next]} theme`);tbtn.title=`${TNAMES[next]} theme`;tbtn.querySelector(".th-l").textContent=`${TNAMES[next]} theme`;
   if(save){store.set("ph-theme",id);S.revT=1;setTimeout(()=>S.revT=0,600)}}
 setTheme(store.get("ph-theme")||"land");
 
@@ -38,7 +38,8 @@ async function copyEmail(){try{await navigator.clipboard.writeText(CONTACT.email
   try{const t=document.createElement("textarea");t.value=CONTACT.email;t.setAttribute("readonly","");t.style.cssText="position:fixed;opacity:0";document.body.appendChild(t);t.select();const ok=document.execCommand("copy");t.remove();return ok}catch(_){return false}}}
 document.addEventListener("click",async e=>{const a=e.target.closest('[data-cta="email"],#copy');if(!a)return;
   if(a.id==="copy")e.preventDefault();
-  const ok=await copyEmail();toast(ok?`Email copied: ${CONTACT.email}`:CONTACT.email)});
+  const ok=await copyEmail();const mail=a.dataset.cta==="email";
+  toast(ok?(mail?`Opening your mail app. Address copied: ${CONTACT.email}`:`Email copied: ${CONTACT.email}`):CONTACT.email)});
 
 /* ---------- main logo (profile) ----------
    p and h stay; the rest rolls through PAIRS, then back to the name.
@@ -82,30 +83,30 @@ function typeIntro(root){
 /* ---------- pages ---------- */
 const idxRows=list=>`<ol class="idx">${list.map(p=>`<li><a href="#${p.id}"><span class="t">${esc(p.t)}</span><span class="k">${esc(p.tag)}</span></a></li>`).join("")}</ol>`;
 const workBlock=p=>`<article class="work${p.kind==="research"?" r":""}" id="w-${p.id}" data-id="${p.id}"><a href="#${p.id}">
-  <span class="tag">${esc(p.tag)}</span>
+  <span class="tag"><span>${esc(p.tag)}</span>${p.body?"":` · <span class="wip">Write-up in progress</span>`}</span>
   <div class="work-h"><h2>${esc(p.t)}</h2>${ARR}</div>
   ${p.line?`<p class="line">${esc(p.line)}</p>`:""}
-  ${p.hero?`<img class="work-img" src="${p.hero.src}" alt="" loading="lazy">`:""}</a></article>`;
+  ${p.hero?`<img class="work-img" src="${p.hero.src}" alt="" loading="lazy"${p.hero.w?` width="${p.hero.w}" height="${p.hero.h}"`:""}>`:""}</a></article>`;
 /* Featured work: three projects, one after another, research first. Chorvivo is under wraps: Profile > Work only.
    kind = research, design, or both; format = what it was (startup, paper, design-a-thon).
    img = a picture of the work; until there is one, the slot shows what belongs there. */
 const FEATURED=[
-  {id:"connection",kind:"UX research",format:"Self-directed · 7 interviews",year:"2025",img:"",slot:"",
+  {id:"connection",kind:"UX research",format:"Self-directed · 7 interviews",year:"2025",img:"media/paper-feature.webp",w:1194,h:480,alt:"Title page of the paper: Technology in Social Contexts: Subjective Well-being in Young Adults",
     line:"How relationships through technology relate to life satisfaction among emerging adults. 7 semi-structured interviews, grounded-theory coding, and a 27-page paper."},
-  {id:"wayfarer",kind:"UX design + research",format:"Design-a-thon winner",year:"2026",img:"media/wayfarer/hero.webp",alt:"Three Wayfarer app screens",
-    line:"Winner of Cornell University's CU Design-a-thon 2026: a two-day sprint, 71 participants. An app that accompanies you on your walk, with asynchronous social connection and easy journaling."},
-  {id:"glenergy",kind:"UX design + research",format:"Dark patterns study · Team of 3",year:"2025",img:"media/glenergy/logo.webp",alt:"Glenergy logo: a glowing light bulb beside the wordmark on a navy background",
+  {id:"wayfarer",kind:"UX design + research",format:"Design-a-thon winner",year:"2026",img:"media/wayfarer/hero.webp",w:1414,h:920,alt:"Three Wayfarer app screens",
+    line:"Winner of Cornell University’s CU Design-a-thon 2026: a two-day sprint, 71 participants. An app that accompanies you on your walk, with asynchronous social connection and easy journaling."},
+  {id:"glenergy",kind:"UX design + research",format:"Dark patterns study · Team of 3",year:"2025",img:"media/glenergy/feature.webp",w:1728,h:1100,alt:"Glenergy high-fidelity screen: the Give Back retirement plan page, $1 to $2 employer match",
     line:"A design of an Employee Onboarding Portal that incentivizes users to choose cost-effective options for the distributor/business. We tested to identify the effectiveness of “Dark Patterns” and discern perceptions of AI integration in business applications."}
 ];
 const featBlocks=()=>FEATURED.map((f,i)=>{const p=byId(f.id);if(!p)return"";
   return `<article class="fw"><a href="#${p.id}">
-    <span class="fw-k">${esc(f.kind)} · ${esc(f.format)}${f.year?` · ${f.year}`:""}</span>
+    <span class="fw-k">${[f.kind,...f.format.split(" · "),f.year].filter(Boolean).map(x=>`<span>${esc(x)}</span>`).join(" · ")}</span>
     <div class="fw-h"><span class="fw-t">${esc(p.t)}</span>${ARR}</div>
     <p class="fw-p">${esc(f.line)}</p>
-    ${f.img?`<img class="fw-img" src="${f.img}" alt="${esc(f.alt||"")}" loading="lazy">`:""}</a></article>`}).join("");
+    ${f.img?`<img class="fw-img" src="${f.img}" alt="${esc(f.alt||"")}" loading="lazy"${f.w?` width="${f.w}" height="${f.h}"`:""}>`:""}</a></article>`}).join("");
 const PAGES={
-  home:()=>`<div class="hi"><div class="hi-txt"><h1 class="ph1 greet">Hello! I'm Peter Huang.</h1>
-    <p class="mission">I'm a UX researcher with a background in psychology, digital media, and design. I'm curious about how we design safer systems and more pleasurable experiences.</p>
+  home:()=>`<div class="hi"><div class="hi-txt"><h1 class="ph1 greet">Hello! I’m Peter Huang.</h1>
+    <p class="mission">I’m a UX researcher with a background in psychology, digital media, and design. I’m curious about how we design safer systems and more pleasurable experiences.</p>
     <div class="hi-act">${ctaPair()}</div></div>
     <img class="hi-photo" src="media/me-smile.jpg" alt="Peter Huang, smiling, in a cap" width="556" height="520"></div>
     <h2 class="label feat-h">Featured work</h2>${featBlocks()}
@@ -116,8 +117,8 @@ const PAGES={
   resume:()=>`<h1 class="ph1">Résumé</h1>
     <div class="cv-act"><a class="btn" href="${CONTACT.resume}" download="Peter-Huang-Resume.pdf">Download PDF</a><a class="btn" href="${CONTACT.resume}" target="_blank" rel="noopener">Open PDF</a><a class="btn" href="mailto:${CONTACT.email}" data-cta="email">Email</a></div>
     <div class="case cv-html">${resumeHTML().replace('<p class="cv-top"><span>Human factors focus</span><a class="btn" href="${CONTACT.resume}" target="_blank" rel="noopener">Open PDF</a></p>','')}</div>`,
-  contact:()=>`<h1 class="ph1 contact-h">Seems like you're curious!</h1>
-    <p class="contact-sub">I'm open to connecting and collaborating on new projects!</p>
+  contact:()=>`<h1 class="ph1 contact-h">Seems like you’re curious!</h1>
+    <p class="contact-sub">I’m open to connecting and collaborating on new projects!</p>
     <div class="contact-mail"><output id="mail">${CONTACT.email}</output></div>
     <div class="contact-act">${ctaPair()}<button class="btn" id="copy" type="button">Copy email</button></div>
     <dl class="kv"><dt>LinkedIn</dt><dd><a href="${CONTACT.linkedin}" target="_blank" rel="noopener">${CONTACT.linkedinLabel}</a></dd>
@@ -170,7 +171,7 @@ function openStory(){
       ${STORY.map((c,i)=>`<g class="art" data-i="${i}">${c.art.map(a=>`<path class="halo" d="${a.d}"/>`).join("")}${c.art.map(a=>`<path class="ln" d="${a.d}"/>`).join("")}${(c.labels||[]).map(([t,x,y])=>`<text x="${x}" y="${y+7}" text-anchor="middle">${t}</text>`).join("")}</g>`).join("")}</svg></div>
     <div class="story-copy"><p class="story-line" id="sl" aria-live="polite">${STORY[0].s}</p>
       <a class="btn story-enter" id="enter" href="#profile" hidden>Back to profile</a></div></div>
-    <div class="story-track" style="height:${N*140}vh"></div>
+    <div class="story-track" style="height:${N*100}vh"></div><span class="story-prog" aria-hidden="true"><i id="sprog"></i></span>
     <a class="btn story-skip" href="#profile" id="skip">Close story</a><span class="story-hint" id="hint" aria-hidden="true">Scroll</span>`;
   const G=[...story.querySelectorAll(".art")].map(g=>{const ln=[...g.querySelectorAll(".ln")],ha=[...g.querySelectorAll(".halo")],tx=[...g.querySelectorAll("text")];
     const L=ln.map(p=>p.getTotalLength());const st=[];let acc=0;L.forEach(l=>{st.push(acc);acc+=l});
@@ -194,7 +195,7 @@ function openStory(){
     G.forEach((g,k)=>{if(k!==i||STORY[k].tiles){paint(g,0,0);return}
       if(reduce){paint(g,1,0);return}
       const draw=ease(Math.min(1,lp/(fin?.65:.5)));const erase=fin?0:ease(Math.max(0,(lp-.82)/.18));paint(g,draw,erase)});
-    hint.style.opacity=p>.02?0:1;enter.hidden=!fin;
+    hint.style.opacity=p>.02?0:1;enter.hidden=!fin;$("sprog").style.setProperty("--p",p.toFixed(3));
     if(i!==last){last=i;if(reduce){sl.textContent=STORY[i].s}else{sl.classList.add("swap");setTimeout(()=>{sl.textContent=STORY[i].s;sl.classList.remove("swap")},220)}}};
   addEventListener("scroll",onScroll,{passive:true});scrollTo(0,0);onScroll();
   storyCleanup=()=>{removeEventListener("scroll",onScroll);story.hidden=true;story.innerHTML="";document.body.classList.remove("story-mode");storyOn=false};

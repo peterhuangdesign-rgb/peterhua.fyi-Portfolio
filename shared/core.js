@@ -13,30 +13,30 @@ const DATA={
   research:[
     {id:"connection",kind:"research",t:"Technology mediating connection",short:"Technology & connection",tag:"Self-directed UX research",
       kicker:"UX research · Self-directed, 0 to 100 · Oct 2025",
-      line:"How Gen Z's ubiquitous use of technology relates to mental health and well-being. The themes are technology, social connection, and life satisfaction.",
+      line:"How Gen Z’s ubiquitous use of technology relates to mental health and well-being. The themes are technology, social connection, and life satisfaction.",
       lede:"I interviewed 7 participants aged 19–24, analyzed their pain points with qualitative data, and translated the insights into an academic research paper after receiving critique from 2 psychology professionals.",
       stats:[["7","Semi-structured interviews"],["3","Themes from grounded-theory coding"],["2","Psychology professionals gave critique"]],
       meta:[["Role","UX researcher, customer discovery, interviewer"],["Timeline","2 months, Oct – Nov 2025"],["Team","Peter H"],["Tools","Zoom"]],
       body:[
         {h:"Research question",quote:"To what extent do relationships through technology relate to levels of subjective life satisfaction among emerging adults?"},
-        {h:"The problem",p:["Gen Z's ubiquitous technology use relates to negative consequences in mental health and well-being. Exploring how we can bolster mental health in this era is key to improving life satisfaction and purpose."]},
+        {h:"The problem",p:["Gen Z’s ubiquitous technology use relates to negative consequences in mental health and well-being. Exploring how we can bolster mental health in this era is key to improving life satisfaction and purpose."]},
         {h:"Why interviews",p:["I chose to conduct user interviews because these topics are nuanced and difficult to capture through data. Quantitative data collected relates to hours of use; qualitative methods are key here to explore the underlying dynamics of technology use."]},
         {h:"My process",steps:["Reviewed current psychological research","Formulated an interview protocol","Conducted 7 semi-structured interviews","Analyzed descriptive data on human motivations","Found insights through qualitative analysis, then grouped the themes in one table","Presented preliminary findings to a psychology class for critique and feedback"]},
         {h:"Participants",table:{cap:"Table 1. Demographic characteristics of participants",cols:["Participant","Age","Location","Major / work","Screen time (hrs)"],num:[0,1,4],
           rows:[["1","24","WA","Water technician","5"],["2","21","CA","Aviation","8"],["3","21","NY","Sociology","4"],["4","21","NY","NYU IDM","4"],["5","19","NY","NYU IDM","2"],["6","20","NY","NYU IDM","8"],["7","22","CA","Software founder","5"]]}},
-        {h:"Themes and codes",note:"Three themes emerged through open and axial coding. Each code below has its definition and a participant's own words.",
+        {h:"Themes and codes",note:"Three themes emerged through open and axial coding. Each code below has its definition and a participant’s own words.",
           themes:[
             {t:"Technology as a tool",codes:[
-              ["Utility","Functional, usable, and useful for daily life",["I feel like first of all, being new to the city, I can't really navigate without GPS... I don't think I could function without it; I can't really navigate without it. So I feel like that's very essential."]],
-              ["Dependence","Not being able to live without, a core necessity",["It would be inconvenient if I didn't have it... But over the long term, it will be your worst enemy; Technology is a tool... but then it also creates FOMO. It creates a lot of anxiety for people... but then it also creates community."]],
-              ["Habit formation","Engaging with devices frequently, without aim or purpose, and out of compulsion",["The algorithm of certain apps, specifically Instagram, is designed to trap you in there; I realized 90% of the time when I turn on my phone, it's just to feel it... It’s become... like a water bottle... an emotional like buddy."]],
-              ["Lack of awareness of time","Losing track of time, forgoing responsibilities, forgetting tasks",["I just, like, pull it out when you're bored, that's when, like, doom scrolling happens... when you're just spending idle time; I realized I... scroll. I get lost very, very fast."]],
-              ["Contrasts between in-person and digital connection","Non-verbal social cues, contextual clues, and accessibility",["It hinders our communication... when you're in a long-distance relationship... there's so much like body cues that you might not be able to see; You're trusting someone only based on their voice... Rather than, like, your mannerisms, the way you act, the way you dress in person."]]]},
+              ["Utility","Functional, usable, and useful for daily life",["I feel like first of all, being new to the city, I can’t really navigate without GPS... I don’t think I could function without it; I can’t really navigate without it. So I feel like that’s very essential."]],
+              ["Dependence","Not being able to live without, a core necessity",["It would be inconvenient if I didn’t have it... But over the long term, it will be your worst enemy; Technology is a tool... but then it also creates FOMO. It creates a lot of anxiety for people... but then it also creates community."]],
+              ["Habit formation","Engaging with devices frequently, without aim or purpose, and out of compulsion",["The algorithm of certain apps, specifically Instagram, is designed to trap you in there; I realized 90% of the time when I turn on my phone, it’s just to feel it... It’s become... like a water bottle... an emotional like buddy."]],
+              ["Lack of awareness of time","Losing track of time, forgoing responsibilities, forgetting tasks",["I just, like, pull it out when you’re bored, that’s when, like, doom scrolling happens... when you’re just spending idle time; I realized I... scroll. I get lost very, very fast."]],
+              ["Contrasts between in-person and digital connection","Non-verbal social cues, contextual clues, and accessibility",["It hinders our communication... when you’re in a long-distance relationship... there’s so much like body cues that you might not be able to see; You’re trusting someone only based on their voice... Rather than, like, your mannerisms, the way you act, the way you dress in person."]]]},
             {t:"Relationships within life satisfaction",codes:[
               ["Strong relationships","Authenticity, reciprocal, warm",["The first time I felt a genuine hug in my life... came from my grandma... There was just something about it that made me want to cry... it is just so different."]]]},
             {t:"Conflicts with adapting to AI",codes:[
-              ["Improving","Being useful, freeing up cognitive space, benefiting life",["Creatives are very, very anti AI... instant backlash... But the people who are actually like making the models... they're making this because they genuinely want to make people's lives easier; I see... AI... as a collaborative tool for creativity."]],
-              ["Degrading","Reducing creativity, intelligence, and ingenuity",["I feel like people will get dumber as AI, like, advances.","I feel like people are becoming overly reliant on it... We're just gonna forget how to do things ourselves."]]]}]},
+              ["Improving","Being useful, freeing up cognitive space, benefiting life",["Creatives are very, very anti AI... instant backlash... But the people who are actually like making the models... they’re making this because they genuinely want to make people’s lives easier; I see... AI... as a collaborative tool for creativity."]],
+              ["Degrading","Reducing creativity, intelligence, and ingenuity",["I feel like people will get dumber as AI, like, advances.","I feel like people are becoming overly reliant on it... We’re just gonna forget how to do things ourselves."]]]}]},
         {h:"Findings",p:["Technology that Gen Z utilized consisted of AI, social media, and software."],
           split:[["Led to beneficial outcomes",["Mindful use","Purposeful use","Social use"]],["Led to negative outcomes in subjective well-being",["Lack of awareness","Social comparison","Degraded critical thinking skills"]]]},
         {h:"The outcome",p:["This study extended existing literature on tech use, grounded in modern constructs such as AI. Some individuals felt lonely, some felt stuck, and this study sought to explain why users felt this way and how to counteract these stressors.",
@@ -48,7 +48,7 @@ const DATA={
           "The research here acts as the foundation for any direction of design, led by the stakeholders in the business or problem."]},
         {h:"Full paper",paper:{cover:{src:"media/paper-cover.webp",alt:"Title page: Technology in Social Contexts: Subjective Well-being in Young Adults. Peter Huang. Seminar in Applied Psychology II, Dec 16, 2025",w:1194,h:822},
           title:"Technology in Social Contexts: Subjective Well-being in Young Adults",meta:"Seminar in Applied Psychology II: Theory, Research, and Practice · NYU · Dec 2025 · 27 pages",href:"media/paper-technology-social-contexts.pdf",
-          note:"If you're curious about what this process looks like, I highly recommend reading the full paper."}}
+          note:"If you’re curious about what this process looks like, I highly recommend reading the full paper."}}
       ]},
     {id:"students-ai",kind:"research",t:"Student Outcomes amidst AI",short:"Students & AI",tag:"Mixed methods",line:L.s,meta:[["Method","Mixed methods"],["Sample","Lorem ipsum"],["Year","Lorem"],["Format","Paper"]]},
     {id:"pilipino",kind:"research",t:"Ethnographic Study on Pilipino Culture",short:"Pilipino Culture",tag:"Qualitative",line:L.s,meta:[["Method","Qualitative, ethnography"],["Site","Lorem ipsum"],["Year","Lorem"],["Format","Paper"]]}
@@ -59,38 +59,38 @@ const DATA={
       meta:[["Role","Clinical observational researcher"],["Where","New York City"],["When","Jan – May 2025"],["Data","~130 sessions"]],
       sections:[["Setting","Music therapy sessions at a clinical center, reviewed with licensed therapists after each session."],
         ["What I did","Coded and managed a behavioral database of about 130 therapy sessions, using structured tracking protocols to map client progress over time."],
-        ["Outcome","A detailed longitudinal case study of one client's growth, synthesized from the coded observations."]]},
+        ["Outcome","A detailed longitudinal case study of one client’s growth, synthesized from the coded observations."]]},
     {id:"dorot",kind:"research",field:true,t:"DOROT",short:"DOROT",tag:"Behavioral data",
       line:"Program data from 400+ older adults, analyzed for usability and access barriers.",
       meta:[["Role","Research & operations assistant"],["Where","New York City"],["When","Aug – Dec 2025"],["Tools","SPSS, Salesforce"]],
       sections:[["Setting","Social programs for older adults in New York City."],
         ["What I did","Ran quantitative behavioral analysis in SPSS across 400+ program participants to find usability and accessibility barriers. Kept data collection reliable across a diverse population."],
-        ["Outcome","Recommendations and stakeholder reports that fed the organization's impact assessments."]]}
+        ["Outcome","Recommendations and stakeholder reports that fed the organization’s impact assessments."]]}
   ],
   design:[
     /* Chorvivo: in progress and under wraps. Not a project page; it appears only under Work on Profile. */
     {id:"wayfarer",kind:"design",t:"Wayfarer",short:"Wayfarer",tag:"Design-a-thon winner",
       kicker:"Cornell University CU Design-a-thon 2026 · Winner",
       line:"An app designed to accompany you on your walk. Asynchronous social connection and easy access to journaling.",
-      lede:"Wayfarer's mission is to bring people together, to build a more connected culture through reflection, observation, and presence.",
+      lede:"Wayfarer’s mission is to bring people together, to build a more connected culture through reflection, observation, and presence.",
       stats:[["Winner","CU Design-a-thon 2026"],["2 days","Design sprint"],["71","Participants"]],
       meta:[["Focus","UX design + research"],["Date","Apr 19, 2026"],["Role","UX designer, UX researcher, customer discovery"],["Tools","Figma, Figma Make"]],
       hero:{src:"media/wayfarer/hero.webp",alt:"Three Wayfarer screens: the welcome screen, the home screen with a Begin button, and the Walk Constellation map of past walks",w:1414,h:920},
       body:[
         {h:"The prompt",quote:"Design a digital application or product that reimagines one aspect of daily life."},
         {h:"The problem",p:["Gen Z is subject to manipulative tools like social media and doomscrolling to stay connected and entertained."]},
-        {h:"My purpose",p:["To design an alternative to doomscrolling and addiction by encouraging emotional and social relationships within the user's physical environment."]},
+        {h:"My purpose",p:["To design an alternative to doomscrolling and addiction by encouraging emotional and social relationships within the user’s physical environment."]},
         {h:"My process",p:["Navigation apps are purely functional and prioritize efficiency, contributing to digital burnout and spatial amnesia. I hypothesized that designing a “spatial journal” could encourage users to take a slower look at their commute and experience “soft fascination” (Attention Restoration Theory)."],
           figs:[{src:"media/wayfarer/sketches.webp",alt:"Nine hand-drawn screen sketches: message, friend profile, home, login, onboarding, profile, walk summary, walk tracking and walk visualization pages",cap:"Initial screen sketches",w:3200,h:506},
                 {src:"media/wayfarer/user-flow.webp",alt:"User flow diagram from the welcome page through onboarding, login, home, walk tracking, walk summary, profile, friends and sharing",cap:"Wireframe ideation",w:2800,h:1167}]},
         {h:"Usability testing",p:["I conducted moderated usability testing on my initial prototype, which relied heavily on text-based journaling and live social feeds.",
-          "The users rejected the initial design. They noted that stopping to type a journal entry pulled them out of their physical environment, defeating the app's purpose. They also found social notifications highly disruptive to the sanctuary of their walk."],
+          "The users rejected the initial design. They noted that stopping to type a journal entry pulled them out of their physical environment, defeating the app’s purpose. They also found social notifications highly disruptive to the sanctuary of their walk."],
           pivot:"I immediately pivoted the UX strategy away from “active journaling” toward “frictionless capture” and “somatic grounding,” prioritizing screen-off interactions."},
         {h:"The solution",items:[
           ["Frictionless capture","A home-screen widget and Apple Watch integration that allows users to record ambient audio or voice memos in two taps, bypassing the keyboard entirely to keep their eyes on the city."],
           ["Opt-in, asynchronous social","Social features are strictly opt-in and asynchronous. Friends' traces are left on the map to be discovered organically, transforming the city into a shared canvas without the pressure of a live feed."],
           ["Location-based pings","A system of gentle, location-based pings that notify users when they walk past a coordinate where they previously left an artifact, fostering reflection on how their perspectives have changed over time."]],
-          figs:[{src:"media/wayfarer/final-screens.webp",alt:"Ten final Wayfarer screens: onboarding, mission, shared presence, home, leave an impression, walk tracking, a saved memory, a friend's trace and the walk constellation",cap:"Final screens",w:1800,h:1400},
+          figs:[{src:"media/wayfarer/final-screens.webp",alt:"Ten final Wayfarer screens: onboarding, mission, shared presence, home, leave an impression, walk tracking, a saved memory, a friend’s trace and the walk constellation",cap:"Final screens",w:1800,h:1400},
                 {src:"media/wayfarer/final-system.webp",alt:"Wayfarer on the lock screen, Apple Watch, notifications, quick actions and Control Center",cap:"Lock screen, Apple Watch, notifications and Control Center",w:1800,h:969}]},
         {h:"Future directions",items:[
           ["AI transcription","Integrating an AI transcription service for premium users. This would take the frictionless audio recorded during the walk and automatically transcribe it into a searchable, text-based journal for deep reflection once the user is back home."],
@@ -126,7 +126,7 @@ const DATA={
                  {src:"media/glenergy/lofi-summary.webp",alt:"Low-fidelity summary board: colour palette, About Us page, log-in, sign-up and plan screens",cap:"Low-fidelity summary",w:1800,h:944},
                  {src:"media/glenergy/chatbot.webp",alt:"Five chatbot messages that shift from guilt-tripping at 5% to praise at 0 to 1%, showing escalating pressure to give up employer match",cap:"Manipulative AI chatbot iterations",w:1376,h:700}]},
         {h:"The outcome",p:["Through user testing and a client meeting, our team identified user pushback on the manipulative design: users felt reduced trust in using the portal, software, and business. We then translated the results into the next steps for more human-centered design."],
-          pull:["I feel like AI is everywhere, and incorporating it here would be great, but I don't know how much I would trust or rely on it for my financials.","Tell me more where my money is going? Explain more about the charities and why I should donate to certain charity."]},
+          pull:["I feel like AI is everywhere, and incorporating it here would be great, but I don’t know how much I would trust or rely on it for my financials.","Tell me more where my money is going? Explain more about the charities and why I should donate to certain charity."]},
         {h:"User interview takeaways",p:["The data revealed a critical business trade-off: while the aggressive designs successfully skewed user choices toward cost-saving options, they triggered a severe drop in employer trust. Users recognized the manipulation, demonstrating that short-term financial gains via dark patterns create long-term risks to employee retention and brand perception."],
           figs:[{src:"media/glenergy/ba-home.webp",alt:"Home page before and after feedback: before has competing calls to action and a chatbot prompt; after shows the chosen plans and no pending actions",cap:"Before / after: home page",w:1418,h:800},
                 {src:"media/glenergy/ba-retirement.webp",alt:"Retirement plan page before and after feedback: before is a bare dropdown; after shows three clearly labelled investment options",cap:"Before / after: retirement plan page",w:1403,h:736}],
@@ -177,7 +177,7 @@ const RESUME={
     {role:"Clinical Observational Researcher",org:"Nordoff-Robbins Center for Music Therapy, New York",when:"Jan – May 2025",pts:["Structured qualitative observation in a clinical mental-health setting with licensed therapists","Coded a behavioral database of ~130 sessions","Longitudinal case study from the coded data"]},
     {role:"Operations Intern",org:"NOVA Kitchen and Bar, Orange",when:"Jul – Aug 2024",pts:["Resolved operational pain points for 100+ daily guests","Built workflows with a 30+ person team under time pressure"]}
   ],
-  education:{school:"New York University, Steinhardt",degree:"B.S. Applied Psychology",minors:"Minors: Integrated Design & Media (HCI/UX), Philosophy",when:"2026",extra:"Dean's List, Spring 2024",courses:"Human-Centered Research Methods I & II, Statistics for Behavioral Sciences, Agile Product Design, Ideation & Prototyping, Dark Patterns"},
+  education:{school:"New York University, Steinhardt",degree:"B.S. Applied Psychology",minors:"Minors: Integrated Design & Media (HCI/UX), Philosophy",when:"2026",extra:"Dean’s List, Spring 2024",courses:"Human-Centered Research Methods I & II, Statistics for Behavioral Sciences, Agile Product Design, Ideation & Prototyping, Dark Patterns"},
   skills:[["Research methods","Usability testing, task analysis, qualitative and quantitative research, behavioral data analysis, research protocol design"],["Tools","Figma, SPSS, Salesforce, Microsoft Office"]]
 };
 const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -236,21 +236,21 @@ function resumeHTML(){
     <div class="cv-ed"><div class="cv-h"><b>${R.education.degree}</b><span>${R.education.when}</span></div><p class="cv-org">${R.education.school}</p><p>${R.education.minors}. ${R.education.extra}.</p><p class="cv-muted">${R.education.courses}</p></div>
     <dl class="cv-skills">${R.skills.map(([a,b])=>`<div><dt>${a}</dt><dd>${b}</dd></div>`).join("")}</dl></div></section>`;
 }
-/* Peter's own words (peterhua.fyi), grammar fixes only. */
+/* Peter’s own words (peterhua.fyi), grammar fixes only. */
 const PROFILE={
   about:["My foundation in psychology is important for human-centric design, a skill needed in a future empowered by AI.",
     "I translate quantitative and qualitative data into a clear direction for design.",
-    "I'm fascinated by art and science, I prioritize physical and mental health, and I'm inspired to build a future with integrity and humility.",
+    "I’m fascinated by art and science, I prioritize physical and mental health, and I’m inspired to build a future with integrity and humility.",
     "My approach is guided by curiosity, creativity, and a constant search for better ways to understand the human experience."],
   skills:[["UX design","Figma, Adobe Illustrator, Adobe InDesign, Adobe Photoshop"],["UX research","SPSS, Excel, R, qualitative and quantitative analysis"]],
   memory:{q:"To feel the memory forming while living the moment.",p:[
     "During my time at NYU in New York City, I met many unique individuals, each with their own story and journey.",
-    "I explored topics in philosophy and art, music and media, and research and science. I'm now an avid climber, jazz enthusiast, and cat owner.",
-    "I'm fascinated by how people think, which drives me to pursue a career in UX research and human factors. In the future, I hope to travel, read, and create a podcast."]},
-  why:["I find joy in the dynamics of human connection. Through my biology or my upbringing, I've noticed that being seen truthfully by others is a guiding value I identify with. Technology has influenced these human connections, for better or for worse. It is a goal of mine to improve the connections people have with one another through digital means. As technology leaps further and further, our humanity is questioned again and again: What defines a human? What are the ideals we strive for? What makes us feel truly alive? My professional aspiration is to enhance the human experience with technology through observation, discussion, and analysis.",
-    "I graduated from NYU with a Bachelor's in Applied Psychology, an experience that helped me build analytical, statistical, and empathetic skills. In addition, I focused my efforts on a minor in Integrated Design & Media, becoming familiar with common design tools and processes such as ideation, interviews, and agile product design.",
+    "I explored topics in philosophy and art, music and media, and research and science. I’m now an avid climber, jazz enthusiast, and cat owner.",
+    "I’m fascinated by how people think, which drives me to pursue a career in UX research and human factors. In the future, I hope to travel, read, and create a podcast."]},
+  why:["I find joy in the dynamics of human connection. Through my biology or my upbringing, I’ve noticed that being seen truthfully by others is a guiding value I identify with. Technology has influenced these human connections, for better or for worse. It is a goal of mine to improve the connections people have with one another through digital means. As technology leaps further and further, our humanity is questioned again and again: What defines a human? What are the ideals we strive for? What makes us feel truly alive? My professional aspiration is to enhance the human experience with technology through observation, discussion, and analysis.",
+    "I graduated from NYU with a Bachelor’s in Applied Psychology, an experience that helped me build analytical, statistical, and empathetic skills. In addition, I focused my efforts on a minor in Integrated Design & Media, becoming familiar with common design tools and processes such as ideation, interviews, and agile product design.",
     "These experiences, coupled with my work helping disadvantaged communities, such as children with disorders and adults with functional impairments, are a testament to my goal of improving how humans interact with the world and with one another.",
-    "As an emerging professional, I am driven to craft digital experiences for human connection. This is where the unfinished story stands. I'm eager, creative, and curious about future opportunities in user experience design and product design.",
+    "As an emerging professional, I am driven to craft digital experiences for human connection. This is where the unfinished story stands. I’m eager, creative, and curious about future opportunities in user experience design and product design.",
     "I hope to explore and excel in this career with communication, agency, and an open curiosity."],
   substack:{url:"https://petersworld.substack.com/",label:"petersworld.substack.com",note:"Where I share all things philosophy, art, and meaning."}
 };
@@ -337,7 +337,7 @@ void main(){vec2 uv=gl_FragCoord.xy/r;float as=r.x/r.y;vec2 p=uv*vec2(as,1.);flo
   vec2 dv=p-b*vec2(as,1.);dv+=(vec2(fbm(p*1.7+tt*3.),fbm(p*1.7+5.-tt*3.))-.5)*.22;dv.x*=1.5;dv.y*=.75;
   float g=exp(-dot(dv,dv)/(.05+.05*bs))*blob*k;col=mix(col,vec3(.86,.78,.71),smoothstep(.02,.45,g)*.4*(1.-g));col=mix(col,vec3(.07,.08,.09),pow(g,1.5)*.7);
  }else if(mode<1.5){
-  /* sea: a quiet teal gradient at rest; caustic webs, light shafts and bokeh surface mainly inside the cursor lens, as Land's contours do */
+  /* sea: a quiet teal gradient at rest; caustic webs, light shafts and bokeh surface mainly inside the cursor lens, as Land’s contours do */
   float depth=smoothstep(-.15,1.1,uv.y*.85+(1.-uv.x)*.25+(fbm(p*.7+tt*.4)-.5)*.35);
   col=mix(cBg,cFog,depth*(.35+.45*k));
   float sh=fbm(vec2(p.x*2.2+p.y*.9,tt*1.4));float shaft=smoothstep(.55,.85,sh)*smoothstep(.1,1.,uv.y);
@@ -348,7 +348,7 @@ void main(){vec2 uv=gl_FragCoord.xy/r;float as=r.x/r.y;vec2 p=uv*vec2(as,1.);flo
   vec2 off=(vec2(h(id),h(id+3.1))-.5)*.5;float rad=.12+.2*h(id+7.7);float on=step(.62,h(id+1.9));
   float dd=length(f-off);float disc=1.-smoothstep(rad*.82,rad,dd);float rim=smoothstep(rad*.6,rad*.95,dd)*disc;
   vec3 bc=mix(cAcc,cAlt,h(id+4.4));col=mix(col,bc,on*(disc*.26+rim*.2)*(.1*k+.85*M)*(.55+.45*depth));
-  /* lens: the water clears where the cursor rests and depth contours surface, as Land's lens reveals altitude */
+  /* lens: the water clears where the cursor rests and depth contours surface, as Land’s lens reveals altitude */
   float e2=fbm(p*1.4+vec2(0.,tt*.4));float r1=1.-smoothstep(.02,.06,abs(fract(e2*16.)-.5));float r2=1.-smoothstep(.02,.05,abs(fract(e2*4.)-.5));
   col=mix(col,cFog,M*.4);col=mix(col,cLine,r1*M*.32);col=mix(col,cAcc,r2*M*.6);
   float lum=dot(col,vec3(.2126,.7152,.0722));col*=min(1.,.38/max(lum,.001));
@@ -373,8 +373,12 @@ function Fog(canvas,{blob=true,blobAt=null}={}){
     gl.uniform2f(U.r,canvas.width,canvas.height);gl.uniform2f(U.m,S.mx,S.my);gl.uniform2f(U.b,S.bx,S.by);gl.uniform1f(U.t,reduce?40:(now-t0)/1000);
     gl.uniform1f(U.lens,S.lens);gl.uniform1f(U.rev,S.rev);gl.uniform1f(U.bs,S.lens);gl.uniform1f(U.thin,S.thin);gl.uniform1f(U.blob,S.blob);gl.uniform1f(U.calm,S.calm);
     gl.uniform1f(U.mode,T.mode);gl.uniform3fv(U.cBg,hex(T.bg));gl.uniform3fv(U.cFog,hex(T.fog));gl.uniform3fv(U.cLine,hex(T.line));gl.uniform3fv(U.cAcc,hex(T.acc));gl.uniform3fv(U.cAlt,hex(T.alt));gl.uniform1f(U.dpr,D);
-    gl.drawArrays(gl.TRIANGLES,0,3);S.frame&&S.frame(S,now);if(!document.hidden)requestAnimationFrame(loop)};
-  requestAnimationFrame(loop);document.addEventListener("visibilitychange",()=>{if(!document.hidden)requestAnimationFrame(loop)});
+    gl.drawArrays(gl.TRIANGLES,0,3);S.frame&&S.frame(S,now);
+    /* near-plain pages: stop drawing once the fade has settled; wake() restarts it */
+    const settled=S.pause&&Math.abs(S.thinT-S.thin)<.002&&Math.abs(S.calmT-S.calm)<.002&&S.rev<.01;
+    if(!document.hidden&&!settled)requestAnimationFrame(loop);else running=false};
+  let running=true;S.wake=()=>{if(!running&&!document.hidden){running=true;requestAnimationFrame(loop)}};
+  requestAnimationFrame(loop);document.addEventListener("visibilitychange",()=>{if(!document.hidden){running=false;S.wake()}});
   return S;
 }
 
