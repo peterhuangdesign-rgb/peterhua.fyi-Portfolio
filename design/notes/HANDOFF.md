@@ -1,6 +1,6 @@
 # peterhua.fyi — portfolio and personal brand handoff
 
-Context for a new chat. Status as of 24 Oct 2026 (portfolio artifact version 24, GitHub `main`).
+Context for a new chat. Status as of 24 Oct 2026, evening (portfolio artifact version 24, GitHub `main`). Peter is connecting the domain now.
 Paste this file in first, then give the next request.
 
 ---
@@ -28,10 +28,10 @@ Rules for any new chat:
 | What | Where |
 |---|---|
 | Portfolio (claude.ai artifact, multi-file) | https://claude.ai/artifact/83J6u88WPmagR5GSvvcx3S |
-| Logo and brand canvas (Design artifact) | https://claude.ai/artifact/F2jJWEpkSJRC1GDA1opfM9 (pages: Logo rounds, Applications, Round 5, **Palettes · bright + dark**) |
+| Logo and brand canvas (Design artifact) | https://claude.ai/artifact/F2jJWEpkSJRC1GDA1opfM9 (pages: Logo rounds, Applications incl. **LinkedIn banner**, Round 5, **Palettes · bright + dark**) |
 | Code | github.com/peterhuangdesign-rgb/peterhua.fyi-portfolio, branch `main` (private repo) |
-| Backups | branches `backup/before-fixes`, `backup/before-round-2`, `backup/before-round-3` |
-| Live site today | **Framer** still serves peterhua.fyi. The GitHub version is not live yet (see §4). |
+| Backups | branches `backup/before-fixes`, `backup/before-round-2`, `backup/before-round-3`, `backup/before-round-4` |
+| Live site today | Moving from **Framer** to GitHub Pages. Domain is on **Namecheap**; DNS change in progress (see §4). |
 | Model portfolio Peter admires | https://www.dennisquizhpi.com/ and https://www.dennisquizhpi.com/lawnstack |
 
 ### Portfolio file structure
@@ -43,7 +43,7 @@ Rules for any new chat:
 | `shared/core.css` | Base system: self-hosted `@font-face`, tokens, buttons, case-study blocks, profile styles |
 | `site/app.js` | Router, pages (home, research, design, profile, contact, resume), `ctaPair`, `ARR` arrow box, animated logo (`PAIRS`), typed intro, `FEATURED`, optional story |
 | `site/app.css` | Site layout, rail, logo, home hero, featured work, context line, arrows, profile, contact, themes |
-| `media/` | `favicon.svg`, `favicon-32.png`, `apple-touch-icon.png`, `fonts/` (Darker Grotesque 300/500/600, Albert Sans 400/500, OFL), photos, `paper-feature.webp`, `paper-cover.webp`, `paper-technology-social-contexts.pdf`, `resume-human-factors.pdf`, `wayfarer/*.webp`, `glenergy/*.webp` (incl. `feature.webp`), `track-01..03.mp3` (placeholders, hidden) |
+| `media/` | `favicon.svg`, `favicon-32.png`, `apple-touch-icon.png`, `fonts/` (Darker Grotesque 300/500/600, Albert Sans 400/500, OFL), photos, `paper-codebook.webp` (Home), `paper-feature.webp` and `paper-cover.webp` (unused on Home), `paper-technology-social-contexts.pdf`, `resume-human-factors.pdf` (rebuilt 24 Oct from `RESUME`), `wayfarer/*.webp`, `glenergy/*.webp` (incl. `feature.webp`), `track-01..03.mp3` (placeholders, hidden) |
 
 How to edit the artifact: `read` the artifact URL first, then `read` each file you'll change. Publish only changed files, with `root` set to a local folder that mirrors the structure. Keep GitHub `main` and the artifact in sync.
 
@@ -110,45 +110,48 @@ Open question: earlier notes said the Sea bar is light earth `#C9A57E`, but the 
 
 ## 3. Site: current state (locked)
 
-### The context line (new, 24 Oct)
+### The context line (24 Oct)
 Every project, job and résumé entry has one **context line** on its own line, directly under the title, before any description. Lowercase, graphite, no letter-spacing, parts separated by " / ".
-- **Projects:** `kind of project / field / detail`. Kind is ux research, ux design, or both.
+- **Projects:** `project type / format`. Type is ux research or ux design. Format is research paper, school project, work, or the competition. **No dates, no field.**
 - **Work and research experience:** `kind of work / what the work is for`.
 - Data: `ctx:[…]` on each item in `DATA.research`, `DATA.design`, `DATA.work`, `DATA.field` and `RESUME.experience`. Rendered by `ctxHTML` in `shared/core.js`.
 - The old uppercase tracked kicker above titles is gone everywhere.
 
 | Item | Context line |
 |---|---|
-| Technology and well-being | ux research / psychology + technology / research paper, 7 self-run interviews, 2025 |
-| Personality, resilience, and life satisfaction | ux research / psychology / research paper, survey of 52 + 1 interview, 2025 |
-| Career within spirituality and religion | ux research / psychology + culture / research paper, ethnographic interview + observation, 2025 |
-| Wayfarer | ux design + research / social wellness app / design-a-thon winner, 2026 |
-| Glenergy | ux design + research / employee benefits portal / dark patterns study, team of 3, 2025 |
+| Technology and well-being | ux research / research paper |
+| Personality, resilience, and life satisfaction | ux research / research paper |
+| Career within spirituality and religion | ux research / research paper |
+| Wayfarer | ux design / design-a-thon, 1st place |
+| Glenergy | ux design / school project (Peter to confirm "school project") |
 | Chorvivo (work) | design + research / a startup building a rehearsal-capture app for choreographers |
 | Designity (work) | ui/ux design + user research / a "creativity as a service" agency, remote |
 | DOROT | behavioral data research / social programs for older adults, new york city |
 | Nordoff-Robbins | clinical observational research / music therapy for mental health, new york city |
 | NOVA Kitchen and Bar (résumé only) | operations / a restaurant in orange, california |
 
-The "field" parts (psychology + technology, social wellness app, employee benefits portal, etc.) were written from the project content. Peter should confirm them.
+Work context lines were written from Peter's descriptions; he should confirm them.
 
 ### Shared controls
 - **Résumé + Email**: one button pair (`ctaPair`), same labels and style everywhere: rail foot (desktop), under the intro (phones), Contact. Labels are exactly "Résumé" and "Email".
   - Résumé → in-site `#resume` page (Download PDF, Open PDF, Email, then the résumé as text).
   - Email → opens the mail app **and** copies the address. Toast: "Opening your mail app. Address copied: …".
 - **"Open" affordance**: one 44 px square arrow box (`ARR`). Always top right of the title row. Hover fills the box ink. Used on Home featured, Research list, Design list.
-- Project layout everywhere: **title + arrow box → context line → one line of description → image (if any)**.
+- **Home:** title + arrow box → context line → picture. Nothing else. Complexity lives one click in.
+- **Research and Design lists:** title + arrow box → context line → one line of description → image (if any).
+- **Case pages:** title → context line → **Key finding** (Peter's words, one sentence, `finding` in `DATA`) → description → the rest.
 - Back link on case pages: "← Design" / "← Research", small caps text, no box.
 - Case images open in a lightbox (Enter opens, arrows move, Escape closes and returns focus).
 - Callouts (pivot, pull quote) use rules above and below, not a left border.
 - Theme switch: all colours change in the same frame, and the background redraws on every switch.
 
 ### Home (opens every visit; no intro)
-1. **Hero:** greeting "Hello! I'm Peter Huang." left, two-line intro that types in about 1 s (`TYPE_MS`, no blinking caret), smiling photo right (`me-smile.jpg`). **Nothing else in the hero.**
+1. **Hero:** greeting "Hello! I'm Peter Huang." left, two-line intro that types in about 1 s (`TYPE_MS`, no blinking caret), smiling photo right (`me-smile.jpg`). Intro ends "…safer systems and more effective experiences." **Nothing else in the hero.**
 2. **Featured work**, in this order (edit `FEATURED` in `site/app.js`; context comes from the project's `ctx`):
-   1. **Technology and well-being: an independent interview study**. Image: `paper-feature.webp` (crop of the paper's title page).
+   1. **Technology and well-being: an independent interview study**. Image: `paper-codebook.webp` (top of the Appendix B codebook).
    2. **Wayfarer**. Image: `wayfarer/hero.webp`, uncropped.
    3. **Glenergy**. Image: `glenergy/feature.webp` (crop of the high-fidelity Give Back screen).
+   All three pictures share one frame, Wayfarer's own ratio (1414:920), cropped from the top.
 3. Links: "All research" and "All design".
 - **Chorvivo is not a project.** Peter can't talk about it. It appears only under Work on Profile and on the résumé, with no link and no case page.
 
@@ -181,8 +184,13 @@ Wayfarer and Glenergy (both done, Peter's text and images).
 ### Résumé page (matches Profile)
 - Same organisations, roles, dates and context lines as Profile; entries read name + dates → role → context → bullets.
 - Order: Chorvivo, Designity, DOROT, Nordoff-Robbins, NOVA Kitchen and Bar.
-- Roles in sentence case. Skills: Research methods, UX design (Figma, Adobe Illustrator, InDesign, Photoshop), UX research (SPSS, Excel, R, Salesforce, qual + quant).
-- **The PDF is still the old one** (see §4).
+- Roles in sentence case. Bullets are the full ones from Peter's human factors résumé, in past tense. A Research section lists the three papers. Skills: Research methods, UX design (Figma, Adobe Illustrator, InDesign, Photoshop), UX research (SPSS, Excel, R, Salesforce, qual + quant).
+- **PDF rebuilt 24 Oct** from the same `RESUME` data: one page, real text, brand fonts, contact line "Orange County, CA · (949) 933-0073 · peterhuangdesign@gmail.com · peterhua.fyi · linkedin.com/in/peterhuaux". GPA left off (versions disagree: 3.57 / 3.54 / 3.56).
+
+### LinkedIn banner (24 Oct)
+- 1584 × 396, exported at 2× (3168 × 792), Land and Sea versions. On the brand canvas, Applications page.
+- Rail lockup (mark, Peter Huang, UX RESEARCH / HUMAN FACTORS), the line "Curious about how we design safer systems and more effective experiences.", and peterhua.fyi.
+- Text sits right of centre, outside the desktop profile-photo zone and inside the phone-visible area. Faint contour lines fade out behind the text.
 
 ### Contact
 - Heading "Seems like you're curious!" with "I'm open to connecting and collaborating on new projects!" under it.
@@ -195,26 +203,38 @@ Wayfarer and Glenergy (both done, Peter's text and images).
 
 ## 4. Open items / needed from Peter
 
-- [ ] **Go live from GitHub (leave Framer as the fallback until then):**
-  1. Make the repo public, or use GitHub Pro (Pages won't publish from a private repo on a free plan).
-  2. Settings → Pages → Deploy from branch `main`, folder `/ (root)`. `CNAME` already says `peterhua.fyi`.
-  3. Right before step 4: Framer → Site Settings → Domains → remove peterhua.fyi.
-  4. At the registrar: four `A` records for `@` (185.199.108.153, .109.153, .110.153, .111.153) and a `CNAME` for `www` → `peterhuangdesign-rgb.github.io`. Unknown: where the domain was bought; if through Framer, check whether Framer lets you edit DNS.
-  5. Tick Enforce HTTPS once the domain check passes.
-- [ ] **RM2 scoring check.** The paper reverse-codes Brief Resilience Scale items 1, 3, 5; the scale's reverse-coded items are 2, 4, 6. That likely flips resilience and explains the unexpected negative correlation with life satisfaction. The paper also claims mediation although the Sobel test was not significant. Re-run with corrected coding if the data still exists; until then the site shows only the neuroticism result.
-- [ ] **Confirm the context lines**, especially the "field" parts, and the new paper title.
+### Go live (in progress, 24 Oct)
+- [ ] Repo public or GitHub Pro; Settings → Pages → deploy from `main`, `/ (root)`. `CNAME` says `peterhua.fyi`.
+- [ ] Namecheap → Domain List → Manage → Nameservers "Namecheap BasicDNS" → Advanced DNS: delete Framer's records and any URL redirect; add four `A` records for `@` (185.199.108.153, .109.153, .110.153, .111.153) and a `CNAME` for `www` → `peterhuangdesign-rgb.github.io`. **Waiting on DNS.**
+- [ ] Framer → Site Settings → Domains → remove peterhua.fyi.
+- [ ] Tick Enforce HTTPS once the Pages domain check passes.
+- [ ] After it's live: open peterhua.fyi on phone and desktop, check favicon, Résumé download, Email button, theme switch.
+
+### Hiring-team review: to change (24 Oct)
+Ranked by how much a research hiring team would weigh it.
+- [ ] **1. Professional research on the page.** All three research pieces are coursework; Designity and DOROT have no case and no result. Write one short case (DOROT or Designity): question, method, finding, what changed. Needs Peter's facts.
+- [ ] **2. Show impact, not only findings.** Each case should end with what changed or was decided because of the research. Current endings are possible directions.
+- [ ] **3. RM2 scoring.** The paper reverse-codes Brief Resilience Scale items 1, 3, 5; the scale's reverse-coded items are 2, 4, 6. That likely flips resilience and explains the unexpected negative correlation with life satisfaction. The paper also claims mediation although the Sobel test was not significant. Re-run with corrected coding if the data exists; until then the site shows only the neuroticism result.
+- [ ] **4. Human factors evidence.** No task metrics, error analysis or safety framing yet. Add one usability study with task success and time on task, or reframe an existing project with those measures if the data exists.
+- [ ] **5. Research artifacts.** Add the interview guide (paper's Appendix A) to the Technology and well-being case. Consider an affinity or coding snapshot for the ethnography.
+- [ ] **6. Home picture for the paper.** The codebook reads as real research but is still text-heavy at a glance; replace with a cleaner figure if one exists.
+- [ ] **7. Stat triplets** (three boxed numbers on case pages) read as a template pattern. Keep only where the numbers are the finding.
+- [ ] **8. Case length.** Case pages are long; the Key finding now leads, but sections could be trimmed once impact is added.
+
+### Content and decisions needed from Peter
+- [ ] **Confirm** the paper title, "school project" for Glenergy, the Key finding sentences, and the work context lines.
+- [ ] **GPA** on the PDF: which number, or leave off.
 - [ ] **Theme switching**: Peter saw visibility problems; not reproduced in Chromium. If it still happens, note the page and browser (Safari untested).
-- [ ] **Résumé PDF is out of date**: still says ph2344@nyu.edu, "Expected May 2026", Designity "Aug – Sep 2026", and has no Chorvivo. The in-site résumé is correct.
 - [ ] **Palette decision** (§5). Choose one, then apply it in one pass.
-- [ ] **Designity**: 2–3 specific projects and one concrete result.
+- [ ] **Designity**: 2–3 specific projects and one concrete result (feeds review item 1).
 - [ ] **Links to check by hand**: YouTube demo, both Figma decks ("anyone with the link"), LinkedIn, Substack.
 - [ ] **Conflicts flagged, Peter's text kept:**
   - Wayfarer: "two-day sprint" vs event banner "April 17–19, three-day". Devpost confirms solo build, 1st place; "solo" isn't in Peter's text.
   - Paper: ages 20–23 in Peter's text vs Table 1's 19–24 (page uses 19–24). Page date Oct 2025; paper dated Dec 16, 2025.
   - Glenergy: 4 weeks vs "two-week sprint"; slide also lists Adobe InDesign.
+  - Designity title: old PDF said "UX Intern, NYC"; site and new PDF say "UI/UX intern, remote".
 - [ ] **Music**: SoundCloud or Bandcamp links.
 - [ ] **Repo `CLAUDE.md`** still describes an older version (signature logo, first-visit intro). Rewrite it from this file.
-- [ ] Optional: a figure from the paper (e.g. Table 1) to replace the title-page image on Home.
 
 ---
 
@@ -255,3 +275,6 @@ Brand principle agreed: two themes that are distinctly bright and dark, one bar 
 - "Mission" button under the logo. Replaced by "Read my mission" at the end of What guides me?.
 - Blinking caret on the typed intro.
 - Left-border callouts.
+- Description lines and dates on Home featured projects. Home shows title, type / format and picture only.
+- Field and date parts in project context lines.
+- Paper title page as the Home picture.
