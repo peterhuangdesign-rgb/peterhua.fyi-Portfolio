@@ -1,7 +1,6 @@
 /* Site — Split Pane. Rail with four buttons; one page of work at a time. Three themes from Peter's curated images. */
 html[data-theme="land"]{--t0:#E8EAE4;--t1:#DADDD7;--t2:#E9DFD3;--t3:#D9CDBF;--glyph:#15181A;--mist:#FCFCFA;--fog:#DADDD7;--ink:#15181A;--graphite:#585E62;--lichen:#5F6E2E;--earth:#7A5636;--halo:#7A5636;--rule:#15181A33;color-scheme:light}
 html[data-theme="sea"]{--mist:#0D3640;--fog:#1A5E68;--ink:#F5FCFA;--graphite:#DDEFEC;--lichen:#9FE0D2;--earth:#9FE0D2;--halo:#9FE0D2;--rule:#EEF8F630;--t0:#14505A;--t1:#1E6873;--t2:#2C7F86;--t3:#3F8C8F;--glyph:#EEF8F6;color-scheme:dark}
-body{transition:background-color .5s ease-out,color .5s ease-out}
 :root{--rail:min(30vw,360px)}
 [tabindex="-1"]:focus{outline:none}
 
@@ -18,7 +17,7 @@ html[data-theme="sea"]{--bar:#9FE0D2}
 .lock-div{flex:none;width:1px;height:44px;background:var(--ink)}
 .lock-txt{display:flex;flex-direction:column;gap:4px;min-width:0}
 .lock-name{font:600 24px/1 var(--display)}
-.home-link .role{display:block;font-size:11px;line-height:1.3;letter-spacing:.12em}
+.home-link .role{display:block;font-size:12px;line-height:1.3;letter-spacing:.12em}
 .home-link:hover .lock-name{text-decoration:underline;text-underline-offset:4px}
 
 /* main logo, animated: p and h stay, the rest rolls Peter Huang ⇄ psychology human factors */
@@ -282,3 +281,8 @@ a:hover .arr,a:focus-visible .arr{background:var(--ink);color:var(--mist)}
 .story-prog{position:fixed;z-index:6;left:0;right:0;bottom:0;height:2px;background:var(--rule)}
 .story-prog i{position:absolute;inset:0;background:var(--ink);transform-origin:left;transform:scaleX(var(--p,0))}
 .wip{color:var(--graphite)}
+
+/* project label folded into the line under the title: lowercase, graphite, no tracking */
+.m-in{color:var(--graphite);text-transform:lowercase;letter-spacing:0;font-weight:500;margin-right:.5em}
+.pf-mission{margin:24px 0 0}
+.theme-switch *,.theme-switch *::before,.theme-switch *::after{transition:none!important}

@@ -50,8 +50,42 @@ const DATA={
           title:"Technology in Social Contexts: Subjective Well-being in Young Adults",meta:"Seminar in Applied Psychology II: Theory, Research, and Practice · NYU · Dec 2025 · 27 pages",href:"media/paper-technology-social-contexts.pdf",
           note:"If you’re curious about what this process looks like, I highly recommend reading the full paper."}}
       ]},
-    {id:"students-ai",kind:"research",t:"Student Outcomes amidst AI",short:"Students & AI",tag:"Mixed methods",line:L.s,meta:[["Method","Mixed methods"],["Sample","Lorem ipsum"],["Year","Lorem"],["Format","Paper"]]},
-    {id:"pilipino",kind:"research",t:"Ethnographic Study on Pilipino Culture",short:"Pilipino Culture",tag:"Qualitative",line:L.s,meta:[["Method","Qualitative, ethnography"],["Site","Lorem ipsum"],["Year","Lorem"],["Format","Paper"]]}
+    /* From Peter's paper "Personality and Life Satisfaction with Resilience as a Mediating Factor in Young Adults: A Mixed-Methods Study" (RM2, Aug 2025).
+       Resilience results are left out until the scoring is re-checked: the paper reverse-codes BRS items 1, 3, 5 (the scale's reverse-coded items are 2, 4, 6). */
+    {id:"resilience",kind:"research",t:"Personality, resilience, and life satisfaction",short:"Personality & resilience",tag:"Mixed methods · Survey + interview",
+      kicker:"Mixed methods · Research Methods II · Aug 2025",
+      line:"How does neuroticism shape life satisfaction in young adults, and does resilience mediate that relationship?",
+      meta:[["Role","Researcher"],["Method","Survey (n = 52) + interview"],["Date","Aug 2025"],["Course","Research Methods II, NYU"]],
+      body:[
+        {h:"Research questions",quote:"How does neuroticism shape life satisfaction? In what ways do adults perceive neuroticism impacting life satisfaction?"},
+        {h:"Why mixed methods",p:["In our quantitative methods, life satisfaction is a self-report questionnaire about how close one’s life is to an ideal. In our qualitative methods, life satisfaction is a boundless, subjective, and ever-changing construct that evades rigid definition. Combining both supplements the data with a personal account that explains the dynamic."]},
+        {h:"Measures",table:{cap:"Table 1. Validated scales and their internal consistency",cols:["Construct","Scale","Items","Alpha"],num:[2,3],
+          rows:[["Neuroticism (predictor)","Mini IPIP","4",".676"],["Life satisfaction (outcome)","Satisfaction with Life Scale","5",".889"],["Resilience (mediator)","Brief Resilience Scale","6",".883"]]}},
+        {h:"My process",steps:["Ran a Cronbach’s alpha reliability test on each scale","Built scale scores, reverse-coding the required items","Ran descriptive statistics and bivariate Pearson correlations","Followed Baron & Kenny: two simple regressions and one simultaneous regression, then a Sobel’s test","Interviewed one young adult over Zoom, matching the survey’s age range","Coded the interview into three themes and combined both sets of findings"]},
+        {h:"Finding",p:["Neuroticism was significantly, moderately, and negatively correlated with life satisfaction (r = −.474, p < .001), explaining about 22% of the variance in life satisfaction scores (R² = .225)."]},
+        {h:"Interview themes",items:[
+          ["Resilience as maturity, expressed through action","“Resilience, to me, is like being able to deal with setbacks in a positive way.”"],
+          ["Neuroticism as a prerequisite for resilience","“Maybe you just get so used to being neurotic that you become, like, highly resilient, because you learn how to solve problems that are insignificant very fast.”"],
+          ["Life satisfaction is subjective","“You definitely can’t judge someone’s satisfaction from a third person perspective.”"]]},
+        {h:"Limitations",p:["Quantitative: a low Cronbach’s alpha for the four-item neuroticism scale, selection and sampling bias, and confounding variables such as socioeconomic status. Qualitative: interviewer, selection, and cultural bias, since the interviewee is a close friend."]},
+        {h:"What I’d do next",p:["I would give this research an Expansion purpose. Life satisfaction is difficult to quantify, and an Expansion purpose can explore it as it relates to spirituality, impermanence, and love."]}
+      ]},
+    /* From Peter's paper "Career within Spirituality and Religion: Perceptions of a Christian College Student" (Cultures of Psychology, Apr 2025). */
+    {id:"career-faith",kind:"research",t:"Career within spirituality and religion",short:"Career & faith",tag:"Ethnography · Interview + observation",
+      kicker:"Qualitative · Ethnography · Cultures of Psychology · Apr 2025",
+      line:"How does the Christian upbringing of one second-generation Mexican and Filipino man in the United States influence career choice?",
+      meta:[["Role","Researcher, interviewer"],["Method","Interview + observation"],["Date","Apr 2025"],["Course","Cultures of Psychology, NYU"]],
+      body:[
+        {h:"Research question",quote:"How does the Christian upbringing of one Mexican and Filipino second-generation man living in the United States influence career choice?"},
+        {h:"Why this study",p:["Career choice, occupation, and professional development are a source of uncertainty among many college students. Research on “calling” links spirituality with better wellness outcomes, but there are gaps around specific cultural and ethnic interactions with work and spirituality."]},
+        {h:"My process",steps:["Recruited a mutual friend, anonymized as “TP”","Led a 40-minute semi-structured interview in a Manhattan park, guided by 10 questions on culture, family, career, and religion","Observed TP at his customer service job, looking for where religion, spirituality, and career meet","Analyzed the interview and observation into three themes","Wrote a critical reflexivity statement on my own biases"]},
+        {h:"Themes",items:[
+          ["Perfectionism","Striving for a perfect relationship with God carries into other parts of life, such as his organized system at work."],
+          ["Family tradition","Religion isn’t explicit at work; it is focused internally and expressed through service to others."],
+          ["Systemic values","“Just to be a decent human being, pretty much. It’s like Ethics 101.” He treats common ethical standards as separate from religion."]]},
+        {h:"Reflexivity",p:["I share a religious upbringing and a second-generation immigrant experience with the participant, which may have led to assumptions. I believe that, in holding a fluid stance towards religion, I can approach research and analysis holistically."]},
+        {h:"Limitations",p:["A single researcher and a single subject limit generalizability. A stronger observation site would have been a social and religious setting, such as a Sunday service or a university club."]}
+      ]}
   ],
   field:[
     {id:"nordoff",kind:"research",field:true,t:"Nordoff-Robbins Center for Music Therapy",short:"Nordoff-Robbins",tag:"Clinical observation",
@@ -184,11 +218,14 @@ const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
 /* ---------- content ---------- */
+const metaIn=k=>`<span class="m-in">${String(k).split(/\s+[·\/]\s+/).map(esc).join(" / ")}</span>`;
 function figHTML(f,i){return `<figure class="cf"><button class="cf-z" type="button" data-z="${i}" aria-label="Enlarge: ${esc(f.cap||f.alt)}"><img src="${f.src}" alt="${esc(f.alt)}" loading="lazy"${f.w?` width="${f.w}" height="${f.h}"`:""}></button>${f.cap?`<figcaption>${esc(f.cap)}</figcaption>`:""}</figure>`}
 function caseHTML(p,opts={}){
   const secs=p.sections||[];
   const H=opts.h||"h2";
-  const title=opts.noTitle?"":`${p.kicker?`<p class="c-kick">${esc(p.kicker)}</p>`:""}<${H} class="c-t${p.t.length>24?" long":""}">${esc(p.t)}</${H}>`;
+  const title=opts.noTitle?"":`<${H} class="c-t${p.t.length>24?" long":""}">${esc(p.t)}</${H}>`;
+  /* the project label rides at the start of the line under the title: lowercase, parts split by " / " as in the logo lockup */
+  const lineHTML=(p.line||p.kicker)?`<p class="c-line">${p.kicker?`${metaIn(p.kicker)} `:""}${esc(p.line||"")}</p>`:"";
   const imgs=[];const reg=f=>{imgs.push(f);return imgs.length-1};
   if(p.body){
     const hero=p.hero?figHTML(p.hero,reg(p.hero)).replace('class="cf"','class="cf cf-hero"'):"";
@@ -216,7 +253,7 @@ function caseHTML(p,opts={}){
       return h}).join("");
     p._imgs=imgs;
     return `${title}
-  ${p.line?`<p class="c-line">${esc(p.line)}</p>`:""}${p.lede?`<p class="c-lede">${esc(p.lede)}</p>`:""}
+  ${lineHTML}${p.lede?`<p class="c-lede">${esc(p.lede)}</p>`:""}
   ${p.stats?`<dl class="c-stats">${p.stats.map(([a,b])=>`<div><dt>${esc(a)}</dt><dd>${esc(b)}</dd></div>`).join("")}</dl>`:""}
   ${hero}
   <dl class="c-meta">${p.meta.map(([a,b])=>`<div><dt>${a}</dt><dd>${esc(b)}</dd></div>`).join("")}</dl>
@@ -278,7 +315,8 @@ function profileHTML(opts={}){
   <h2 class="pf-break">Beyond work</h2>
   <section class="c-sec"><h3>What guides me?</h3><div class="pf-long why">
     ${whyParts().map(ps=>`<div class="why-part">${ps}</div>`).join("")}
-    <p class="pf-sub"><a class="btn" href="${P.substack.url}" target="_blank" rel="noopener">Substack ↗</a> <span class="pf-note">${esc(P.substack.note)}</span></p></div></section>
+    <p class="pf-sub"><a class="btn" href="${P.substack.url}" target="_blank" rel="noopener">Substack ↗</a> <span class="pf-note">${esc(P.substack.note)}</span></p>
+    <p class="pf-mission"><a class="btn" href="#story">Read my mission</a></p></div></section>
   <section class="pf-photos" aria-label="Photos of Peter"><ul class="photos me-photos">${DATA.mePhotos.map((p,i)=>`<li><button class="ph" data-set="me" data-i="${i}" aria-label="Open ${esc(p.alt)}"><img src="${p.src}" alt="${esc(p.alt)}" loading="lazy"></button></li>`).join("")}</ul></section>
   <section class="c-sec"><h3>Outside of work</h3><ul class="me">${DATA.me.map(a=>`<li><b>${esc(a)}</b></li>`).join("")}</ul></section>
   ${opts.resume?resumeHTML():""}
@@ -363,7 +401,7 @@ function Fog(canvas,{blob=true,blobAt=null}={}){
   gl.bindBuffer(gl.ARRAY_BUFFER,gl.createBuffer());gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
   const a=gl.getAttribLocation(pr,"a");gl.enableVertexAttribArray(a);gl.vertexAttribPointer(a,2,gl.FLOAT,false,0,0);
   const U={};["r","m","b","t","lens","rev","bs","thin","blob","mode","calm","dpr","cBg","cFog","cLine","cAcc","cAlt"].forEach(k=>U[k]=gl.getUniformLocation(pr,k));
-  let D=1;const size=()=>{const d=D=Math.min(devicePixelRatio||1,1.5);canvas.width=innerWidth*d;canvas.height=innerHeight*d;gl.viewport(0,0,canvas.width,canvas.height)};size();addEventListener("resize",size);
+  let D=1;const size=()=>{const d=D=Math.min(devicePixelRatio||1,1.5);canvas.width=innerWidth*d;canvas.height=innerHeight*d;gl.viewport(0,0,canvas.width,canvas.height);S.wake&&S.wake()};size();addEventListener("resize",size);
   const t0=performance.now();
   if(blobAt){const [x,y]=blobAt(S);S.bx=x;S.by=y}
   const loop=now=>{const k=reduce?1:.08;S.mx+=(S.tx-S.mx)*k;S.my+=(S.ty-S.my)*k;
@@ -382,5 +420,5 @@ function Fog(canvas,{blob=true,blobAt=null}={}){
   return S;
 }
 
-window.Presence={wireCase,DATA,L,CONTACT,RESUME,THEMES,THEME_ALIAS,PROFILE,caseHTML,profileHTML,resumeHTML,wireProfile,Lightbox,Fog,reduce,esc};
+window.Presence={wireCase,DATA,L,CONTACT,RESUME,THEMES,THEME_ALIAS,PROFILE,caseHTML,metaIn,profileHTML,resumeHTML,wireProfile,Lightbox,Fog,reduce,esc};
 })();

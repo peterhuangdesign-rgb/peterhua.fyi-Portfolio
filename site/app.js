@@ -2,7 +2,7 @@
    Every visit opens on #home: who Peter is in a few lines, then three featured projects.
    The scroll story (#story) is optional, opened from the "Read my story" button on Profile. */
 (function(){
-const {wireCase,DATA,CONTACT,THEMES,THEME_ALIAS,caseHTML,profileHTML,resumeHTML,wireProfile,Fog,reduce,esc}=Presence;
+const {wireCase,DATA,CONTACT,THEMES,THEME_ALIAS,caseHTML,metaIn,profileHTML,resumeHTML,wireProfile,Fog,reduce,esc}=Presence;
 const $=id=>document.getElementById(id);
 const main=$("main"),nav4=$("nav4"),sub=$("sub"),subList=$("sub-list"),prog=$("prog"),story=$("story");
 const byId=id=>DATA.all.find(p=>p.id===id);
@@ -21,9 +21,11 @@ const themesEl=document.querySelector(".themes");
 const TNAMES={land:"Land",sea:"Sea"};
 const tbtn=document.createElement("button");tbtn.className="th";tbtn.type="button";tbtn.innerHTML=`<i aria-hidden="true"></i><span class="th-l" aria-hidden="true"></span>`;themesEl.appendChild(tbtn);
 tbtn.onclick=()=>setTheme(document.documentElement.dataset.theme==="sea"?"land":"sea",true);
-function setTheme(id,save){id=THEME_ALIAS[id]||id;if(!THEMES[id])id="land";document.documentElement.dataset.theme=id;S.theme=THEMES[id];
+function setTheme(id,save){id=THEME_ALIAS[id]||id;if(!THEMES[id])id="land";
+  /* switch every colour in the same frame: hover transitions would otherwise lag behind the text */
+  const R=document.documentElement;R.classList.add("theme-switch");requestAnimationFrame(()=>requestAnimationFrame(()=>R.classList.remove("theme-switch")));document.documentElement.dataset.theme=id;S.theme=THEMES[id];S.wake&&S.wake();
   const next=id==="sea"?"land":"sea";tbtn.dataset.t=next;tbtn.setAttribute("aria-label",`Switch to ${TNAMES[next]} theme`);tbtn.title=`${TNAMES[next]} theme`;tbtn.querySelector(".th-l").textContent=`${TNAMES[next]} theme`;
-  if(save){store.set("ph-theme",id);S.revT=1;setTimeout(()=>S.revT=0,600)}}
+  if(save){store.set("ph-theme",id);S.revT=1;S.wake&&S.wake();setTimeout(()=>S.revT=0,600)}}
 setTheme(store.get("ph-theme")||"land");
 
 /* ---------- rail ---------- */
@@ -52,7 +54,7 @@ const roll=list=>`<span class="phm-w"><span class="phm-r">${list.map((w,i)=>`<sp
 const PHM_LABEL="Peter Huang. The p and h also stand for "+PAIRS.slice(1).map(([a,b])=>`p${a} and h${b}`).join(", ")+".";
 const PHM=`<figure class="phm" role="img" aria-label="${PHM_LABEL}" style="--n:${PAIRS.length};--k:0">
   <div class="phm-t" aria-hidden="true"><span class="phm-l"><span>p</span>${roll(PAIRS.map(x=>x[0]))}</span><span class="phm-bar"></span><span class="phm-l h"><span>h</span>${roll(PAIRS.map(x=>x[1]))}</span></div></figure>
-  <div class="phm-act"><a class="btn" href="#story">Mission</a><button class="replay phm-toggle" type="button" aria-pressed="false">Pause animation</button></div>`;
+  <div class="phm-act"><button class="replay phm-toggle" type="button" aria-pressed="false">Pause animation</button></div>`;
 let phmT=null;
 function wireLogo(root){
   clearInterval(phmT);phmT=null;
@@ -83,9 +85,8 @@ function typeIntro(root){
 /* ---------- pages ---------- */
 const idxRows=list=>`<ol class="idx">${list.map(p=>`<li><a href="#${p.id}"><span class="t">${esc(p.t)}</span><span class="k">${esc(p.tag)}</span></a></li>`).join("")}</ol>`;
 const workBlock=p=>`<article class="work${p.kind==="research"?" r":""}" id="w-${p.id}" data-id="${p.id}"><a href="#${p.id}">
-  <span class="tag"><span>${esc(p.tag)}</span>${p.body?"":` · <span class="wip">Write-up in progress</span>`}</span>
   <div class="work-h"><h2>${esc(p.t)}</h2>${ARR}</div>
-  ${p.line?`<p class="line">${esc(p.line)}</p>`:""}
+  <p class="line">${metaIn(p.tag)} ${esc(p.line||"")}</p>
   ${p.hero?`<img class="work-img" src="${p.hero.src}" alt="" loading="lazy"${p.hero.w?` width="${p.hero.w}" height="${p.hero.h}"`:""}>`:""}</a></article>`;
 /* Featured work: three projects, one after another, research first. Chorvivo is under wraps: Profile > Work only.
    kind = research, design, or both; format = what it was (startup, paper, design-a-thon).
@@ -100,9 +101,8 @@ const FEATURED=[
 ];
 const featBlocks=()=>FEATURED.map((f,i)=>{const p=byId(f.id);if(!p)return"";
   return `<article class="fw"><a href="#${p.id}">
-    <span class="fw-k">${[f.kind,...f.format.split(" · "),f.year].filter(Boolean).map(x=>`<span>${esc(x)}</span>`).join(" · ")}</span>
     <div class="fw-h"><span class="fw-t">${esc(p.t)}</span>${ARR}</div>
-    <p class="fw-p">${esc(f.line)}</p>
+    <p class="fw-p">${metaIn([f.kind,f.format,f.year].filter(Boolean).join(" / "))} ${esc(f.line)}</p>
     ${f.img?`<img class="fw-img" src="${f.img}" alt="${esc(f.alt||"")}" loading="lazy"${f.w?` width="${f.w}" height="${f.h}"`:""}>`:""}</a></article>`}).join("");
 const PAGES={
   home:()=>`<div class="hi"><div class="hi-txt"><h1 class="ph1 greet">Hello! I’m Peter Huang.</h1>
