@@ -1,6 +1,6 @@
 # peterhua.fyi — portfolio and personal brand handoff
 
-Context for a new chat. Status as of 24 Oct 2026 (portfolio artifact version 23, GitHub `main`).
+Context for a new chat. Status as of 24 Oct 2026 (portfolio artifact version 24, GitHub `main`).
 Paste this file in first, then give the next request.
 
 ---

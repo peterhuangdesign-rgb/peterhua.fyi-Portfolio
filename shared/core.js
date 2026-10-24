@@ -12,7 +12,8 @@ const CONTACT={email:"peterhuangdesign@gmail.com",linkedin:"https://www.linkedin
 const DATA={
   research:[
     {id:"connection",kind:"research",t:"Technology and well-being: an independent interview study",short:"Technology & well-being",tag:"Self-directed UX research",
-      ctx:["UX research","Psychology + technology","Research paper, 7 self-run interviews, 2025"],
+      ctx:["UX research","Research paper"],
+      finding:"Mindful, purposeful, and social use of technology led to beneficial outcomes; lack of awareness, social comparison, and degraded critical thinking led to negative outcomes in subjective well-being.",
       line:"How Gen Z’s ubiquitous use of technology relates to mental health and well-being. The themes are technology, social connection, and life satisfaction.",
       lede:"I interviewed 7 participants aged 19–24, analyzed their pain points with qualitative data, and translated the insights into an academic research paper after receiving critique from 2 psychology professionals.",
       stats:[["7","Semi-structured interviews"],["3","Themes from grounded-theory coding"],["2","Psychology professionals gave critique"]],
@@ -53,7 +54,8 @@ const DATA={
     /* From Peter's paper "Personality and Life Satisfaction with Resilience as a Mediating Factor in Young Adults: A Mixed-Methods Study" (RM2, Aug 2025).
        Resilience results are left out until the scoring is re-checked: the paper reverse-codes BRS items 1, 3, 5 (the scale's reverse-coded items are 2, 4, 6). */
     {id:"resilience",kind:"research",t:"Personality, resilience, and life satisfaction",short:"Personality & resilience",tag:"Mixed methods · Survey + interview",
-      ctx:["UX research","Psychology","Research paper, survey of 52 + 1 interview, 2025"],
+      ctx:["UX research","Research paper"],
+      finding:"Neuroticism was significantly, moderately, and negatively correlated with life satisfaction (r = −.474, p < .001).",
       line:"How does neuroticism shape life satisfaction in young adults, and does resilience mediate that relationship?",
       meta:[["Role","Researcher"],["Method","Survey (n = 52) + interview"],["Date","Aug 2025"],["Course","Research Methods II, NYU"]],
       body:[
@@ -72,7 +74,8 @@ const DATA={
       ]},
     /* From Peter's paper "Career within Spirituality and Religion: Perceptions of a Christian College Student" (Cultures of Psychology, Apr 2025). */
     {id:"career-faith",kind:"research",t:"Career within spirituality and religion",short:"Career & faith",tag:"Ethnography · Interview + observation",
-      ctx:["UX research","Psychology + culture","Research paper, ethnographic interview + observation, 2025"],
+      ctx:["UX research","Research paper"],
+      finding:"Three themes arose: perfectionism, family tradition, and systemic values, shaped by traditional family values and an environment of acculturation.",
       line:"How does the Christian upbringing of one second-generation Mexican and Filipino man in the United States influence career choice?",
       meta:[["Role","Researcher, interviewer"],["Method","Interview + observation"],["Date","Apr 2025"],["Course","Cultures of Psychology, NYU"]],
       body:[
@@ -102,7 +105,8 @@ const DATA={
   ],
   design:[
     /* Chorvivo: in progress and under wraps. Not a project page; it appears only under Work on Profile. */
-    {id:"wayfarer",kind:"design",t:"Wayfarer",short:"Wayfarer",tag:"Design-a-thon winner",ctx:["UX design + research","Social wellness app","Design-a-thon winner, 2026"],
+    {id:"wayfarer",kind:"design",t:"Wayfarer",short:"Wayfarer",tag:"Design-a-thon winner",ctx:["UX design","Design-a-thon, 1st place"],
+      finding:"Users rejected text-based journaling, so I pivoted the UX strategy toward “frictionless capture” and “somatic grounding,” prioritizing screen-off interactions.",
       kicker:"Cornell University CU Design-a-thon 2026 · Winner",
       line:"An app designed to accompany you on your walk. Asynchronous social connection and easy access to journaling.",
       lede:"Wayfarer’s mission is to bring people together, to build a more connected culture through reflection, observation, and presence.",
@@ -135,7 +139,8 @@ const DATA={
                    {src:"media/wayfarer/event-theme.webp",alt:"The theme statement, Reimagining daily life",w:1600,h:808},
                    {src:"media/wayfarer/event-rubric.webp",alt:"Judging rubric: problem-solving and impact, innovation, visual design, user research and execution, 10 points each",w:1380,h:1382}]}
       ]},
-    {id:"glenergy",kind:"design",t:"Glenergy",short:"Glenergy",tag:"Product design · Dark patterns study",ctx:["UX design + research","Employee benefits portal","Dark patterns study, team of 3, 2025"],
+    {id:"glenergy",kind:"design",t:"Glenergy",short:"Glenergy",tag:"Product design · Dark patterns study",ctx:["UX design","School project"],
+      finding:"While the aggressive designs successfully skewed user choices toward cost-saving options, they triggered a severe drop in employer trust.",
       kicker:"Product design · Team of 3 · Fall 2025",
       line:"A design of an Employee Onboarding Portal that incentivizes users to choose cost-effective options for the distributor/business. We tested to identify the effectiveness of “Dark Patterns” and discern perceptions of AI integration in business applications.",
       stats:[["3/5","users declined the AI chatbot feature"],["4/5","were skeptical of donating to charity through a corporation"],["5/5","felt confused by the client-recommended employer-match design"]],
@@ -204,14 +209,21 @@ DATA.all=[...DATA.researchAll,...DATA.design];
 
 /* From the human factors résumé (Resume_Peter_HuangHF.pdf). */
 const RESUME={
+  /* One source for the in-site résumé and media/resume-human-factors.pdf (rebuilt Oct 24, 2026 from Peter's human factors résumé). */
+  contact:"Orange County, CA · (949) 933-0073 · peterhuangdesign@gmail.com · peterhua.fyi · linkedin.com/in/peterhuaux",
   experience:[
     {role:"Head of design",org:"Chorvivo",when:"Sep 2026 – present",ctx:["Design + research","A startup building a rehearsal-capture app for choreographers"],pts:["Lead the UI/UX and customer discovery interviews","Turn what choreographers tell us into user flows, a design system, and brand fundamentals, working with the founder and an engineer"]},
-    {role:"UI/UX intern",org:"Designity",when:"Jun 15 – Sep 15, 2026 · 3 months",ctx:["UI/UX design + user research","A “creativity as a service” agency, remote"],pts:["User research and usability testing with qualitative and quantitative methods","Turned findings into design recommendations within business constraints","Ran structured feedback loops with cross-functional stakeholders","Kept research documentation consistent across touchpoints"]},
-    {role:"Research & operations assistant",org:"DOROT",when:"Aug – Dec 2025",ctx:["Behavioral data research","Social programs for older adults, New York City"],pts:["Behavioral data analysis (SPSS) across 400+ participants to find usability and accessibility barriers for older adults","Recommendations and stakeholder reports","Reliable data collection across diverse populations"]},
-    {role:"Clinical observational researcher",org:"Nordoff-Robbins Center for Music Therapy",when:"Jan – May 2025",ctx:["Clinical observational research","Music therapy for mental health, New York City"],pts:["Structured qualitative observation in a clinical mental-health setting with licensed therapists","Coded a behavioral database of ~130 sessions","Longitudinal case study from the coded data"]},
-    {role:"Operations intern",org:"NOVA Kitchen and Bar",when:"Jul – Aug 2024",ctx:["Operations","A restaurant in Orange, California"],pts:["Resolved operational pain points for 100+ daily guests","Built workflows with a 30+ person team under time pressure"]}
+    {role:"UI/UX intern",org:"Designity",when:"Jun 15 – Sep 15, 2026 · 3 months",ctx:["UI/UX design + user research","A “creativity as a service” agency, remote"],pts:["Conducted user research and usability testing, applying qualitative and quantitative methods to evaluate product usability and inform human-centered design decisions","Translated research insights into actionable design recommendations, balancing user needs with business and stakeholder constraints","Facilitated structured feedback loops with cross-functional stakeholders to uphold usability standards and design consistency","Maintained research documentation systems to ensure scalability and coherence across usability research touchpoints"]},
+    {role:"Research & operations assistant",org:"DOROT",when:"Aug – Dec 2025",ctx:["Behavioral data research","Social programs for older adults, New York City"],pts:["Executed quantitative behavioral data analysis (SPSS) across 400+ program participants to identify usability and accessibility barriers for older adult users","Translated behavioral research findings into actionable recommendations and stakeholder reports","Applied user-centered communication methods across diverse populations to ensure high-quality, reliable data collection for impact assessments"]},
+    {role:"Clinical observational researcher",org:"Nordoff-Robbins Center for Music Therapy",when:"Jan – May 2025",ctx:["Clinical observational research","Music therapy for mental health, New York City"],pts:["Conducted structured qualitative observational research in a clinical mental-health setting, collaborating with licensed therapists on post-session analysis","Coded and managed a behavioral database of ~130 therapy sessions using structured tracking protocols to map client progress","Synthesized complex behavioral data into a detailed longitudinal case study"]},
+    {role:"Operations intern",org:"NOVA Kitchen and Bar",when:"Jul – Aug 2024",ctx:["Operations","A restaurant in Orange, California"],pts:["Identified and resolved operational pain points for 100+ daily guests in a high-volume, fast-paced environment","Collaborated with a 30+ member team to develop efficient operational workflows under time pressure"]}
   ],
-  education:{school:"New York University, Steinhardt",degree:"B.S. Applied Psychology",minors:"Minors: Integrated Design & Media (HCI/UX), Philosophy",when:"2026",extra:"Dean’s List, Spring 2024",courses:"Human-Centered Research Methods I & II, Statistics for Behavioral Sciences, Agile Product Design, Ideation & Prototyping, Dark Patterns"},
+  research:[
+    ["Technology and well-being: an independent interview study","7 semi-structured interviews, grounded-theory coding, 27-page paper","Oct – Dec 2025"],
+    ["Personality, resilience, and life satisfaction","Mixed methods: survey of 52, regression and mediation analysis, 1 interview","Aug 2025"],
+    ["Career within spirituality and religion","Ethnography: semi-structured interview and workplace observation","Apr 2025"]
+  ],
+  education:{school:"New York University, Steinhardt",degree:"B.S. Applied Psychology",minors:"Minors: Integrated Design & Media (HCI/UX), Philosophy",when:"May 2026",extra:"Dean’s List, Spring 2024",courses:"Human-Centered Research Methods I & II, Statistics for Behavioral Sciences, Agile Product Design, Ideation & Prototyping, Dark Patterns, Seminar I & II"},
   skills:[["Research methods","Usability testing, task analysis, qualitative and quantitative research, behavioral data analysis, research protocol design"],["UX design","Figma, Adobe Illustrator, Adobe InDesign, Adobe Photoshop"],["UX research","SPSS, Excel, R, Salesforce, qualitative and quantitative analysis"]]
 };
 const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -227,7 +239,7 @@ function caseHTML(p,opts={}){
   const H=opts.h||"h2";
   const title=opts.noTitle?"":`<${H} class="c-t${p.t.length>24?" long":""}">${esc(p.t)}</${H}>`;
   /* the project label rides at the start of the line under the title: lowercase, parts split by " / " as in the logo lockup */
-  const lineHTML=`${ctxHTML(p.ctx)}${p.line?`<p class="c-line">${esc(p.line)}</p>`:""}`;
+  const lineHTML=`${ctxHTML(p.ctx)}${p.finding?`<p class="c-find"><span class="label">Key finding</span>${esc(p.finding)}</p>`:""}${p.line?`<p class="c-line">${esc(p.line)}</p>`:""}`;
   const imgs=[];const reg=f=>{imgs.push(f);return imgs.length-1};
   if(p.body){
     const hero=p.hero?figHTML(p.hero,reg(p.hero)).replace('class="cf"','class="cf cf-hero"'):"";
@@ -272,6 +284,7 @@ function resumeHTML(){
   const R=RESUME;
   return `<section class="c-sec" id="resume-body"><h3>Human factors focus</h3><div class="cv">
     <ol class="cv-list">${R.experience.map(e=>`<li><div class="cv-h"><b>${esc(e.org)}</b><span>${esc(e.when)}</span></div><p class="cv-role">${esc(e.role)}</p>${ctxHTML(e.ctx)}<ul>${e.pts.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></li>`).join("")}</ol>
+    <ol class="cv-list cv-res">${R.research.map(([t,d,w])=>`<li><div class="cv-h"><b>${esc(t)}</b><span>${esc(w)}</span></div><p class="cv-role">${esc(d)}</p></li>`).join("")}</ol>
     <div class="cv-ed"><div class="cv-h"><b>${R.education.degree}</b><span>${R.education.when}</span></div><p class="cv-org">${R.education.school}</p><p>${R.education.minors}. ${R.education.extra}.</p><p class="cv-muted">${R.education.courses}</p></div>
     <dl class="cv-skills">${R.skills.map(([a,b])=>`<div><dt>${a}</dt><dd>${b}</dd></div>`).join("")}</dl></div></section>`;
 }

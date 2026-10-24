@@ -92,7 +92,7 @@ const workBlock=p=>`<article class="work${p.kind==="research"?" r":""}" id="w-${
    kind = research, design, or both; format = what it was (startup, paper, design-a-thon).
    img = a picture of the work; until there is one, the slot shows what belongs there. */
 const FEATURED=[
-  {id:"connection",kind:"UX research",format:"Self-directed · 7 interviews",year:"2025",img:"media/paper-feature.webp",w:1194,h:480,alt:"Title page of the paper: Technology in Social Contexts: Subjective Well-being in Young Adults",
+  {id:"connection",kind:"UX research",format:"Self-directed · 7 interviews",year:"2025",img:"media/paper-codebook.webp",w:1355,h:882,alt:"The paper’s codebook (Appendix B): theme, codes, definitions and participant quotes",
     line:"How relationships through technology relate to life satisfaction among emerging adults. 7 semi-structured interviews, grounded-theory coding, and a 27-page paper."},
   {id:"wayfarer",kind:"UX design + research",format:"Design-a-thon winner",year:"2026",img:"media/wayfarer/hero.webp",w:1414,h:920,alt:"Three Wayfarer app screens",
     line:"Winner of Cornell University’s CU Design-a-thon 2026: a two-day sprint, 71 participants. An app that accompanies you on your walk, with asynchronous social connection and easy journaling."},
@@ -102,11 +102,11 @@ const FEATURED=[
 const featBlocks=()=>FEATURED.map((f,i)=>{const p=byId(f.id);if(!p)return"";
   return `<article class="fw"><a href="#${p.id}">
     <div class="fw-h"><span class="fw-t">${esc(p.t)}</span>${ARR}</div>
-    ${ctxHTML(p.ctx)}<p class="fw-p">${esc(f.line)}</p>
+    ${ctxHTML(p.ctx)}
     ${f.img?`<img class="fw-img" src="${f.img}" alt="${esc(f.alt||"")}" loading="lazy"${f.w?` width="${f.w}" height="${f.h}"`:""}>`:""}</a></article>`}).join("");
 const PAGES={
   home:()=>`<div class="hi"><div class="hi-txt"><h1 class="ph1 greet">Hello! I’m Peter Huang.</h1>
-    <p class="mission">I’m a UX researcher with a background in psychology, digital media, and design. I’m curious about how we design safer systems and more pleasurable experiences.</p>
+    <p class="mission">I’m a UX researcher with a background in psychology, digital media, and design. I’m curious about how we design safer systems and more effective experiences.</p>
     <div class="hi-act">${ctaPair()}</div></div>
     <img class="hi-photo" src="media/me-smile.jpg" alt="Peter Huang, smiling, in a cap" width="556" height="520"></div>
     <h2 class="label feat-h">Featured work</h2>${featBlocks()}
