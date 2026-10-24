@@ -1,8 +1,8 @@
 /* Site router.
-   First visit (no hash, never visited) → #story, a scroll-driven introduction. Afterwards → #home.
-   In production: peterhua.fyi serves the story to first-time visitors, peterhua.fyi/home is the main page. */
+   Every visit opens on #home: who Peter is in a few lines, then three featured projects.
+   The scroll story (#story) is optional, opened from the "Read my story" button on Profile. */
 (function(){
-const {DATA,CONTACT,THEMES,THEME_ALIAS,caseHTML,profileHTML,wireProfile,Fog,reduce,esc}=Presence;
+const {wireCase,DATA,CONTACT,THEMES,THEME_ALIAS,caseHTML,profileHTML,resumeHTML,wireProfile,Fog,reduce,esc}=Presence;
 const $=id=>document.getElementById(id);
 const main=$("main"),nav4=$("nav4"),sub=$("sub"),subList=$("sub-list"),prog=$("prog"),story=$("story");
 const byId=id=>DATA.all.find(p=>p.id===id);
@@ -29,35 +29,103 @@ setTheme(store.get("ph-theme")||"land");
 /* ---------- rail ---------- */
 nav4.innerHTML=[["research","Research"],["design","Design"],["profile","Profile"],["contact","Contact"]]
   .map(([id,t])=>`<li><a href="#${id}" data-sec="${id}">${t}</a></li>`).join("");
-$("rail-mail").textContent=CONTACT.email;$("rail-mail").href="mailto:"+CONTACT.email;
-$("rail-cv").href=CONTACT.resume;
-$("replay").onclick=()=>{location.hash="story"};
+/* Résumé + Email: one pair, same labels and behaviour everywhere (rail, home on phones, contact).
+   Résumé opens an in-site page (the PDF embedded, plus a download), so it works inside sandboxed previews.
+   Email opens the mail app and also copies the address, so it still works where mailto is blocked. */
+const ctaPair=()=>`<div class="cta"><a class="btn" href="#resume" data-cta="resume">Résumé</a><a class="btn" href="mailto:${CONTACT.email}" data-cta="email">Email</a></div>`;
+$("rail-foot").innerHTML=ctaPair();
+async function copyEmail(){try{await navigator.clipboard.writeText(CONTACT.email);return true}catch(e){
+  try{const t=document.createElement("textarea");t.value=CONTACT.email;t.setAttribute("readonly","");t.style.cssText="position:fixed;opacity:0";document.body.appendChild(t);t.select();const ok=document.execCommand("copy");t.remove();return ok}catch(_){return false}}}
+document.addEventListener("click",async e=>{const a=e.target.closest('[data-cta="email"],#copy');if(!a)return;
+  if(a.id==="copy")e.preventDefault();
+  const ok=await copyEmail();toast(ok?`Email copied: ${CONTACT.email}`:CONTACT.email)});
+
+/* ---------- main logo (profile) ----------
+   p and h stay; the rest rolls through PAIRS, then back to the name.
+   To add a pair, write both words without their first letter: ["ianist","…"] is pianist / h….
+   Keep each h-word no wider than "human factors" so it never wraps.
+   Screen readers get one label. Pause button for motion that repeats; reduced motion shows the name, still. */
+const PAIRS=[["eter","uang"],["sychology","uman factors"],["atience","umility"]];
+const ARR=`<span class="arr" aria-hidden="true"><svg viewBox="0 0 18 18"><path d="M3 9H15M10 4L15 9L10 14"/></svg></span>`;
+const roll=list=>`<span class="phm-w"><span class="phm-r">${list.map((w,i)=>`<span${i?' class="lt"':""}>${w}</span>`).join("")}</span></span>`;
+const PHM_LABEL="Peter Huang. The p and h also stand for "+PAIRS.slice(1).map(([a,b])=>`p${a} and h${b}`).join(", ")+".";
+const PHM=`<figure class="phm" role="img" aria-label="${PHM_LABEL}" style="--n:${PAIRS.length};--k:0">
+  <div class="phm-t" aria-hidden="true"><span class="phm-l"><span>p</span>${roll(PAIRS.map(x=>x[0]))}</span><span class="phm-bar"></span><span class="phm-l h"><span>h</span>${roll(PAIRS.map(x=>x[1]))}</span></div></figure>
+  <div class="phm-act"><a class="btn" href="#story">Mission</a><button class="replay phm-toggle" type="button" aria-pressed="false">Pause animation</button></div>`;
+let phmT=null;
+function wireLogo(root){
+  clearInterval(phmT);phmT=null;
+  const f=root.querySelector(".phm"),b=root.querySelector(".phm-toggle");if(!f)return;
+  if(reduce){b.hidden=true;return}
+  let k=0;
+  const run=()=>{phmT=setInterval(()=>{k=(k+1)%PAIRS.length;f.style.setProperty("--k",k)},2800)};
+  run();
+  b.onclick=()=>{const on=!!phmT;if(on){clearInterval(phmT);phmT=null}else run();
+    b.textContent=on?"Play animation":"Pause animation";b.setAttribute("aria-pressed",String(on))};
+}
+
+/* ---------- home intro: typed out over about one second, once per visit ----------
+   The full sentence holds its space from the start (no layout jump) and is what screen readers get. */
+const TYPE_MS=1000;
+let typed=false,twT=null;
+function typeIntro(root){
+  cancelAnimationFrame(twT);
+  const p=root.querySelector(".mission");if(!p||typed||reduce)return;typed=true;
+  const full=p.textContent.trim();
+  p.innerHTML=`<span class="sr">${esc(full)}</span><span class="tw" aria-hidden="true"><span class="tw-g">${esc(full)}</span><span class="tw-l"></span></span>`;
+  const l=p.querySelector(".tw-l");let t0=null;
+  const tick=t=>{if(t0===null)t0=t;const k=Math.min(1,(t-t0)/TYPE_MS);l.textContent=full.slice(0,Math.round(k*full.length));
+    if(k<1)twT=requestAnimationFrame(tick);else l.classList.add("done")};
+  setTimeout(()=>{twT=requestAnimationFrame(tick)},250);
+}
 
 /* ---------- pages ---------- */
 const idxRows=list=>`<ol class="idx">${list.map(p=>`<li><a href="#${p.id}"><span class="t">${esc(p.t)}</span><span class="k">${esc(p.tag)}</span></a></li>`).join("")}</ol>`;
-const workBlock=p=>`<article class="work ${p.kind==="research"?"r":""}" id="w-${p.id}" data-id="${p.id}">
-  <h2>${esc(p.t)}</h2>
-  <div class="fig">[ ${p.kind==="design"?"cover":p.field?"field photo":"figure"} ]</div>
-  <div class="row"><span class="tag">${esc(p.tag)}</span><a class="btn" href="#${p.id}">Open ${p.kind==="design"?"case":p.field?"study":"paper"}</a></div></article>`;
+const workBlock=p=>`<article class="work${p.kind==="research"?" r":""}" id="w-${p.id}" data-id="${p.id}"><a href="#${p.id}">
+  <span class="tag">${esc(p.tag)}</span>
+  <div class="work-h"><h2>${esc(p.t)}</h2>${ARR}</div>
+  ${p.line?`<p class="line">${esc(p.line)}</p>`:""}
+  ${p.hero?`<img class="work-img" src="${p.hero.src}" alt="" loading="lazy">`:""}</a></article>`;
+/* Featured work: three projects, one after another, research first. Chorvivo is under wraps: Profile > Work only.
+   kind = research, design, or both; format = what it was (startup, paper, design-a-thon).
+   img = a picture of the work; until there is one, the slot shows what belongs there. */
+const FEATURED=[
+  {id:"connection",kind:"UX research",format:"Self-directed · 7 interviews",year:"2025",img:"",slot:"",
+    line:"How relationships through technology relate to life satisfaction among emerging adults. 7 semi-structured interviews, grounded-theory coding, and a 27-page paper."},
+  {id:"wayfarer",kind:"UX design + research",format:"Design-a-thon winner",year:"2026",img:"media/wayfarer/hero.webp",alt:"Three Wayfarer app screens",
+    line:"Winner of Cornell University's CU Design-a-thon 2026: a two-day sprint, 71 participants. An app that accompanies you on your walk, with asynchronous social connection and easy journaling."},
+  {id:"glenergy",kind:"UX design + research",format:"Dark patterns study · Team of 3",year:"2025",img:"media/glenergy/logo.webp",alt:"Glenergy logo: a glowing light bulb beside the wordmark on a navy background",
+    line:"A design of an Employee Onboarding Portal that incentivizes users to choose cost-effective options for the distributor/business. We tested to identify the effectiveness of “Dark Patterns” and discern perceptions of AI integration in business applications."}
+];
+const featBlocks=()=>FEATURED.map((f,i)=>{const p=byId(f.id);if(!p)return"";
+  return `<article class="fw"><a href="#${p.id}">
+    <span class="fw-k">${esc(f.kind)} · ${esc(f.format)}${f.year?` · ${f.year}`:""}</span>
+    <div class="fw-h"><span class="fw-t">${esc(p.t)}</span>${ARR}</div>
+    <p class="fw-p">${esc(f.line)}</p>
+    ${f.img?`<img class="fw-img" src="${f.img}" alt="${esc(f.alt||"")}" loading="lazy">`:""}</a></article>`}).join("");
 const PAGES={
-  home:()=>`<h1 class="ph1 greet">Hello! I'm Peter Huang.</h1>
+  home:()=>`<div class="hi"><div class="hi-txt"><h1 class="ph1 greet">Hello! I'm Peter Huang.</h1>
     <p class="mission">I'm a UX researcher with a background in psychology, digital media, and design. I'm curious about how we design safer systems and more pleasurable experiences.</p>
-    <ul class="cred" aria-label="Education"><li>NYU graduate</li><li>B.S. Applied Psychology</li><li>Minor in Integrated Design and Media</li></ul>
-    <div class="idx-h"><h2 class="label">Research</h2><a href="#research">All research</a></div>${idxRows(DATA.researchAll)}
-    <div class="idx-h"><h2 class="label">Design</h2><a href="#design">All design</a></div>${idxRows(DATA.design)}`,
+    <div class="hi-act">${ctaPair()}</div></div>
+    <img class="hi-photo" src="media/me-smile.jpg" alt="Peter Huang, smiling, in a cap" width="556" height="520"></div>
+    <h2 class="label feat-h">Featured work</h2>${featBlocks()}
+    <p class="fw-more"><a href="#research">All research</a><a href="#design">All design</a></p>`,
   research:()=>`<h1 class="ph1">Research</h1>${DATA.research.map(workBlock).join("")}`,
   design:()=>`<h1 class="ph1">Design</h1>${DATA.design.map(workBlock).join("")}`,
-  profile:()=>`<div class="case">${profileHTML({h:"h1"})}</div>`,
-  contact:()=>`<h1 class="ph1">Contact</h1>
-    <div class="contact-mail"><output id="mail">${CONTACT.email}</output><button class="btn" id="copy">Copy email</button></div>
-    <dl class="kv"><dt>Email</dt><dd><a href="mailto:${CONTACT.email}">Write an email</a></dd>
-      <dt>LinkedIn</dt><dd><a href="${CONTACT.linkedin}" target="_blank" rel="noopener">${CONTACT.linkedinLabel}</a></dd>
-      <dt>Résumé</dt><dd><a href="${CONTACT.resume}" target="_blank" rel="noopener">Human factors résumé (PDF)</a></dd>
+  profile:()=>`<div class="case">${profileHTML({h:"h1"}).replace('<h1 class="c-t">Profile</h1>',`<h1 class="sr">Profile</h1><div class="phm-hero">${PHM}</div>`)}</div>`,
+  resume:()=>`<h1 class="ph1">Résumé</h1>
+    <div class="cv-act"><a class="btn" href="${CONTACT.resume}" download="Peter-Huang-Resume.pdf">Download PDF</a><a class="btn" href="${CONTACT.resume}" target="_blank" rel="noopener">Open PDF</a><a class="btn" href="mailto:${CONTACT.email}" data-cta="email">Email</a></div>
+    <div class="case cv-html">${resumeHTML().replace('<p class="cv-top"><span>Human factors focus</span><a class="btn" href="${CONTACT.resume}" target="_blank" rel="noopener">Open PDF</a></p>','')}</div>`,
+  contact:()=>`<h1 class="ph1 contact-h">Seems like you're curious!</h1>
+    <p class="contact-sub">I'm open to connecting and collaborating on new projects!</p>
+    <div class="contact-mail"><output id="mail">${CONTACT.email}</output></div>
+    <div class="contact-act">${ctaPair()}<button class="btn" id="copy" type="button">Copy email</button></div>
+    <dl class="kv"><dt>LinkedIn</dt><dd><a href="${CONTACT.linkedin}" target="_blank" rel="noopener">${CONTACT.linkedinLabel}</a></dd>
       <dt>Based in</dt><dd>${CONTACT.city}</dd></dl>`
 };
 function projectPage(p){const list=p.kind==="design"?DATA.design:DATA.researchAll,i=list.indexOf(p),prev=list[(i+list.length-1)%list.length],next=list[(i+1)%list.length];
   const sec=p.kind==="design"?"Design":"Research";
-  return `<p class="back"><a class="btn" href="#${p.kind}">← ${sec}</a></p><div class="case">${caseHTML(p,{h:"h1"}).replace('class="fig"','class="fig hero"')}</div>
+  return `<p class="back"><a class="back-a" href="#${p.kind}" aria-label="Back to ${sec}">← ${sec}</a></p><div class="case">${caseHTML(p,{h:"h1"}).replace('class="fig"','class="fig hero"')}</div>
   <nav class="pager" aria-label="More ${sec.toLowerCase()}"><a href="#${prev.id}"><span class="label">Previous</span><b>${esc(prev.short)}</b></a><a href="#${next.id}"><span class="label">Next</span><b>${esc(next.short)}</b></a></nav>`}
 
 /* ---------- story (first visit) ----------
@@ -101,9 +169,9 @@ function openStory(){
       <defs><filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="4"/></filter></defs>
       ${STORY.map((c,i)=>`<g class="art" data-i="${i}">${c.art.map(a=>`<path class="halo" d="${a.d}"/>`).join("")}${c.art.map(a=>`<path class="ln" d="${a.d}"/>`).join("")}${(c.labels||[]).map(([t,x,y])=>`<text x="${x}" y="${y+7}" text-anchor="middle">${t}</text>`).join("")}</g>`).join("")}</svg></div>
     <div class="story-copy"><p class="story-line" id="sl" aria-live="polite">${STORY[0].s}</p>
-      <a class="btn story-enter" id="enter" href="#home" hidden>Enter portfolio</a></div></div>
+      <a class="btn story-enter" id="enter" href="#profile" hidden>Back to profile</a></div></div>
     <div class="story-track" style="height:${N*140}vh"></div>
-    <a class="btn story-skip" href="#home" id="skip">Skip intro</a><span class="story-hint" id="hint" aria-hidden="true">Scroll</span>`;
+    <a class="btn story-skip" href="#profile" id="skip">Close story</a><span class="story-hint" id="hint" aria-hidden="true">Scroll</span>`;
   const G=[...story.querySelectorAll(".art")].map(g=>{const ln=[...g.querySelectorAll(".ln")],ha=[...g.querySelectorAll(".halo")],tx=[...g.querySelectorAll("text")];
     const L=ln.map(p=>p.getTotalLength());const st=[];let acc=0;L.forEach(l=>{st.push(acc);acc+=l});
     [...ln,...ha].forEach((p,k)=>{const l=L[k%ln.length];p.style.strokeDasharray=`${l} ${l}`;p.style.strokeDashoffset=l});return {ln,ha,tx,L,st,total:acc}});
@@ -129,7 +197,6 @@ function openStory(){
     hint.style.opacity=p>.02?0:1;enter.hidden=!fin;
     if(i!==last){last=i;if(reduce){sl.textContent=STORY[i].s}else{sl.classList.add("swap");setTimeout(()=>{sl.textContent=STORY[i].s;sl.classList.remove("swap")},220)}}};
   addEventListener("scroll",onScroll,{passive:true});scrollTo(0,0);onScroll();
-  const done=()=>store.set("ph-visited","1");$("skip").addEventListener("click",done);enter.addEventListener("click",done);
   storyCleanup=()=>{removeEventListener("scroll",onScroll);story.hidden=true;story.innerHTML="";document.body.classList.remove("story-mode");storyOn=false};
   document.title="Peter Huang";
 }
@@ -138,9 +205,9 @@ function openStory(){
 let current=null,io=null;
 function route(){
   let h=(location.hash||"").slice(1);
-  if(!h){h=store.get("ph-visited")?"home":"story";history.replaceState(null,"","#"+h)}
+  if(!h){h="home";history.replaceState(null,"","#home")}
   if(h==="story"){if(!storyOn)openStory();return}
-  if(storyOn){store.set("ph-visited","1");storyCleanup()}
+  if(storyOn)storyCleanup();
   const p=byId(h);const key=p?p.kind:(PAGES[h]?h:"home");
   const html=p?projectPage(p):PAGES[key]();
   const swap=()=>{main.innerHTML=`<div class="page">${html}</div>`;scrollTo(0,0);
@@ -155,7 +222,8 @@ function route(){
     const h1=main.querySelector("h1");if(h1){h1.setAttribute("tabindex","-1");if(current!==null)h1.focus({preventScroll:true})}
     document.title=p?`${p.short} — Peter Huang`:key==="home"?"Peter Huang — UX research & design":`${key[0].toUpperCase()+key.slice(1)} — Peter Huang`;
     if(key==="profile")wireProfile(main);
-    if(key==="contact")$("copy").onclick=async()=>{try{await navigator.clipboard.writeText(CONTACT.email);toast("Email copied")}catch(e){const r=document.createRange();r.selectNodeContents($("mail"));const s=getSelection();s.removeAllRanges();s.addRange(r);toast("Email selected")}};
+    if(p)wireCase(main,p);
+    wireLogo(main);typeIntro(main);
     setBg(p||key==="profile"||key==="contact"?"page":key);S.revT=1;setTimeout(()=>S.revT=0,700);onScroll();current=h};
   const old=main.querySelector(".page");if(old&&!reduce){old.classList.add("leaving");setTimeout(swap,200)}else swap();
 }

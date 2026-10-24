@@ -11,7 +11,45 @@ const CONTACT={email:"peterhuangdesign@gmail.com",linkedin:"https://www.linkedin
 
 const DATA={
   research:[
-    {id:"connection",kind:"research",t:"Technology, Social Connection, and Life Satisfaction",short:"Social Connection",tag:"Qualitative",line:L.s,meta:[["Method","Qualitative"],["Sample","Lorem ipsum"],["Year","Lorem"],["Format","Paper"]]},
+    {id:"connection",kind:"research",t:"Technology mediating connection",short:"Technology & connection",tag:"Self-directed UX research",
+      kicker:"UX research · Self-directed, 0 to 100 · Oct 2025",
+      line:"How Gen Z's ubiquitous use of technology relates to mental health and well-being. The themes are technology, social connection, and life satisfaction.",
+      lede:"I interviewed 7 participants aged 19–24, analyzed their pain points with qualitative data, and translated the insights into an academic research paper after receiving critique from 2 psychology professionals.",
+      stats:[["7","Semi-structured interviews"],["3","Themes from grounded-theory coding"],["2","Psychology professionals gave critique"]],
+      meta:[["Role","UX researcher, customer discovery, interviewer"],["Timeline","2 months, Oct – Nov 2025"],["Team","Peter H"],["Tools","Zoom"]],
+      body:[
+        {h:"Research question",quote:"To what extent do relationships through technology relate to levels of subjective life satisfaction among emerging adults?"},
+        {h:"The problem",p:["Gen Z's ubiquitous technology use relates to negative consequences in mental health and well-being. Exploring how we can bolster mental health in this era is key to improving life satisfaction and purpose."]},
+        {h:"Why interviews",p:["I chose to conduct user interviews because these topics are nuanced and difficult to capture through data. Quantitative data collected relates to hours of use; qualitative methods are key here to explore the underlying dynamics of technology use."]},
+        {h:"My process",steps:["Reviewed current psychological research","Formulated an interview protocol","Conducted 7 semi-structured interviews","Analyzed descriptive data on human motivations","Found insights through qualitative analysis, then grouped the themes in one table","Presented preliminary findings to a psychology class for critique and feedback"]},
+        {h:"Participants",table:{cap:"Table 1. Demographic characteristics of participants",cols:["Participant","Age","Location","Major / work","Screen time (hrs)"],num:[0,1,4],
+          rows:[["1","24","WA","Water technician","5"],["2","21","CA","Aviation","8"],["3","21","NY","Sociology","4"],["4","21","NY","NYU IDM","4"],["5","19","NY","NYU IDM","2"],["6","20","NY","NYU IDM","8"],["7","22","CA","Software founder","5"]]}},
+        {h:"Themes and codes",note:"Three themes emerged through open and axial coding. Each code below has its definition and a participant's own words.",
+          themes:[
+            {t:"Technology as a tool",codes:[
+              ["Utility","Functional, usable, and useful for daily life",["I feel like first of all, being new to the city, I can't really navigate without GPS... I don't think I could function without it; I can't really navigate without it. So I feel like that's very essential."]],
+              ["Dependence","Not being able to live without, a core necessity",["It would be inconvenient if I didn't have it... But over the long term, it will be your worst enemy; Technology is a tool... but then it also creates FOMO. It creates a lot of anxiety for people... but then it also creates community."]],
+              ["Habit formation","Engaging with devices frequently, without aim or purpose, and out of compulsion",["The algorithm of certain apps, specifically Instagram, is designed to trap you in there; I realized 90% of the time when I turn on my phone, it's just to feel it... It’s become... like a water bottle... an emotional like buddy."]],
+              ["Lack of awareness of time","Losing track of time, forgoing responsibilities, forgetting tasks",["I just, like, pull it out when you're bored, that's when, like, doom scrolling happens... when you're just spending idle time; I realized I... scroll. I get lost very, very fast."]],
+              ["Contrasts between in-person and digital connection","Non-verbal social cues, contextual clues, and accessibility",["It hinders our communication... when you're in a long-distance relationship... there's so much like body cues that you might not be able to see; You're trusting someone only based on their voice... Rather than, like, your mannerisms, the way you act, the way you dress in person."]]]},
+            {t:"Relationships within life satisfaction",codes:[
+              ["Strong relationships","Authenticity, reciprocal, warm",["The first time I felt a genuine hug in my life... came from my grandma... There was just something about it that made me want to cry... it is just so different."]]]},
+            {t:"Conflicts with adapting to AI",codes:[
+              ["Improving","Being useful, freeing up cognitive space, benefiting life",["Creatives are very, very anti AI... instant backlash... But the people who are actually like making the models... they're making this because they genuinely want to make people's lives easier; I see... AI... as a collaborative tool for creativity."]],
+              ["Degrading","Reducing creativity, intelligence, and ingenuity",["I feel like people will get dumber as AI, like, advances.","I feel like people are becoming overly reliant on it... We're just gonna forget how to do things ourselves."]]]}]},
+        {h:"Findings",p:["Technology that Gen Z utilized consisted of AI, social media, and software."],
+          split:[["Led to beneficial outcomes",["Mindful use","Purposeful use","Social use"]],["Led to negative outcomes in subjective well-being",["Lack of awareness","Social comparison","Degraded critical thinking skills"]]]},
+        {h:"The outcome",p:["This study extended existing literature on tech use, grounded in modern constructs such as AI. Some individuals felt lonely, some felt stuck, and this study sought to explain why users felt this way and how to counteract these stressors.",
+          "For future directions, this comprehensive user research forms the basis for holistic and human-centric design. This structured process of finding participants, interviewing them to discover pain points, and identifying insights is key to the foundation of product design and UX design.",
+          "With more time and financial support, I would pursue this project further by designing interventions to bolster well-being among Gen Z."]},
+        {h:"Design implications",p:["Research informs design. These insights inform various design directions related to addiction, ethicality, and mental wellness. Some design directions are:"],
+          chips:["An ethical scrolling mechanism","A social connectivity app","An easy-access mental wellness wearable","A third-space encouraging program"],
+          p2:["Amidst the massive structural change of AI, students may also feel a sense of fear related to future directions in their careers and relationships. Companies are now identifying ways to utilize AI in their employees and workflow. This research connects to companies or students, informing many different design directions for different end goals.",
+          "The research here acts as the foundation for any direction of design, led by the stakeholders in the business or problem."]},
+        {h:"Full paper",paper:{cover:{src:"media/paper-cover.webp",alt:"Title page: Technology in Social Contexts: Subjective Well-being in Young Adults. Peter Huang. Seminar in Applied Psychology II, Dec 16, 2025",w:1194,h:822},
+          title:"Technology in Social Contexts: Subjective Well-being in Young Adults",meta:"Seminar in Applied Psychology II: Theory, Research, and Practice · NYU · Dec 2025 · 27 pages",href:"media/paper-technology-social-contexts.pdf",
+          note:"If you're curious about what this process looks like, I highly recommend reading the full paper."}}
+      ]},
     {id:"students-ai",kind:"research",t:"Student Outcomes amidst AI",short:"Students & AI",tag:"Mixed methods",line:L.s,meta:[["Method","Mixed methods"],["Sample","Lorem ipsum"],["Year","Lorem"],["Format","Paper"]]},
     {id:"pilipino",kind:"research",t:"Ethnographic Study on Pilipino Culture",short:"Pilipino Culture",tag:"Qualitative",line:L.s,meta:[["Method","Qualitative, ethnography"],["Site","Lorem ipsum"],["Year","Lorem"],["Format","Paper"]]}
   ],
@@ -30,11 +68,76 @@ const DATA={
         ["Outcome","Recommendations and stakeholder reports that fed the organization's impact assessments."]]}
   ],
   design:[
-    {id:"chorvivo",kind:"design",t:"Chorvivo",short:"Chorvivo",tag:"Startup",line:L.s,meta:[["Role","Head of design"],["Type","Startup"],["Year","2026"],["Status","Lorem ipsum"]]},
-    {id:"wayfarer",kind:"design",t:"Wayfarer",short:"Wayfarer",tag:"Design-a-thon win",line:L.s,meta:[["Role","Lorem ipsum"],["Event","CUXD Design-a-thon"],["Year","2026"],["Outcome","1st place"]]},
-    {id:"glenergy",kind:"design",t:"Glenergy",short:"Glenergy",tag:"School · Collaboration",line:L.s,meta:[["Role","Lorem ipsum"],["Type","School project"],["Team","Collaboration"],["Year","Lorem"]]}
+    /* Chorvivo: in progress and under wraps. Not a project page; it appears only under Work on Profile. */
+    {id:"wayfarer",kind:"design",t:"Wayfarer",short:"Wayfarer",tag:"Design-a-thon winner",
+      kicker:"Cornell University CU Design-a-thon 2026 · Winner",
+      line:"An app designed to accompany you on your walk. Asynchronous social connection and easy access to journaling.",
+      lede:"Wayfarer's mission is to bring people together, to build a more connected culture through reflection, observation, and presence.",
+      stats:[["Winner","CU Design-a-thon 2026"],["2 days","Design sprint"],["71","Participants"]],
+      meta:[["Focus","UX design + research"],["Date","Apr 19, 2026"],["Role","UX designer, UX researcher, customer discovery"],["Tools","Figma, Figma Make"]],
+      hero:{src:"media/wayfarer/hero.webp",alt:"Three Wayfarer screens: the welcome screen, the home screen with a Begin button, and the Walk Constellation map of past walks",w:1414,h:920},
+      body:[
+        {h:"The prompt",quote:"Design a digital application or product that reimagines one aspect of daily life."},
+        {h:"The problem",p:["Gen Z is subject to manipulative tools like social media and doomscrolling to stay connected and entertained."]},
+        {h:"My purpose",p:["To design an alternative to doomscrolling and addiction by encouraging emotional and social relationships within the user's physical environment."]},
+        {h:"My process",p:["Navigation apps are purely functional and prioritize efficiency, contributing to digital burnout and spatial amnesia. I hypothesized that designing a “spatial journal” could encourage users to take a slower look at their commute and experience “soft fascination” (Attention Restoration Theory)."],
+          figs:[{src:"media/wayfarer/sketches.webp",alt:"Nine hand-drawn screen sketches: message, friend profile, home, login, onboarding, profile, walk summary, walk tracking and walk visualization pages",cap:"Initial screen sketches",w:3200,h:506},
+                {src:"media/wayfarer/user-flow.webp",alt:"User flow diagram from the welcome page through onboarding, login, home, walk tracking, walk summary, profile, friends and sharing",cap:"Wireframe ideation",w:2800,h:1167}]},
+        {h:"Usability testing",p:["I conducted moderated usability testing on my initial prototype, which relied heavily on text-based journaling and live social feeds.",
+          "The users rejected the initial design. They noted that stopping to type a journal entry pulled them out of their physical environment, defeating the app's purpose. They also found social notifications highly disruptive to the sanctuary of their walk."],
+          pivot:"I immediately pivoted the UX strategy away from “active journaling” toward “frictionless capture” and “somatic grounding,” prioritizing screen-off interactions."},
+        {h:"The solution",items:[
+          ["Frictionless capture","A home-screen widget and Apple Watch integration that allows users to record ambient audio or voice memos in two taps, bypassing the keyboard entirely to keep their eyes on the city."],
+          ["Opt-in, asynchronous social","Social features are strictly opt-in and asynchronous. Friends' traces are left on the map to be discovered organically, transforming the city into a shared canvas without the pressure of a live feed."],
+          ["Location-based pings","A system of gentle, location-based pings that notify users when they walk past a coordinate where they previously left an artifact, fostering reflection on how their perspectives have changed over time."]],
+          figs:[{src:"media/wayfarer/final-screens.webp",alt:"Ten final Wayfarer screens: onboarding, mission, shared presence, home, leave an impression, walk tracking, a saved memory, a friend's trace and the walk constellation",cap:"Final screens",w:1800,h:1400},
+                {src:"media/wayfarer/final-system.webp",alt:"Wayfarer on the lock screen, Apple Watch, notifications, quick actions and Control Center",cap:"Lock screen, Apple Watch, notifications and Control Center",w:1800,h:969}]},
+        {h:"Future directions",items:[
+          ["AI transcription","Integrating an AI transcription service for premium users. This would take the frictionless audio recorded during the walk and automatically transcribe it into a searchable, text-based journal for deep reflection once the user is back home."],
+          ["Standalone watchOS app","Expanding the Apple Watch complication into a standalone, fully functional watchOS app, allowing users to leave their iPhones at home completely while still capturing spatial memories."],
+          ["Institutional partnerships","Exploring institutional partnerships (such as university wellness programs or corporate HR). Wayfarer could be licensed as a preventative mental health tool, encouraging physical movement and cognitive decompression for students and employees facing digital burnout."]]},
+        {h:"Project gallery",links:[["Event details","https://devpost.com/software/wayfarer-7cb68d"],["Pitch deck","https://www.figma.com/deck/1W9G5n3NwgrHuAjdkzplwi/Wayfarer-Pitch?node-id=1-427&viewport=-108%2C-35%2C0.52&t=4lySBLuYG08w1pSP-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1"],["Demo video","https://www.youtube.com/watch?v=c-prWIRe-gc"]],
+          gallery:[{src:"media/wayfarer/event-banner.webp",alt:"CUXD Design-a-thon banner, April 17 to 19, 2026",w:1600,h:812},
+                   {src:"media/wayfarer/event-prompt.webp",alt:"The challenge: design a digital application or product that reimagines one aspect of daily life",w:1600,h:747},
+                   {src:"media/wayfarer/event-theme.webp",alt:"The theme statement, Reimagining daily life",w:1600,h:808},
+                   {src:"media/wayfarer/event-rubric.webp",alt:"Judging rubric: problem-solving and impact, innovation, visual design, user research and execution, 10 points each",w:1380,h:1382}]}
+      ]},
+    {id:"glenergy",kind:"design",t:"Glenergy",short:"Glenergy",tag:"Product design · Dark patterns study",
+      kicker:"Product design · Team of 3 · Fall 2025",
+      line:"A design of an Employee Onboarding Portal that incentivizes users to choose cost-effective options for the distributor/business. We tested to identify the effectiveness of “Dark Patterns” and discern perceptions of AI integration in business applications.",
+      stats:[["3/5","users declined the AI chatbot feature"],["4/5","were skeptical of donating to charity through a corporation"],["5/5","felt confused by the client-recommended employer-match design"]],
+      meta:[["Focus","Product design"],["Date","Nov 20, 2025"],["Role","UX designer, researcher"],["Timeline","4 weeks, Fall 2025"],["Team","Peter Huang, Devynne Best, Ananya Singh"],["Tools","Figma, Zoom"]],
+      hero:{src:"media/glenergy/logo.webp",alt:"Glenergy logo: a glowing light bulb beside the wordmark on a navy background",w:1795,h:1117},
+      body:[
+        {h:"The problem",p:["A mock client requested an employee onboarding portal designed to aggressively steer users toward cost-effective benefit options using “Dark Patterns” and deceptive visual hierarchy."],
+          note:"Dark patterns are deceptive user interface (UI) designs used on websites and apps to manipulate users into taking actions they did not intend, such as purchasing insurance, subscribing to services, or revealing personal data."},
+        {h:"The constraints",p:["Our client noted limitations for this project."],steps:[
+          "This project sprint needed to account for financial motivations by the business.",
+          "The technical features needed to be more profit-oriented and business-centric, tasking us with changing minor details related to the user experience.",
+          "This project needs to include an AI-integrated chatbot.",
+          "By the end of the two-week sprint, we need to have conducted user interviews and present findings alongside a pitch for the client."]},
+        {h:"The process",p:["As designers, my team stands between the business and the user. In this scenario, we have the responsibility to balance both parties' needs effectively. I initiated conversations in our team about the ethical considerations that result from our design decisions, establishing a consensus about how we approach this project.",
+          "We developed three progressively assertive interface iterations. By conducting user testing on the early stages, we measured how specific behavioral nudges, such as altered visual hierarchy and friction in the opt-out processes, impacted both user decision-making and psychological sentiment.",
+          "We began by iterating on user flow and low-fidelity mockups."],
+          figs:[{src:"media/glenergy/user-flow.webp",alt:"User flow: home page to log in or sign up, then the dashboard, finish actions, and choose retirement and health care plans",cap:"User flow",w:1412,h:515}],
+          pair:[{src:"media/glenergy/lofi-dashboard.webp",alt:"Low-fidelity dashboard wireframe with a side panel, header and a 0% slider",cap:"Low-fidelity dashboard page",w:1728,h:1802},
+                {src:"media/glenergy/lofi-plan-intro.webp",alt:"Low-fidelity plan intro wireframe with the Glenergy Give Back banner and a $1 to $2 diagram",cap:"Low-fidelity plan intro page",w:1728,h:2457}],
+          figs2:[{src:"media/glenergy/lofi-stage1.webp",alt:"Three low-fidelity Stage 1 screens: retirement plan, Glenergy Giveback info and health care plan pages",cap:"Low-fidelity Stage 1 screens",w:1416,h:708},
+                 {src:"media/glenergy/lofi-summary.webp",alt:"Low-fidelity summary board: colour palette, About Us page, log-in, sign-up and plan screens",cap:"Low-fidelity summary",w:1800,h:944},
+                 {src:"media/glenergy/chatbot.webp",alt:"Five chatbot messages that shift from guilt-tripping at 5% to praise at 0 to 1%, showing escalating pressure to give up employer match",cap:"Manipulative AI chatbot iterations",w:1376,h:700}]},
+        {h:"The outcome",p:["Through user testing and a client meeting, our team identified user pushback on the manipulative design: users felt reduced trust in using the portal, software, and business. We then translated the results into the next steps for more human-centered design."],
+          pull:["I feel like AI is everywhere, and incorporating it here would be great, but I don't know how much I would trust or rely on it for my financials.","Tell me more where my money is going? Explain more about the charities and why I should donate to certain charity."]},
+        {h:"User interview takeaways",p:["The data revealed a critical business trade-off: while the aggressive designs successfully skewed user choices toward cost-saving options, they triggered a severe drop in employer trust. Users recognized the manipulation, demonstrating that short-term financial gains via dark patterns create long-term risks to employee retention and brand perception."],
+          figs:[{src:"media/glenergy/ba-home.webp",alt:"Home page before and after feedback: before has competing calls to action and a chatbot prompt; after shows the chosen plans and no pending actions",cap:"Before / after: home page",w:1418,h:800},
+                {src:"media/glenergy/ba-retirement.webp",alt:"Retirement plan page before and after feedback: before is a bare dropdown; after shows three clearly labelled investment options",cap:"Before / after: retirement plan page",w:1403,h:736}],
+          pair:[{src:"media/glenergy/hifi-choice.webp",alt:"High-fidelity Select Your Retirement Plan page: contribution choices, an employer-match slider and investment option",cap:"High-fidelity choice page",w:1728,h:3062},
+                {src:"media/glenergy/hifi-plan.webp",alt:"High-fidelity A Retirement Plan That Gives Back page with the $1 to $2 donation explanation",cap:"High-fidelity plan page",w:1728,h:2238}]},
+        {h:"My role",p:["UX researcher & designer. Team project; I expanded it further by designing the high-fidelity mockups as a solo project."]},
+        {h:"Pitch and story",links:[["Client pitch deck","https://www.figma.com/deck/0mEYUGC2k4z2iIR7zjSgs3"]],
+          figs:[{src:"media/glenergy/summary.webp",alt:"One-slide project summary: Ethical Friction, balancing business incentives and user trust in employee onboarding",cap:"Project summary in one slide",w:1440,h:1024}]}
+      ]},
   ],
-  me:[["Jazz piano","Self-taught, Bill Evans"],["Game audio","Music for a friend's game"],["Climbing","Ongoing practice"],["Running","Ongoing practice"],["Photography","Below"],["Contemplation","Meditation, breathwork"]],
+  me:["Jazz Piano","Videogame Music Production","Climbing","Weightlifting","Meditating","Photography"],
   tracks:[
     {t:"Lorem study no. 1",note:"Piano",src:"media/track-01.mp3"},
     {t:"Ipsum, for a game",note:"Game audio",src:"media/track-02.mp3"},
@@ -42,15 +145,34 @@ const DATA={
   ],
   /* photos of Peter: add more files to media/ and list them here */
   mePhotos:[{src:"media/portrait.jpg",alt:"Portrait of Peter"},{src:"media/me-01.jpg",alt:"Peter holding his cat"},{src:"media/me-02.jpg",alt:"Peter on a hillside"}],
-  photos:[1,2,3,4,5,6].map(i=>({src:`media/photo-0${i}.jpg`,alt:`Photograph ${i}`}))
+  photos:[
+    {src:"media/photo-07.jpg",alt:"Stone pagoda among weathered statues at the edge of a forest"},
+    {src:"media/photo-08.jpg",alt:"Painted wooden pavilion over a garden pond, surrounded by trees"},
+    {src:"media/photo-09.jpg",alt:"Brandenburg Gate framed by trees, with a pedicab parked in front"}]
 };
+/* Anything still marked Lorem is not shown: meta rows with a Lorem value are dropped,
+   and a project with no written sections shows one honest "write-up in progress" line. */
+const isLorem=v=>/lorem/i.test(String(v));
+[...DATA.research,...DATA.design].forEach(p=>{p.meta=p.meta.filter(([,v])=>!isLorem(v));if(isLorem(p.line))p.line=""});
+/* Music: the three tracks are 24-second placeholders. Set SHOW_MUSIC to true once real tracks or links are in. */
+const SHOW_MUSIC=false;
+if(!SHOW_MUSIC)DATA.tracks=[];
+/* Work shown at the top of Profile, newest first. Chorvivo is current; Designity is the internship.
+   Only facts Peter has given: the Designity bullets come from his résumé. Add impact numbers here when he has them. */
+DATA.work=[
+  {t:"Chorvivo",now:true,meta:[["Role","Head of design"],["Where","Startup, rehearsal-capture app for choreographers"],["When","Sep 2026 – present"]],
+    sections:[["What I do","Lead the UI/UX and customer discovery interviews. I turn what choreographers tell us into user flows, a design system, and brand fundamentals, working with the founder and an engineer."]]},
+  {t:"Designity",meta:[["Role","UI/UX intern"],["Where","“Creativity as a service” agency · Remote"],["When","Jun 15 – Sep 15, 2026 · 3 months"]],
+    sections:[["What I did","User research and usability testing with qualitative and quantitative methods. Turned research insights into design recommendations, balancing user needs with business and stakeholder constraints."],
+      ["How I worked","Ran structured feedback loops with cross-functional stakeholders to keep usability standards and design consistent, and kept research documentation organised across touchpoints."]]}
+];
 DATA.researchAll=[...DATA.research]; /* field work (Nordoff-Robbins, DOROT) lives on Profile, not here */
 DATA.all=[...DATA.researchAll,...DATA.design];
 
 /* From the human factors résumé (Resume_Peter_HuangHF.pdf). */
 const RESUME={
   experience:[
-    {role:"UX Intern",org:"Designity",when:"Aug – Sep 2026",pts:["User research and usability testing with qualitative and quantitative methods","Turned findings into design recommendations within business constraints","Ran structured feedback loops with cross-functional stakeholders","Kept research documentation consistent across touchpoints"]},
+    {role:"UI/UX Intern",org:"Designity (remote)",when:"Jun – Sep 2026",pts:["User research and usability testing with qualitative and quantitative methods","Turned findings into design recommendations within business constraints","Ran structured feedback loops with cross-functional stakeholders","Kept research documentation consistent across touchpoints"]},
     {role:"Research & Operations Assistant",org:"DOROT, New York",when:"Aug – Dec 2025",pts:["Behavioral data analysis (SPSS) across 400+ participants to find usability and accessibility barriers for older adults","Recommendations and stakeholder reports","Reliable data collection across diverse populations"]},
     {role:"Clinical Observational Researcher",org:"Nordoff-Robbins Center for Music Therapy, New York",when:"Jan – May 2025",pts:["Structured qualitative observation in a clinical mental-health setting with licensed therapists","Coded a behavioral database of ~130 sessions","Longitudinal case study from the coded data"]},
     {role:"Operations Intern",org:"NOVA Kitchen and Bar, Orange",when:"Jul – Aug 2024",pts:["Resolved operational pain points for 100+ daily guests","Built workflows with a 30+ person team under time pressure"]}
@@ -62,19 +184,54 @@ const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
 /* ---------- content ---------- */
+function figHTML(f,i){return `<figure class="cf"><button class="cf-z" type="button" data-z="${i}" aria-label="Enlarge: ${esc(f.cap||f.alt)}"><img src="${f.src}" alt="${esc(f.alt)}" loading="lazy"${f.w?` width="${f.w}" height="${f.h}"`:""}></button>${f.cap?`<figcaption>${esc(f.cap)}</figcaption>`:""}</figure>`}
 function caseHTML(p,opts={}){
-  const secs=p.sections||(p.kind==="design"?[["Problem",L.a],["Process",L.b],["Outcome",L.c]]:[["Question",L.a],["Method",L.b],["Findings",L.c]]);
+  const secs=p.sections||[];
   const H=opts.h||"h2";
-  return `${opts.noTitle?"":`<${H} class="c-t${p.t.length>24?" long":""}">${esc(p.t)}</${H}>`}
+  const title=opts.noTitle?"":`${p.kicker?`<p class="c-kick">${esc(p.kicker)}</p>`:""}<${H} class="c-t${p.t.length>24?" long":""}">${esc(p.t)}</${H}>`;
+  const imgs=[];const reg=f=>{imgs.push(f);return imgs.length-1};
+  if(p.body){
+    const hero=p.hero?figHTML(p.hero,reg(p.hero)).replace('class="cf"','class="cf cf-hero"'):"";
+    const blocks=p.body.map(b=>{
+      let h=`<section class="c-sec cb"><h3>${esc(b.h)}</h3><div class="cb-b">`;
+      if(b.quote)h+=`<blockquote class="c-quote">${esc(b.quote)}</blockquote>`;
+      (b.p||[]).forEach(x=>h+=`<p>${esc(x)}</p>`);
+      if(b.pivot)h+=`<p class="c-pivot">${esc(b.pivot)}</p>`;
+      if(b.items)h+=`<ol class="c-items">${b.items.map(([t,d])=>`<li><b>${esc(t)}</b><p>${esc(d)}</p></li>`).join("")}</ol>`;
+      (b.pull||[]).forEach(q=>h+=`<blockquote class="c-pull">“${esc(q)}”</blockquote>`);
+      if(b.note)h+=`<p class="c-note">${esc(b.note)}</p>`;
+      if(b.steps)h+=`<ol class="c-steps">${b.steps.map(x=>`<li>${esc(x)}</li>`).join("")}</ol>`;
+      if(b.split)h+=`<div class="c-split">${b.split.map(([t,xs],k)=>`<div class="${k?"neg":"pos"}"><span class="label">${esc(t)}</span><ul>${xs.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`).join("")}</div>`;
+      if(b.chips)h+=`<ul class="c-chips">${b.chips.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`;
+      (b.p2||[]).forEach(x=>h+=`<p>${esc(x)}</p>`);
+      if(b.table){const T=b.table;h+=`<div class="c-tbl-w"><table class="c-tbl"><caption>${esc(T.cap)}</caption><thead><tr>${T.cols.map((c,k)=>`<th scope="col"${T.num.includes(k)?' class="n"':""}>${esc(c)}</th>`).join("")}</tr></thead><tbody>${T.rows.map(r=>`<tr>${r.map((c,k)=>`<td${T.num.includes(k)?' class="n"':""}>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`}
+      if(b.paper){const P=b.paper;h+=`<div class="c-paper-card"><a href="${P.href}" target="_blank" rel="noopener" class="c-paper-cov"><img src="${P.cover.src}" alt="${esc(P.cover.alt)}" width="${P.cover.w}" height="${P.cover.h}" loading="lazy"></a><div><p>${esc(P.note)}</p><b>${esc(P.title)}</b><span class="c-paper-meta">${esc(P.meta)}</span><p class="c-links"><a class="btn" href="${P.href}" target="_blank" rel="noopener">Read the paper ↗</a><a class="btn" href="${P.href}" download>Download PDF</a></p></div></div>`}
+      if(b.links)h+=`<p class="c-links">${b.links.map(([t,u])=>`<a class="btn" href="${esc(u)}" target="_blank" rel="noopener">${esc(t)} ↗</a>`).join("")}</p>`;
+      h+=`</div></section>`;
+      if(b.themes)h+=`<div class="c-themes">${b.themes.map((t,k)=>`<section class="c-theme"><h4><span>Theme ${k+1}</span>${esc(t.t)}</h4><dl>${t.codes.map(([c,d,qs])=>`<div class="c-code"><dt>${esc(c)}</dt><dd class="def">${esc(d)}</dd>${qs.map(q=>`<dd><blockquote>“${esc(q)}”</blockquote></dd>`).join("")}</div>`).join("")}</dl></section>`).join("")}</div>`;
+      if(b.figs)h+=`<div class="c-figs">${b.figs.map(f=>figHTML(f,reg(f))).join("")}</div>`;
+      if(b.pair)h+=`<div class="c-figs c-pair">${b.pair.map(f=>figHTML(f,reg(f))).join("")}</div>`;
+      if(b.figs2)h+=`<div class="c-figs">${b.figs2.map(f=>figHTML(f,reg(f))).join("")}</div>`;
+      if(b.gallery)h+=`<ul class="c-gal">${b.gallery.map(f=>`<li>${figHTML(f,reg(f))}</li>`).join("")}</ul>`;
+      return h}).join("");
+    p._imgs=imgs;
+    return `${title}
+  ${p.line?`<p class="c-line">${esc(p.line)}</p>`:""}${p.lede?`<p class="c-lede">${esc(p.lede)}</p>`:""}
+  ${p.stats?`<dl class="c-stats">${p.stats.map(([a,b])=>`<div><dt>${esc(a)}</dt><dd>${esc(b)}</dd></div>`).join("")}</dl>`:""}
+  ${hero}
   <dl class="c-meta">${p.meta.map(([a,b])=>`<div><dt>${a}</dt><dd>${esc(b)}</dd></div>`).join("")}</dl>
-  <div class="fig">[ ${p.kind==="design"?"prototype capture":p.field?"field photo":"figure"} ]</div>
-  ${secs.map(([h,b])=>`<section class="c-sec"><h3>${h}</h3><p>${b}</p></section>`).join("")}
-  ${p.kind==="research"&&!p.field?`<p class="c-paper"><span class="btn is-off" aria-disabled="true">Paper PDF · soon</span></p>`:""}`;
+  ${blocks}`;
+  }
+  return `${title}
+  <dl class="c-meta">${p.meta.map(([a,b])=>`<div><dt>${a}</dt><dd>${esc(b)}</dd></div>`).join("")}</dl>
+  ${p.line?`<p class="c-line">${esc(p.line)}</p>`:""}
+  ${secs.length?"":`<p class="c-wip"><span class="label">Write-up in progress</span>The full case study is being written. Ask me about it: <a href="mailto:${CONTACT.email}" data-cta="email">${CONTACT.email}</a></p>`}
+  ${secs.map(([h,b])=>`<section class="c-sec"><h3>${h}</h3><p>${b}</p></section>`).join("")}`;
 }
+function wireCase(root,p){if(!p||!p._imgs)return;root.querySelectorAll(".cf-z").forEach(b=>b.onclick=()=>Lightbox.open(+b.dataset.z,b,p._imgs))}
 function resumeHTML(){
   const R=RESUME;
-  return `<section class="c-sec" id="resume"><h3>Résumé</h3><div class="cv">
-    <p class="cv-top"><span>Human factors focus</span><a class="btn" href="${CONTACT.resume}" target="_blank" rel="noopener">Open PDF</a></p>
+  return `<section class="c-sec" id="resume-body"><h3>Human factors focus</h3><div class="cv">
     <ol class="cv-list">${R.experience.map(e=>`<li><div class="cv-h"><b>${esc(e.role)}</b><span>${esc(e.when)}</span></div><p class="cv-org">${esc(e.org)}</p><ul>${e.pts.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></li>`).join("")}</ol>
     <div class="cv-ed"><div class="cv-h"><b>${R.education.degree}</b><span>${R.education.when}</span></div><p class="cv-org">${R.education.school}</p><p>${R.education.minors}. ${R.education.extra}.</p><p class="cv-muted">${R.education.courses}</p></div>
     <dl class="cv-skills">${R.skills.map(([a,b])=>`<div><dt>${a}</dt><dd>${b}</dd></div>`).join("")}</dl></div></section>`;
@@ -89,7 +246,7 @@ const PROFILE={
   memory:{q:"To feel the memory forming while living the moment.",p:[
     "During my time at NYU in New York City, I met many unique individuals, each with their own story and journey.",
     "I explored topics in philosophy and art, music and media, and research and science. I'm now an avid climber, jazz enthusiast, and cat owner.",
-    "I'm fascinated by how people think, which drives me to pursue a career in UX design. In the future, I hope to travel, read, and create a podcast."]},
+    "I'm fascinated by how people think, which drives me to pursue a career in UX research and human factors. In the future, I hope to travel, read, and create a podcast."]},
   why:["I find joy in the dynamics of human connection. Through my biology or my upbringing, I've noticed that being seen truthfully by others is a guiding value I identify with. Technology has influenced these human connections, for better or for worse. It is a goal of mine to improve the connections people have with one another through digital means. As technology leaps further and further, our humanity is questioned again and again: What defines a human? What are the ideals we strive for? What makes us feel truly alive? My professional aspiration is to enhance the human experience with technology through observation, discussion, and analysis.",
     "I graduated from NYU with a Bachelor's in Applied Psychology, an experience that helped me build analytical, statistical, and empathetic skills. In addition, I focused my efforts on a minor in Integrated Design & Media, becoming familiar with common design tools and processes such as ideation, interviews, and agile product design.",
     "These experiences, coupled with my work helping disadvantaged communities, such as children with disorders and adults with functional impairments, are a testament to my goal of improving how humans interact with the world and with one another.",
@@ -98,29 +255,37 @@ const PROFILE={
   substack:{url:"https://petersworld.substack.com/",label:"petersworld.substack.com",note:"Where I share all things philosophy, art, and meaning."}
 };
 function fieldHTML(f){
-  return `<article class="xp"><div class="cv-h"><b>${esc(f.t)}</b><span>${esc(f.meta.find(m=>m[0]==="When")[1])}</span></div>
+  const name=f.href?`<a href="${f.href}">${esc(f.t)}</a>`:esc(f.t);
+  return `<article class="xp${f.now?" now":""}"><div class="cv-h"><b>${f.now?`<span class="now-tag">Now</span>`:""}${name}</b><span>${esc(f.meta.find(m=>m[0]==="When")[1])}</span></div>
     <p class="cv-org">${esc(f.meta[0][1])} · ${esc(f.meta.find(m=>m[0]==="Where")[1])}</p>
     <dl class="xp-d">${f.sections.map(([h,b])=>`<div><dt>${esc(h)}</dt><dd>${esc(b)}</dd></div>`).join("")}</dl></article>`;
 }
-/* Profile reads researcher-first (about, skills, experience, why), then the personal side (photos, outside of work, music, photography). */
+/* What guides me (was "What is my why"): the same words, split into short parts so it reads in steps.
+   The first paragraph is split at its sentence breaks; nothing is reworded. */
+function whyParts(){const P=PROFILE,W=P.why;
+  const first=W[0].split(/(?<=\.) (?=Technology has|As technology)/);
+  return [first.map(x=>`<p>${esc(x)}</p>`).join(""),`<p>${esc(W[1])}</p>`,
+    `<p class="pf-q">“${esc(P.memory.q)}”</p>`+P.memory.p.map(x=>`<p>${esc(x)}</p>`).join(""),
+    W.slice(2,4).map(x=>`<p>${esc(x)}</p>`).join(""),`<p>${esc(W[4])}</p>`]}
+/* Profile, first half = work (about, current work and internship, research experience, skills). Second half, after "Beyond work" = the person (why, photos, outside of work, music, photography). */
 function profileHTML(opts={}){
   const H=opts.h||"h2",P=PROFILE,W=P.why;
   return `<${H} class="c-t">Profile</${H}>
   <div class="pf-top"><img class="pf-portrait" src="media/portrait.jpg" alt="Portrait of Peter Huang" width="512" height="512"><div class="pf-about">${P.about.map(x=>`<p>${esc(x)}</p>`).join("")}</div></div>
+  <section class="c-sec" id="experience"><h3>Work</h3><div class="xps">${DATA.work.map(fieldHTML).join("")}</div></section>
+  <section class="c-sec"><h3>Research experience</h3><div class="xps">${[...DATA.field].reverse().map(fieldHTML).join("")}</div></section>
   <section class="c-sec"><h3>Skills</h3><dl class="pf-skills">${P.skills.map(([a,b])=>`<div><dt>${a}</dt><dd>${esc(b)}</dd></div>`).join("")}</dl></section>
-  <section class="c-sec" id="experience"><h3>Research experience</h3><div class="xps">${DATA.field.map(fieldHTML).join("")}</div></section>
-  <section class="c-sec"><h3>What is my why?</h3><div class="pf-long">
-    <p>${esc(W[0])}</p><p>${esc(W[1])}</p>
-    <p class="pf-q">“${esc(P.memory.q)}”</p>${P.memory.p.map(x=>`<p>${esc(x)}</p>`).join("")}
-    ${W.slice(2).map(x=>`<p>${esc(x)}</p>`).join("")}
+  <h2 class="pf-break">Beyond work</h2>
+  <section class="c-sec"><h3>What guides me?</h3><div class="pf-long why">
+    ${whyParts().map(ps=>`<div class="why-part">${ps}</div>`).join("")}
     <p class="pf-sub"><a class="btn" href="${P.substack.url}" target="_blank" rel="noopener">Substack ↗</a> <span class="pf-note">${esc(P.substack.note)}</span></p></div></section>
   <section class="pf-photos" aria-label="Photos of Peter"><ul class="photos me-photos">${DATA.mePhotos.map((p,i)=>`<li><button class="ph" data-set="me" data-i="${i}" aria-label="Open ${esc(p.alt)}"><img src="${p.src}" alt="${esc(p.alt)}" loading="lazy"></button></li>`).join("")}</ul></section>
-  <section class="c-sec"><h3>Outside of work</h3><ul class="me">${DATA.me.map(([a,b])=>`<li><b>${a}</b><span>${b}</span></li>`).join("")}</ul></section>
+  <section class="c-sec"><h3>Outside of work</h3><ul class="me">${DATA.me.map(a=>`<li><b>${esc(a)}</b></li>`).join("")}</ul></section>
   ${opts.resume?resumeHTML():""}
-  <section class="c-sec"><h3>My music</h3><div data-player>
+  ${DATA.tracks.length?`<section class="c-sec"><h3>My music</h3><div data-player>
     <ol class="tracks">${DATA.tracks.map((t,i)=>`<li><button class="trk" data-i="${i}" aria-pressed="false"><span class="glyph" aria-hidden="true"></span><span class="tt">${esc(t.t)}</span><span class="tn">${esc(t.note)}</span><span class="td" data-d>–:––</span></button></li>`).join("")}</ol>
-    <div class="bar"><input type="range" min="0" max="1000" value="0" step="1" aria-label="Seek" data-seek><span data-time>0:00</span></div>
-    <audio preload="none"></audio></div></section>
+    <div class="seekbar"><input type="range" min="0" max="1000" value="0" step="1" aria-label="Seek" data-seek><span data-time>0:00</span></div>
+    <audio preload="none"></audio></div></section>`:""}
   <section class="c-sec"><h3>Photography</h3><ul class="photos">${DATA.photos.map((p,i)=>`<li><button class="ph" data-set="photos" data-i="${i}" aria-label="Open ${esc(p.alt)}"><img src="${p.src}" alt="${esc(p.alt)}" loading="lazy" width="400" height="400"></button></li>`).join("")}</ul></section>`;
 }
 const fmt=s=>!isFinite(s)?"–:––":`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,"0")}`;
@@ -213,5 +378,5 @@ function Fog(canvas,{blob=true,blobAt=null}={}){
   return S;
 }
 
-window.Presence={DATA,L,CONTACT,RESUME,THEMES,THEME_ALIAS,PROFILE,caseHTML,profileHTML,resumeHTML,wireProfile,Lightbox,Fog,reduce,esc};
+window.Presence={wireCase,DATA,L,CONTACT,RESUME,THEMES,THEME_ALIAS,PROFILE,caseHTML,profileHTML,resumeHTML,wireProfile,Lightbox,Fog,reduce,esc};
 })();

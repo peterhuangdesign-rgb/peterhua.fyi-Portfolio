@@ -7,10 +7,68 @@ body{transition:background-color .5s ease-out,color .5s ease-out}
 
 .rail{position:fixed;z-index:5;top:0;left:0;bottom:0;width:var(--rail);display:grid;grid-template-rows:auto auto 1fr auto auto;gap:24px;
   padding:max(28px,env(safe-area-inset-top,0px)) 28px max(24px,env(safe-area-inset-bottom,0px)) var(--gut)}
-.home-link{text-decoration:none;display:block;color:var(--ink)}
-.sig{display:block;width:min(100%,190px);aspect-ratio:414/143;background:var(--ink);-webkit-mask:url(../media/signature.png) left center/contain no-repeat;mask:url(../media/signature.png) left center/contain no-repeat}
-.home-link .role{display:block;margin-top:12px}
-.home-link:hover .sig{opacity:.75}
+/* logo: p over h, the same Darker Grotesque 500 glyphs and geometry as the animated logo on Profile.
+   Bar spans exactly the letters and sits the same distance from each. */
+html[data-theme="land"]{--bar:#7A5636}
+html[data-theme="sea"]{--bar:#9FE0D2}
+.home-link{text-decoration:none;display:flex;align-items:center;gap:14px;color:var(--ink);width:max-content;max-width:100%}
+.mark{display:block;flex:none;width:19.4px;height:64px}
+.mark path{fill:var(--ink)}
+.mark rect{fill:var(--bar)}
+.lock-div{flex:none;width:1px;height:44px;background:var(--ink)}
+.lock-txt{display:flex;flex-direction:column;gap:4px;min-width:0}
+.lock-name{font:600 24px/1 var(--display)}
+.home-link .role{display:block;font-size:11px;line-height:1.3;letter-spacing:.12em}
+.home-link:hover .lock-name{text-decoration:underline;text-underline-offset:4px}
+
+/* main logo, animated: p and h stay, the rest rolls Peter Huang ⇄ psychology human factors */
+.phm{margin:4px 0 8px;container-type:inline-size}
+.phm-t{display:flex;flex-direction:column;align-items:flex-start;font:500 9vw/1.16 var(--display);font-size:min(140px,17cqi);white-space:nowrap;color:var(--ink)}
+.phm-l{display:flex;align-items:flex-start;height:1.16em}
+.phm-l>span{display:block;line-height:1.16}
+.phm-w{height:1.16em;overflow:hidden}
+.phm-r{display:flex;flex-direction:column;transition:transform .8s cubic-bezier(.2,.7,.2,1)}
+.phm-r>span{display:block;height:1.16em;line-height:1.16}
+.phm-r .lt{font-weight:300}
+.phm-bar{display:block;margin:.04em 0 .051em .042em;width:.402em;height:.05em;background:var(--bar)}
+.phm-l.h,.phm-l.h .phm-w{height:.78em}
+.phm-l.h>span:first-child,.phm-l.h .phm-r{margin-top:-.38em}
+.phm-l.h .phm-r{transition-delay:.12s}
+.phm .phm-r{transform:translateY(calc(var(--k,0) * -100% / var(--n,2)))}
+.phm-toggle{margin:0 0 28px}
+/* profile: the logo is the first screen */
+.phm-hero{display:flex;flex-direction:column;padding:8px 0 0;margin:0 0 36px}
+.phm-hero .phm{margin:0 0 12px}
+.phm-hero .phm-toggle{margin:0}
+.phm-act{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px}
+
+/* home: who I am on the left, photo on the right; then featured work, one project at a time */
+.hi{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,300px);gap:32px;align-items:center;margin:0 0 72px}
+.hi .greet{font-size:clamp(48px,5vw,84px);margin-bottom:14px}
+.hi .mission{margin:0;font-size:clamp(18px,1.5vw,21px);max-width:34ch}
+.hi-photo{display:block;width:100%;height:auto;aspect-ratio:556/520;object-fit:cover;border:1px solid var(--ink)}
+.hi-act{display:none;flex-wrap:wrap;gap:8px;margin-top:20px}
+.feat-h{margin:0 0 4px}
+.fw{border-top:1px solid var(--rule);padding:18px 0 56px}
+.fw a{display:block;text-decoration:none;color:var(--ink)}
+.fw-h{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:baseline}
+.fw-t{font:500 clamp(32px,3.6vw,52px)/1 var(--display);transition:transform .45s cubic-bezier(.2,.7,.2,1)}
+.fw-k{font:500 12px/1.3 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--graphite);white-space:nowrap}
+.fw-p{margin:10px 0 20px;font-size:17px;line-height:1.45;max-width:54ch}
+.fw-img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;margin:0;border:1px solid var(--ink)}
+.fw-more{display:flex;gap:24px;margin:0 0 24px;font-size:14px}
+.fw-more a{display:inline-flex;align-items:center;min-height:44px}
+@media (max-width:860px){.hi-act{display:flex}}
+@media (max-width:640px){.hi{grid-template-columns:1fr;gap:20px;margin-bottom:48px}.hi-photo{order:-1;max-width:240px}
+  .fw-h{grid-template-columns:1fr;gap:8px}.fw-k{white-space:normal}}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.tw{display:grid}
+.tw>span{grid-area:1/1}
+.tw-g{visibility:hidden}
+.tw-l::after{content:"";display:inline-block;width:2px;height:1em;margin-left:2px;vertical-align:-.15em;background:var(--ink);animation:caret 1s steps(1) infinite}
+.tw-l.done::after{display:none}
+@keyframes caret{50%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.phm-r{transition:none}}
 .nav4{display:grid;gap:6px;margin:0;padding:0;list-style:none}
 .nav4 a{display:flex;justify-content:space-between;align-items:center;min-height:48px;padding:0 14px;border:1px solid var(--ink);text-decoration:none;
   font:500 13px/1 var(--body);letter-spacing:.1em;text-transform:uppercase;background:var(--mist);color:var(--ink);transition:background .2s,color .2s}
@@ -22,8 +80,6 @@ body{transition:background-color .5s ease-out,color .5s ease-out}
 .sub ol{list-style:none;margin:0;padding:0;display:grid;gap:2px}
 .sub a{display:flex;align-items:center;min-height:32px;text-decoration:none;color:var(--graphite);font:500 20px/1.1 var(--display);transition:color .2s,transform .4s cubic-bezier(.2,.7,.2,1)}
 .sub a:hover{color:var(--ink)} .sub a[aria-current="page"],.sub a.on{color:var(--ink);transform:translateX(6px)}
-.rail-foot{display:grid;gap:0;font-size:14px;align-content:end}
-.rail-foot a{color:var(--ink);display:flex;align-items:center;min-height:44px;width:max-content;max-width:100%;overflow-wrap:anywhere}
 .replay{all:unset;cursor:pointer;font-size:13px;color:var(--graphite);text-decoration:underline;text-underline-offset:4px;width:max-content;min-height:44px;display:flex;align-items:center}
 .replay:hover{color:var(--ink)}
 
@@ -33,7 +89,7 @@ body{transition:background-color .5s ease-out,color .5s ease-out}
 .th i{display:block;width:100%;height:100%}
 .th:focus-visible{outline:2px solid var(--lichen);outline-offset:3px}
 .th[data-t="land"] i{background:linear-gradient(135deg,#DADDD7 0 50%,#7A5636 50%)}
-.th[data-t="sea"] i{background:linear-gradient(135deg,#0D3640 0 50%,#7FD3D6 50%)}
+.th[data-t="sea"] i{background:linear-gradient(135deg,#0D3640 0 50%,#9FE0D2 50%)}
 
 main{position:relative;z-index:1;margin-left:var(--rail);width:min(860px,calc(100% - var(--rail)));
   padding:max(28px,env(safe-area-inset-top,0px)) var(--gutR) 24vh 44px;outline:none}
@@ -117,7 +173,7 @@ main{position:relative;z-index:1;margin-left:var(--rail);width:min(860px,calc(10
 @media (max-width:860px){
   :root{--rail:0px}
   .rail{position:sticky;top:0;width:auto;bottom:auto;grid-template-columns:1fr auto;grid-template-rows:auto;align-items:center;gap:0 12px;padding:max(10px,env(safe-area-inset-top,0px)) var(--gutR) 10px var(--gut);background:var(--mist);border-bottom:1px solid var(--rule)}
-  .sig{width:112px} .home-link .role{display:none}
+  .mark{width:12.1px;height:40px} .lock-div{height:28px} .lock-name{font-size:20px} .home-link{gap:10px} .home-link .role{display:none}
   .sub,.rail-foot{display:none}
   .themes{grid-column:2;grid-row:1}
   .rail>nav[aria-label="Main"]{grid-column:1/-1}
@@ -166,3 +222,54 @@ main{position:relative;z-index:1;margin-left:var(--rail);width:min(860px,calc(10
 .story-stage.solo .story-vis{display:none}
 .story-stage.solo .story-copy{justify-self:center;align-self:center;max-width:760px}
 .story-stage.solo .story-line{font-size:clamp(30px,3.6vw,56px)!important}
+
+/* Résumé + Email: one pair everywhere. Same 6px gap as the nav, same button style. */
+.rail-foot{align-self:end}
+.cta{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.cta .btn{justify-content:center;width:100%}
+.hi-act .cta,.contact-act .cta{display:flex}
+.hi-act .cta .btn,.contact-act .cta .btn{width:auto;min-width:120px}
+.contact-act,.cv-act{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 40px}
+.cv-html .c-sec{border-top:1px solid var(--rule)}
+/* featured work: until an image exists, no empty box, just a clear way in */
+.fw{padding-bottom:40px}
+
+
+
+
+/* "Open" affordance: one square arrow box, same size, border and hover fill as every other button.
+   It always sits at the top right of the title row; nothing else moves. */
+.arr{flex:none;width:44px;height:44px;border:1px solid var(--ink);display:grid;place-items:center;background:var(--mist);transition:background .2s,color .2s;color:var(--ink)}
+.arr svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:square}
+a:hover .arr,a:focus-visible .arr{background:var(--ink);color:var(--mist)}
+.fw a,.work>a{display:grid;gap:0;text-decoration:none;color:var(--ink)}
+.fw-k,.work .tag{display:block;margin:0 0 10px}
+.fw-h,.work-h{display:grid;grid-template-columns:minmax(0,1fr) 44px;gap:24px;align-items:start}
+.fw-t{transform:none!important}
+.fw-p,.work .line{margin:12px 0 20px;max-width:54ch}
+.fw-img,.work-img{display:block;width:100%;height:auto;border:1px solid var(--ink);margin:0}
+.fw a:focus-visible,.work>a:focus-visible{outline:2px solid var(--lichen);outline-offset:6px}
+.fw a:focus-visible .arr{outline:none}
+.work{padding:32px 0 40px}
+.work h2{margin:0;font:500 clamp(32px,3.6vw,52px)/1 var(--display)}
+.work.r h2{font:500 clamp(30px,3.2vw,48px)/1 var(--display)}
+.me b{font:500 21px/1.1 var(--display)}
+.back-a{display:inline-flex;align-items:center;min-height:44px;text-decoration:none;font:500 12px/1 var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--graphite)}
+.back-a:hover{color:var(--ink)}
+@media (max-width:640px){.fw-h,.work-h{gap:16px}}
+
+/* What guides me: the same words, split into short parts separated by rules */
+.why{display:grid;gap:0}
+.why-part{padding:20px 0;border-top:1px solid var(--rule)}
+.why-part:first-child{border-top:0;padding-top:0}
+.why-part p{margin:0 0 12px;max-width:60ch;line-height:1.6} .why-part p:last-child{margin-bottom:0}
+/* contact */
+.contact-h{font-size:clamp(44px,5.4vw,84px);max-width:14ch}
+.contact-sub{font-size:clamp(18px,1.6vw,22px);line-height:1.4;max-width:36ch;margin:0 0 28px}
+.phm-hero{overflow:hidden}
+
+/* profile: work first, then "Beyond work" */
+.xp .cv-h b a{color:var(--ink);text-underline-offset:4px}
+.now-tag{display:inline-block;vertical-align:.3em;margin-right:10px;padding:3px 6px;border:1px solid var(--ink);font:500 10px/1 var(--body);letter-spacing:.14em;text-transform:uppercase}
+.pf-break{margin:56px 0 0;padding:20px 0 4px;border-top:1px solid var(--ink);font:300 clamp(36px,4vw,56px)/1 var(--display)}
+.pf-break+.c-sec{border-top:0}

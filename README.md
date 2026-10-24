@@ -15,7 +15,7 @@ Portfolio for UXR and UXD and personal works. The repository root is the live si
 python3 -m http.server 8000
 ```
 
-Then open http://localhost:8000. Add `#home` to the URL to skip the intro. Opening `index.html` directly from disk also works.
+Then open http://localhost:8000. Opening `index.html` directly from disk also works.
 
 ## Publish with GitHub Pages
 
@@ -28,7 +28,7 @@ After that, every push to `main` updates peterhua.fyi within a minute or two.
 
 ## Routes
 
-- `/` shows the intro to first-time visitors, then the home page.
+- `/` opens the home page (no intro).
 - `/home` goes straight to the home page.
 - `/#research`, `/#design`, `/#profile` and `/#contact` open the sections.
 
