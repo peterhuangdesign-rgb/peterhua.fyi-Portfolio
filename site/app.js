@@ -115,7 +115,7 @@ const featBlocks=()=>FEATURED.map((f,i)=>{const p=byId(f.id);if(!p)return"";
 const PAGES={
   home:()=>`<div class="hi"><div class="hi-txt"><h1 class="ph1 greet">Hello! I’m Peter Huang.</h1>
     <p class="mission">I’m a UX researcher and <span class="nyu">NYU</span> psychology graduate with a background in digital media and design. I’m curious about how we design safer systems and more effective experiences.</p>
-    <p class="hi-now"><span class="hi-sq" aria-hidden="true"></span>Currently working at Chorvivo.</p>
+    <dl class="hi-facts"><div><dt>Education</dt><dd>NYU, B.S. Applied Psychology</dd></div><div><dt>Now</dt><dd>Head of design at Chorvivo</dd></div><div><dt>Next</dt><dd>Working toward human factors</dd></div></dl>
     <div class="hi-act">${ctaPair()}</div></div>
     <img class="hi-photo" src="media/me-smile.jpg" alt="Peter Huang, smiling, in a cap" width="556" height="520"></div>
     <h2 class="label feat-h">Featured work</h2>${featBlocks()}

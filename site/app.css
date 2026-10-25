@@ -337,3 +337,14 @@ html[data-theme="sea"]{--nyu-line:#D4B8F2}
 .nyu.drawn::after{transform:none}
 @keyframes nyux{to{transform:scaleX(1)}}
 @media (prefers-reduced-motion:reduce){.nyu::after{transform:none!important;animation:none!important}}
+
+/* Home: one quiet row of three facts under the intro (education, now, next). Titles lead because skimmers read titles first. */
+.hi-facts{margin:24px 0 0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-block:1px solid var(--rule)}
+.hi-facts>div{display:flex;flex-direction:column;gap:4px;padding:12px 16px;min-width:0}
+.hi-facts>div:first-child{padding-left:0}
+.hi-facts>div+div{border-left:1px solid var(--rule)}
+.hi-facts dt{font:500 12px/1.2 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--graphite)}
+.hi-facts dd{margin:0;font-size:15px;line-height:1.35}
+/* three columns only when the text column is wide enough; otherwise one fact per line */
+.hi-txt{container-type:inline-size}
+@container (max-width:600px){.hi-facts{grid-template-columns:1fr}.hi-facts>div,.hi-facts>div:first-child{padding:12px 0}.hi-facts>div+div{border-left:0;border-top:1px solid var(--rule)}}

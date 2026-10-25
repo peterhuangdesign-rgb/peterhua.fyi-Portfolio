@@ -148,14 +148,14 @@ Work context lines were written from Peter's descriptions; he should confirm the
 - Theme switch: all colours change in the same frame, and the background redraws on every switch.
 
 ### Home (opens every visit; no intro)
-1. **Hero:** greeting "Hello! I'm Peter Huang." left, two-line intro that types in about 1 s (`TYPE_MS`, no blinking caret), smiling photo right (`me-smile.jpg`). Intro (25 Oct): "I'm a UX researcher and NYU psychology graduate with a background in digital media and design. I'm curious about how we design safer systems and more effective experiences." After the intro types in, a 2 px violet underline draws quickly under **NYU** (0.35 s) and stays; Land `#57068C`, Sea `#D4B8F2`; reduced motion shows it drawn. Box, fill and badge versions were tried and dropped as too much. Under the intro, one small graphite line with an 8 px ink square: **"Currently working at Chorvivo."** (25 Oct). **Nothing else in the hero.**
+1. **Hero:** greeting "Hello! I'm Peter Huang." left, two-line intro that types in about 1 s (`TYPE_MS`, no blinking caret), smiling photo right (`me-smile.jpg`). Intro (25 Oct): "I'm a UX researcher and NYU psychology graduate with a background in digital media and design. I'm curious about how we design safer systems and more effective experiences." After the intro types in, a 2 px violet underline draws quickly under **NYU** (0.35 s) and stays; Land `#57068C`, Sea `#D4B8F2`; reduced motion shows it drawn. Box, fill and badge versions were tried and dropped as too much. Under the intro, a **fact row** (25 Oct; NYU direction 5): Education — NYU, B.S. Applied Psychology · Now — Head of design at Chorvivo · Next — Working toward human factors. Three columns between rules when the text column is at least 600 px wide, otherwise one fact per line. Replaced the "Currently working at Chorvivo." line. "Head of design" matches Profile and the résumé; recruiters skim titles first, so the real title is used. **Nothing else in the hero.**
 2. **Featured work**, in this order (edit `FEATURED` in `site/app.js`; context comes from the project's `ctx`):
    1. **Technology and well-being: an independent interview study**. Image: `paper-codebook.webp` (top of the Appendix B codebook).
    2. **Wayfarer**. Image: `wayfarer/hero.webp`, uncropped.
    3. **Glenergy**. Image: `glenergy/feature.webp` (crop of the high-fidelity Give Back screen).
    All three pictures share one frame, Wayfarer's own ratio (1414:920), cropped from the top.
 3. Links: "All research" and "All design".
-- **Chorvivo is not a project.** Peter can't talk about it. It appears only as the Home line above, under Work on Profile and on the résumé, with no link and no case page.
+- **Chorvivo is not a project.** Peter can't talk about it. It appears only in the Home fact row, under Work on Profile and on the résumé, with no link and no case page.
 
 ### Research (three papers)
 | Project | Status |
