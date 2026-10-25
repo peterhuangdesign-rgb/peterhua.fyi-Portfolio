@@ -1,6 +1,6 @@
 # peterhua.fyi — portfolio and personal brand handoff
 
-Context for a new chat. Status as of 25 Oct 2026. Round 5 is on branch `round-5`, **not pushed or published yet**: Peter is reviewing it first. Artifact version 24 and GitHub `main` are still round 4.
+Context for a new chat. Status as of 25 Oct 2026 (portfolio artifact version 25, GitHub `main`, round 5). Peter asks to review before changes are pushed; wait for his go-ahead.
 Paste this file in first, then give the next request.
 
 ---
@@ -239,7 +239,6 @@ Ranked by how much a research hiring team would weigh it.
 - [ ] **8. Case length.** Case pages are long; the Key finding now leads, but sections could be trimmed once impact is added.
 
 ### Content and decisions needed from Peter
-- [ ] **Review round 5** (branch `round-5`), then push to `main` and publish the artifact.
 - [ ] **Confirm** the mission timeline sentences (chapters 3–7) and the Chorvivo confidential note wording.
 - [ ] **Confirm** the paper title, "school project" for Glenergy, the Key finding sentences, and the work context lines.
 - [ ] **GPA** on the PDF: which number, or leave off.
