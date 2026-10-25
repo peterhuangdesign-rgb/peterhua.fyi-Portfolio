@@ -169,7 +169,7 @@ const DATA={
     {t:"Dolor sketch",note:"Piano",src:"media/track-03.mp3"}
   ],
   /* photos of Peter: add more files to media/ and list them here */
-  mePhotos:[{src:"media/portrait.jpg",alt:"Portrait of Peter"},{src:"media/me-01.jpg",alt:"Peter holding his cat"},{src:"media/me-02.jpg",alt:"Peter on a hillside"}],
+  mePhotos:[{src:"media/me-03.jpg",alt:"Peter smiling outside a chicken restaurant, giving a thumbs up"},{src:"media/me-01.jpg",alt:"Peter holding his cat"},{src:"media/me-02.jpg",alt:"Peter on a hillside"}],
   photos:[
     {src:"media/photo-07.jpg",alt:"Stone pagoda among weathered statues at the edge of a forest"},
     {src:"media/photo-08.jpg",alt:"Painted wooden pavilion over a garden pond, surrounded by trees"},

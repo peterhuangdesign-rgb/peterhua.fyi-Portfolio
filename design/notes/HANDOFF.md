@@ -180,7 +180,7 @@ Wayfarer and Glenergy (both done, Peter's text and images).
 - **Chorvivo confidential indicator:** a small lock glyph, **Confidential**, then "Work in progress, so it isn't shown in this portfolio. I'm happy to talk about my role." Shown on Profile and the résumé page (`note` on the Chorvivo entry).
 - **"Beyond work"** heading, then:
   - **What guides me?** Peter's exact words in five short parts separated by rules. No numbers. Substack button, then **"Read my mission"** as the last thing in the section.
-  - Photos of Peter (3).
+  - Photos of Peter (3): `me-03.jpg` (outside a chicken restaurant, thumbs up; replaced the duplicate of the top portrait on 25 Oct), `me-01.jpg` (with his cat), `me-02.jpg` (hillside).
   - **Outside of work**: Jazz Piano, Videogame Music Production, Climbing, Weightlifting, Meditating, Photography. Titles only.
   - My music: hidden (`SHOW_MUSIC=false`) until real tracks or links.
   - **Photography**: the three real photos only.
