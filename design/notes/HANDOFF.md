@@ -1,7 +1,9 @@
 # peterhua.fyi — portfolio and personal brand handoff
 
-Context for a new chat. Status as of 25 Oct 2026 (portfolio artifact version 26, GitHub `main`, round 6). Peter asks to review before changes are pushed; wait for his go-ahead.
+Context for a new chat. Status as of 25 Oct 2026 (portfolio artifact version 26, GitHub `main`, round 6).
 Paste this file in first, then give the next request.
+
+> **The core design is final.** Peter signed off on the site as it stands on 25 Oct 2026 (artifact v26 = GitHub `main` at round 6). Treat §2 and §3 as the spec. New work adds content or fixes bugs inside this design; it does not restyle it.
 
 ---
 
@@ -20,6 +22,14 @@ Rules for any new chat:
    - no sideways scrolling, no lorem ipsum, no console errors
    - the locked items in this document are still true (logo pairs, bar only in the logo, home hero contents, featured order, Résumé and Email buttons work)
 6. If a request would break a locked item, say so and ask before doing it.
+7. **Peter reviews before anything goes live.** Work on a branch, show screenshots, and push to `main` / publish the artifact only when he says "push". Commits use `noreply@anthropic.com` (Claude) as author.
+8. **Keep one source of truth.** Professional content lives in `RESUME` in `shared/core.js` and feeds Home's fact row, Profile, the résumé page and the PDF. After any `RESUME` change, rebuild the PDF (§3, Résumé page).
+
+### How Peter works
+- Direct, short answers; flag uncertainty; no flattery.
+- Gives changes in batches; often adds requests mid-task. Handle each and say what changed.
+- Wants design decisions grounded in research (cite sources) and mockups before big changes (use the brand canvas).
+- Checks done before every publish: axe scan (WCAG 2.2 AA + best practice) on all pages in both themes, layout at 360 / 375 / 390 / 768 / 1024 / 1280 / 1440 / 1920 with no sideways scroll, reduced motion, keyboard. Last run 25 Oct: 0 violations, 0 layout issues.
 
 ---
 
@@ -31,7 +41,7 @@ Rules for any new chat:
 | Logo and brand canvas (Design artifact) | https://claude.ai/artifact/F2jJWEpkSJRC1GDA1opfM9 (pages: Logo rounds, Applications incl. **LinkedIn banner**, Round 5, **Palettes · bright + dark**) |
 | Code | github.com/peterhuangdesign-rgb/peterhua.fyi-portfolio, branch `main` (private repo) |
 | Backups | branches `backup/before-fixes`, `backup/before-round-2`, `backup/before-round-3`, `backup/before-round-4`, `backup/before-round-5`, `backup/before-round-6` |
-| Live site today | Moving from **Framer** to GitHub Pages. Domain is on **Namecheap**; DNS change in progress (see §4). |
+| Live site | Moving from **Framer** to GitHub Pages. Domain is on **Namecheap**; Peter was connecting DNS on 24 Oct and the HTTPS certificate was pending. Confirm with him whether it's live (see §4). |
 | Model portfolio Peter admires | https://www.dennisquizhpi.com/ and https://www.dennisquizhpi.com/lawnstack |
 
 ### Portfolio file structure
@@ -39,11 +49,11 @@ Rules for any new chat:
 | File | What it holds |
 |---|---|
 | `index.html` | Page shell: rail with logo lockup, nav, rail foot (`#rail-foot`, filled by JS), theme toggle; font preloads; favicons |
-| `shared/core.js` | Content: `DATA` (research, design, `work`, `field`, photos), `CONTACT`, `RESUME`, `PROFILE`; case renderer `caseHTML`; `ctxHTML` (context line); profile markup; lightbox; fog background |
+| `shared/core.js` | Content: `DATA` (research, design, photos), `RESUME` (education, experience, research, strengths, skills: the one source for every professional fact), `CONTACT`, `PROFILE`; renderers `caseHTML`, `ctxHTML` (context line), `eduHTML`, `xpHTML`, `strengthsHTML`, `profileHTML`, `resumeHTML`; lightbox; fog background |
 | `shared/core.css` | Base system: self-hosted `@font-face`, tokens, buttons, case-study blocks, profile styles |
 | `site/app.js` | Router, pages (home, research, design, profile, contact, resume), `ctaPair`, `ARR` arrow box, animated logo (`PAIRS`), typed intro, `FEATURED`, optional story |
 | `site/app.css` | Site layout, rail, logo, home hero, featured work, context line, arrows, profile, contact, themes |
-| `media/` | `favicon.svg`, `favicon-32.png`, `apple-touch-icon.png`, `fonts/` (Darker Grotesque 300/500/600, Albert Sans 400/500, OFL), photos, `paper-codebook.webp` (Home), `paper-feature.webp` and `paper-cover.webp` (unused on Home), `paper-technology-social-contexts.pdf`, `resume-human-factors.pdf` (rebuilt 24 Oct from `RESUME`), `wayfarer/*.webp`, `glenergy/*.webp` (incl. `feature.webp`), `track-01..03.mp3` (placeholders, hidden) |
+| `media/` | `favicon.svg`, `favicon-32.png`, `apple-touch-icon.png`, `fonts/` (Darker Grotesque 300/500/600, Albert Sans 400/500, OFL), photos, `paper-codebook.webp` (Home), `paper-feature.webp` and `paper-cover.webp` (unused on Home), `paper-technology-social-contexts.pdf`, `resume-human-factors.pdf` (built from `RESUME` by `design/notes/build-resume-pdf.js`), `me-03.jpg` (new Profile photo), `wayfarer/*.webp`, `glenergy/*.webp` (incl. `feature.webp`), `track-01..03.mp3` (placeholders, hidden) |
 
 How to edit the artifact: `read` the artifact URL first, then `read` each file you'll change. Publish only changed files, with `root` set to a local folder that mirrors the structure. Keep GitHub `main` and the artifact in sync.
 
@@ -114,7 +124,7 @@ Open question: earlier notes said the Sea bar is light earth `#C9A57E`, but the 
 
 ### The context line (24 Oct)
 Every project, job and résumé entry has one **context line** on its own line, directly under the title, before any description. Lowercase, graphite, no letter-spacing, parts separated by " / ".
-- **Projects:** `project type / format`. Type is ux research or ux design. Format is research paper, school project, work, or the competition. **No dates, no field.**
+- **Projects:** `project type / format`. Type is ux research or ux design. Format is research paper, team project, work, or the competition. **No dates, no field.**
 - **Work and research experience:** `kind of work / what the work is for`.
 - Data: `ctx:[…]` on each item in `DATA.research`, `DATA.design` and `RESUME.experience`. Rendered by `ctxHTML` in `shared/core.js`.
 - The old uppercase tracked kicker above titles is gone everywhere.
@@ -174,7 +184,7 @@ Wayfarer and Glenergy (both done, Peter's text and images).
 - Animated logo (snug), Pause under it.
 - Portrait and about (Peter's words).
 - **Education** (first section, 25 Oct): New York University, May 2026; B.S. Applied Psychology; Minor: Integrated Design & Media (HCI/UX) (**no Philosophy minor**: Peter didn't complete it, so it must not appear anywhere); Steinhardt School of Culture, Education, and Human Development; Dean's List, Spring 2024; coursework. Rendered by `eduHTML` from `RESUME.education`, same on the résumé page and first on the PDF.
-- **Work**: Chorvivo (**Now**, Founding Designer, Sep 2026 – present, no link), then Designity (UI/UX intern, Jun 15 – Sep 15, 2026 · 3 months).
+- **Work**: Chorvivo (**Now**, Founding Designer, Sep 2026 – present, no link), then Designity (UI/UX Intern, Jun 15 – Sep 15, 2026 · 3 months).
 - **Research experience**, newest first: DOROT, then Nordoff-Robbins.
 - **Strengths** (25 Oct): Cross-functional collaboration, AI fluency, Research design rigour, Product thinking, Agile, 0 to 100, each with one line of context from Peter's work. Data `RESUME.strengths`, rendered by `strengthsHTML`.
 - **Skills** (from `RESUME.skills`).
@@ -223,7 +233,7 @@ Wayfarer and Glenergy (both done, Peter's text and images).
 
 ## 4. Open items / needed from Peter
 
-### Go live (in progress, 24 Oct)
+### Go live (status to confirm with Peter)
 - [ ] Repo public or GitHub Pro; Settings → Pages → deploy from `main`, `/ (root)`. `CNAME` says `peterhua.fyi`.
 - [ ] Namecheap → Domain List → Manage → Nameservers "Namecheap BasicDNS" → Advanced DNS: delete Framer's records and any URL redirect; add four `A` records for `@` (185.199.108.153, .109.153, .110.153, .111.153) and a `CNAME` for `www` → `peterhuangdesign-rgb.github.io`. **Waiting on DNS.**
 - [ ] Framer → Site Settings → Domains → remove peterhua.fyi.
@@ -243,7 +253,7 @@ Ranked by how much a research hiring team would weigh it.
 
 ### Content and decisions needed from Peter
 - [ ] **Confirm** the mission timeline sentences (chapters 3–7) and the Chorvivo confidential note wording.
-- [ ] **Confirm** the paper title, "school project" for Glenergy, the Key finding sentences, and the work context lines.
+- [ ] **Confirm** the paper title, the Key finding sentences, the work context lines, and the "Works with AI tools" wording under AI fluency.
 - [ ] **GPA** on the PDF: which number, or leave off.
 - [ ] **Theme switching**: Peter saw visibility problems; not reproduced in Chromium. If it still happens, note the page and browser (Safari untested).
 - [ ] **Palette decision** (§5). Choose one, then apply it in one pass.
@@ -253,9 +263,8 @@ Ranked by how much a research hiring team would weigh it.
   - Wayfarer: "two-day sprint" vs event banner "April 17–19, three-day". Devpost confirms solo build, 1st place; "solo" isn't in Peter's text.
   - Paper: ages 20–23 in Peter's text vs Table 1's 19–24 (page uses 19–24). Page date Oct 2025; paper dated Dec 16, 2025.
   - Glenergy: 4 weeks vs "two-week sprint"; slide also lists Adobe InDesign.
-  - Designity title: old PDF said "UX Intern, NYC"; site and new PDF say "UI/UX intern, remote".
+  - Designity title: Peter's original PDF said "UX Intern, NYC"; site and new PDF say "UI/UX Intern", remote.
 - [ ] **Music**: SoundCloud or Bandcamp links.
-- [ ] **Repo `CLAUDE.md`** still describes an older version (signature logo, first-visit intro). Rewrite it from this file.
 
 ---
 
@@ -274,6 +283,10 @@ Mockups only; nothing applied to the site. Each board shows the home screen in a
 | F · Peter's pick | 2A3D45 6E0D25 895B1E A3C4BC 94A187 | 10.0:1 | Distinctive; light ground derived; choose one bar colour for both themes. |
 
 Brand principle agreed: two themes that are distinctly bright and dark, one bar colour family in both, one accent.
+
+### Other explorations on the canvas (not applied)
+- **NYU on Home · 5 directions** (D1–D5) and **4 highlight options** (H1–H4). Peter chose D5 (the fact row) without any highlight on NYU.
+- **LinkedIn banner** (Applications page): final, Land and Sea PNGs delivered.
 
 ---
 
@@ -297,7 +310,7 @@ Brand principle agreed: two themes that are distinctly bright and dark, one bar 
 - Blinking caret on the typed intro.
 - Left-border callouts.
 - Underline, box and badge treatments on NYU.
-- "Head of design" as the Chorvivo title. Now "Founding designer".
+- "Head of design" and "Founding designer" (lowercase) as the Chorvivo title. Now "Founding Designer".
 - Résumé + Email pair under Profile's work section.
 - Light (300) weight for the rolling traits in the logo.
 - Scroll-scrubbed story drawing (text lagged the drawing).

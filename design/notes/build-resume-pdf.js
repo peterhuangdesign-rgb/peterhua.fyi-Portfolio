@@ -1,12 +1,14 @@
+/* Builds media/resume-human-factors.pdf from RESUME in shared/core.js, so the download matches Profile and the résumé page.
+   Run from the repo root:  node design/notes/build-resume-pdf.js
+   Needs Node and Playwright with Chromium (npx playwright install chromium). Keep the result to one page. */
+const fs=require('fs'),path=require('path');
+const ROOT=path.join(__dirname,'..','..');
 global.window={};global.document={addEventListener(){},getElementById(){return null}};global.matchMedia=()=>({matches:false});global.addEventListener=()=>{};global.performance={now:()=>0};global.requestAnimationFrame=()=>{};
-require('/home/claude/peterhua.fyi-portfolio/shared/core.js');
-const R=window.Presence?null:null;
-const fs=require('fs');
-const src=fs.readFileSync('/home/claude/peterhua.fyi-portfolio/shared/core.js','utf8');
+require(path.join(ROOT,'shared','core.js'));
 const RES=window.Presence.RESUME;
 const e=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
-const F="/home/claude/peterhua.fyi-portfolio/media/fonts/";
-const mark=fs.readFileSync('/tmp/claude-0/-home-claude/14443b14-da4d-5824-afaf-a52cd0bd127b/scratchpad/mark.svg.txt','utf8').replace('class="mark"','width="15" height="50"').replace("<path ",'<path fill="#15181A" ').replace("<rect ",'<rect fill="#7A5636" ').replace(/<path d=/g,'<path fill="#15181A" d=');
+const F=path.join(ROOT,'media','fonts')+'/';
+const mark=`<svg width="15" height="50" viewBox="42 555 402 1328" aria-hidden="true"><path fill="#15181A" d="M265 972Q226 972 199 958.5Q172 945 154.5 927Q137 909 128.5 893Q120 877 118 872H116V1130H50V555H105L116 657H118Q120 652 128 636Q136 620 152.5 601Q169 582 196.5 568.5Q224 555 265 555Q324 555 364 582Q404 609 424 656.5Q444 704 444 765Q444 825 423.5 872Q403 919 363 945.5Q323 972 265 972ZM252 915Q299 915 327.5 893Q356 871 368.5 836.5Q381 802 381 764Q381 725 367 691Q353 657 323.5 635.5Q294 614 246 614Q207 614 178 632Q149 650 133.5 684Q118 718 118 764Q118 810 134.5 844.5Q151 879 181.5 897Q212 915 252 915Z"/><rect fill="#7A5636" x="42" y="1200" width="402" height="50"/><path fill="#15181A" d="M42 1883V1320H107V1577H109Q111 1572 118.5 1555.5Q126 1539 142 1521Q158 1503 185 1489.5Q212 1476 253 1476Q295 1476 323 1488.5Q351 1501 368 1523Q385 1545 393.5 1572.5Q402 1600 405 1628Q408 1656 408 1682V1883H345V1682Q345 1638 335.5 1604.5Q326 1571 302.5 1552.5Q279 1534 235 1534Q189 1534 161 1555.5Q133 1577 120 1612.5Q107 1648 107 1690V1883Z"/></svg>`;
 const html=`<!doctype html><html><head><meta charset="utf-8"><title>Peter Huang — Résumé</title><style>
 @font-face{font-family:DG;font-weight:500;src:url(file://${F}darker-grotesque-latin-500-normal.woff2)}
 @font-face{font-family:DG;font-weight:600;src:url(file://${F}darker-grotesque-latin-600-normal.woff2)}
@@ -40,4 +42,6 @@ ${RES.research.map(([t,d,w])=>`<div class="it"><div class="hd"><b>${e(t)}</b><sp
 <div><h2>Skills</h2>
 <div class="st">${RES.skills.map(([a,b])=>`<div><b>${e(a)}</b> · <span>${e(b)}</span></div>`).join("")}</div></div></div>
 </body></html>`;
-fs.writeFileSync('resume.html',html);
+const out=path.join(ROOT,'media','resume-human-factors.pdf'),tmp=path.join(__dirname,'.resume.html');fs.writeFileSync(tmp,html);
+(async()=>{const {chromium}=require('playwright');const b=await chromium.launch();const pg=await b.newPage();await pg.goto('file://'+tmp);await pg.waitForTimeout(500);
+  await pg.pdf({path:out,format:'Letter',printBackground:true,preferCSSPageSize:true});await b.close();fs.unlinkSync(tmp);console.log('wrote',out)})();

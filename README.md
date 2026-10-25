@@ -4,8 +4,9 @@ Portfolio for UXR and UXD and personal works. The repository root is the live si
 
 ## Edit content
 
-- **Projects, profile text, résumé, contact:** `shared/core.js` (`DATA`, `PROFILE`, `RESUME`, `CONTACT`)
-- **Intro sentences:** `STORY` in `site/app.js`
+- **Projects, profile text, contact:** `shared/core.js` (`DATA`, `PROFILE`, `CONTACT`)
+- **Education, work, research, strengths, skills:** `RESUME` in `shared/core.js` (feeds Home, Profile, the résumé page and the PDF). Then rebuild the PDF: `node design/notes/build-resume-pdf.js` (see the script header) and copy the result to `media/resume-human-factors.pdf`.
+- **Home intro, fact row, featured work, logo pairs, mission story:** `site/app.js`
 - **Photos and audio:** add files to `media/` and list them in `DATA.mePhotos`, `DATA.photos` or `DATA.tracks`
 - **Styles:** `site/app.css` (site), `shared/core.css` (shared parts)
 
@@ -30,8 +31,8 @@ After that, every push to `main` updates peterhua.fyi within a minute or two.
 
 - `/` opens the home page (no intro).
 - `/home` goes straight to the home page.
-- `/#research`, `/#design`, `/#profile` and `/#contact` open the sections.
+- `/#research`, `/#design`, `/#profile`, `/#contact` and `/#resume` open the sections; `/#story` is the mission story (from Profile).
 
 ## Rules
 
-Design rules, the current structure and the working agreement are in `CLAUDE.md`.
+The full spec is `design/notes/HANDOFF.md`; the short version and the working agreement are in `CLAUDE.md`. The design is final as of 25 Oct 2026.
