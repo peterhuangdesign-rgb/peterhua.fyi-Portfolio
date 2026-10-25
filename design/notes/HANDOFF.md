@@ -148,7 +148,7 @@ Work context lines were written from Peter's descriptions; he should confirm the
 - Theme switch: all colours change in the same frame, and the background redraws on every switch.
 
 ### Home (opens every visit; no intro)
-1. **Hero:** greeting "Hello! I'm Peter Huang." left, two-line intro that types in about 1 s (`TYPE_MS`, no blinking caret), smiling photo right (`me-smile.jpg`). Intro (25 Oct, Peter's words): "I'm a UX researcher trained in psychology and human-computer interaction at NYU. I'm curious about how we design safer systems and more effective experiences." No underline or box on NYU. Under the intro, a **fact row** (25 Oct; NYU direction 5): Education — NYU, B.S. Applied Psychology / Minor: Integrated Design & Media (HCI) · Now — Founding Designer at Chorvivo · Next — Building towards human factors. Three columns between rules when the text column is at least 600 px wide, otherwise one fact per line. Replaced the "Currently working at Chorvivo." line. "Founding Designer" is Peter's title everywhere (Home, Profile, résumé page, PDF); recruiters skim titles first. **Nothing else in the hero.**
+1. **Hero:** greeting "Hello! I'm Peter Huang." left, two-line intro that types in about 1 s (`TYPE_MS`, no blinking caret), smiling photo right (`me-smile.jpg`). Intro (25 Oct, Peter's words): "I'm a UX researcher trained in psychology and human-computer interaction at NYU. I'm curious about how we design safer systems and more effective experiences." No underline or box on NYU. Under the intro, a **fact row** (25 Oct; NYU direction 5): Education — NYU, B.S. Applied Psychology / Minor: Integrated Design & Media (HCI) · Now — Founding Designer at Chorvivo · Next — Human Factors and Graduate Study. Three columns between rules when the text column is at least 600 px wide, otherwise one fact per line. Replaced the "Currently working at Chorvivo." line. "Founding Designer" is Peter's title everywhere (Home, Profile, résumé page, PDF); recruiters skim titles first. **Nothing else in the hero.**
 2. **Featured work**, in this order (edit `FEATURED` in `site/app.js`; context comes from the project's `ctx`):
    1. **Technology and well-being: an independent interview study**. Image: `paper-codebook.webp` (top of the Appendix B codebook).
    2. **Wayfarer**. Image: `wayfarer/hero.webp`, uncropped.
@@ -242,7 +242,6 @@ Ranked by how much a research hiring team would weigh it.
 - [ ] **8. Case length.** Case pages are long; the Key finding now leads, but sections could be trimmed once impact is added.
 
 ### Content and decisions needed from Peter
-- [ ] **Review round 6** (branch `round-6`): Profile button pair removed, story stepping, logo weight, new photo crop, NYU underline, heading order and home-link name fixes (axe scan clean, 8 screen sizes clean).
 - [ ] **Confirm** the mission timeline sentences (chapters 3–7) and the Chorvivo confidential note wording.
 - [ ] **Confirm** the paper title, "school project" for Glenergy, the Key finding sentences, and the work context lines.
 - [ ] **GPA** on the PDF: which number, or leave off.
