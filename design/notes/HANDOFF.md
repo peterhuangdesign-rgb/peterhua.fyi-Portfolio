@@ -1,6 +1,6 @@
 # peterhua.fyi — portfolio and personal brand handoff
 
-Context for a new chat. Status as of 25 Oct 2026 (portfolio artifact version 25, GitHub `main`, round 5). Round 6 is on branch `round-6`, not pushed yet. Peter asks to review before changes are pushed; wait for his go-ahead.
+Context for a new chat. Status as of 25 Oct 2026 (portfolio artifact version 26, GitHub `main`, round 6). Peter asks to review before changes are pushed; wait for his go-ahead.
 Paste this file in first, then give the next request.
 
 ---
