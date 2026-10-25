@@ -326,17 +326,6 @@ html.story-snap{scroll-snap-type:y mandatory}
 .story-step{height:100vh;height:100svh;scroll-snap-align:start}
 .story-skip,.story-hint,.story-prog{z-index:7}
 
-/* NYU in the intro: one quick violet underline after the intro types in, then it stays.
-   Land #57068C on the ground 11.3:1; Sea #D4B8F2 on the ground 7.4:1. Only transform animates. */
-html[data-theme="land"]{--nyu-line:#57068C}
-html[data-theme="sea"]{--nyu-line:#D4B8F2}
-.nyu{position:relative;display:inline-block;white-space:nowrap}
-.tw-g .nyu{visibility:visible;color:transparent}
-.nyu::after{content:"";position:absolute;left:0;right:0;bottom:-.08em;height:2px;background:var(--nyu-line);transform:scaleX(0);transform-origin:left}
-.nyu.draw::after{animation:nyux .35s cubic-bezier(.2,.7,.2,1) forwards}
-.nyu.drawn::after{transform:none}
-@keyframes nyux{to{transform:scaleX(1)}}
-@media (prefers-reduced-motion:reduce){.nyu::after{transform:none!important;animation:none!important}}
 
 /* Home: one quiet row of three facts under the intro (education, now, next). Titles lead because skimmers read titles first. */
 .hi-facts{margin:24px 0 0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-block:1px solid var(--rule)}
@@ -348,3 +337,12 @@ html[data-theme="sea"]{--nyu-line:#D4B8F2}
 /* three columns only when the text column is wide enough; otherwise one fact per line */
 .hi-txt{container-type:inline-size}
 @container (max-width:600px){.hi-facts{grid-template-columns:1fr}.hi-facts>div,.hi-facts>div:first-child{padding:12px 0}.hi-facts>div+div{border-left:0;border-top:1px solid var(--rule)}}
+.hi-sub{display:block;margin-top:2px;font-size:14px;color:var(--graphite)}
+/* education entry: degree in medium weight so it reads first after the school */
+.edu .cv-role b{font-weight:500}
+.edu-unit{margin:2px 0 8px;font-size:14px;color:var(--graphite)}
+/* Strengths: trait in medium weight, one line of context in graphite */
+.strengths{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.strengths li{display:grid;gap:2px}
+.strengths b{font:500 20px/1.15 var(--display)}
+.strengths span{font-size:15px;color:var(--graphite);max-width:62ch}

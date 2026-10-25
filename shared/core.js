@@ -126,7 +126,7 @@ const DATA={
                    {src:"media/wayfarer/event-theme.webp",alt:"The theme statement, Reimagining daily life",w:1600,h:808},
                    {src:"media/wayfarer/event-rubric.webp",alt:"Judging rubric: problem-solving and impact, innovation, visual design, user research and execution, 10 points each",w:1380,h:1382}]}
       ]},
-    {id:"glenergy",kind:"design",t:"Glenergy",short:"Glenergy",tag:"Product design · Dark patterns study",ctx:["UX design","School project"],
+    {id:"glenergy",kind:"design",t:"Glenergy",short:"Glenergy",tag:"Product design · Dark patterns study",ctx:["UX design","Team project"],
       finding:"While the aggressive designs successfully skewed user choices toward cost-saving options, they triggered a severe drop in employer trust.",
       kicker:"Product design · Team of 3 · Fall 2025",
       line:"A design of an Employee Onboarding Portal that incentivizes users to choose cost-effective options for the distributor/business. We tested to identify the effectiveness of “Dark Patterns” and discern perceptions of AI integration in business applications.",
@@ -191,7 +191,7 @@ const RESUME={
   /* One source for the in-site résumé and media/resume-human-factors.pdf (rebuilt Oct 24, 2026 from Peter's human factors résumé). */
   contact:"Orange County, CA · (949) 933-0073 · peterhuangdesign@gmail.com · peterhua.fyi · linkedin.com/in/peterhuaux",
   experience:[
-    {role:"Head of design",org:"Chorvivo",group:"work",now:true,note:"Work in progress, so it isn’t shown in this portfolio. I’m happy to talk about my role.",when:"Sep 2026 – present",ctx:["Design + research","A startup building a rehearsal-capture app for choreographers"],pts:["Lead the UI/UX and customer discovery interviews","Turn what choreographers tell us into user flows, a design system, and brand fundamentals, working with the founder and an engineer"]},
+    {role:"Founding designer",org:"Chorvivo",group:"work",now:true,note:"Work in progress, so it isn’t shown in this portfolio. I’m happy to talk about my role.",when:"Sep 2026 – present",ctx:["Design + research","A startup building a rehearsal-capture app for choreographers"],pts:["Lead the UI/UX and customer discovery interviews","Turn what choreographers tell us into user flows, a design system, and brand fundamentals, working with the founder and an engineer"]},
     {role:"UI/UX intern",org:"Designity",group:"work",when:"Jun 15 – Sep 15, 2026 · 3 months",ctx:["UI/UX design + user research","A “creativity as a service” agency, remote"],pts:["Conducted user research and usability testing, applying qualitative and quantitative methods to evaluate product usability and inform human-centered design decisions","Translated research insights into actionable design recommendations, balancing user needs with business and stakeholder constraints","Facilitated structured feedback loops with cross-functional stakeholders to uphold usability standards and design consistency","Maintained research documentation systems to ensure scalability and coherence across usability research touchpoints"]},
     {role:"Research & operations assistant",org:"DOROT",group:"research",when:"Aug – Dec 2025",ctx:["Behavioral data research","Social programs for older adults, New York City"],pts:["Executed quantitative behavioral data analysis (SPSS) across 400+ program participants to identify usability and accessibility barriers for older adult users","Translated behavioral research findings into actionable recommendations and stakeholder reports","Applied user-centered communication methods across diverse populations to ensure high-quality, reliable data collection for impact assessments"]},
     {role:"Clinical observational researcher",org:"Nordoff-Robbins Center for Music Therapy",group:"research",when:"Jan – May 2025",ctx:["Clinical observational research","Music therapy for mental health, New York City"],pts:["Conducted structured qualitative observational research in a clinical mental-health setting, collaborating with licensed therapists on post-session analysis","Coded and managed a behavioral database of ~130 therapy sessions using structured tracking protocols to map client progress","Synthesized complex behavioral data into a detailed longitudinal case study"]},
@@ -202,7 +202,16 @@ const RESUME={
     ["Personality, resilience, and life satisfaction","Mixed methods: survey of 52, regression and mediation analysis, 1 interview","Aug 2025"],
     ["Career within spirituality and religion","Ethnography: semi-structured interview and workplace observation","Apr 2025"]
   ],
-  education:{school:"New York University, Steinhardt",degree:"B.S. Applied Psychology",minors:"Minors: Integrated Design & Media (HCI/UX), Philosophy",when:"May 2026",extra:"Dean’s List, Spring 2024",courses:"Human-Centered Research Methods I & II, Statistics for Behavioral Sciences, Agile Product Design, Ideation & Prototyping, Dark Patterns, Seminar I & II"},
+  education:{school:"New York University",unit:"Steinhardt School of Culture, Education, and Human Development",degree:"B.S. Applied Psychology",minors:"Minor: Integrated Design & Media (HCI/UX)",when:"May 2026",extra:"Dean’s List, Spring 2024",courses:"Human-Centered Research Methods I & II, Statistics for Behavioral Sciences, Agile Product Design, Ideation & Prototyping, Dark Patterns, Seminar I & II"},
+  /* Strengths: Peter's traits, each with one line of context drawn from his own work. Shown on Profile, the résumé page and the PDF. */
+  strengths:[
+    ["Cross-functional collaboration","Founders and engineers at Chorvivo, licensed therapists at Nordoff-Robbins, stakeholders at Designity"],
+    ["AI fluency","Works with AI tools, and studies how people perceive and trust AI (Glenergy, interview study)"],
+    ["Research design rigour","Validated scales, reliability checks, grounded-theory coding, reflexivity"],
+    ["Product thinking","Turns findings into design decisions within business constraints"],
+    ["Agile","Short sprints and fast iteration: a design-a-thon win, Agile Product Design coursework"],
+    ["0 to 100","Takes a study from a blank page to a finished paper, self-directed"]
+  ],
   skills:[["Research methods","Usability testing, task analysis, qualitative and quantitative research, behavioral data analysis, research protocol design"],["UX design","Figma, Adobe Illustrator, Adobe InDesign, Adobe Photoshop"],["UX research","SPSS, Excel, R, Salesforce, qualitative and quantitative analysis"]]
 };
 const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -261,11 +270,11 @@ function caseHTML(p,opts={}){
 function wireCase(root,p){if(!p||!p._imgs)return;root.querySelectorAll(".cf-z").forEach(b=>b.onclick=()=>Lightbox.open(+b.dataset.z,b,p._imgs))}
 function resumeHTML(){
   const R=RESUME;
-  return `<section class="c-sec" id="resume-body"><h2 class="c-h">Human factors focus</h2><div class="cv">
-    <div class="xps">${R.experience.map(xpHTML).join("")}</div>
-    <ol class="cv-list cv-res">${R.research.map(([t,d,w])=>`<li><div class="cv-h"><b>${esc(t)}</b><span>${esc(w)}</span></div><p class="cv-role">${esc(d)}</p></li>`).join("")}</ol>
-    <div class="cv-ed"><div class="cv-h"><b>${R.education.degree}</b><span>${R.education.when}</span></div><p class="cv-org">${R.education.school}</p><p>${R.education.minors}. ${R.education.extra}.</p><p class="cv-muted">${R.education.courses}</p></div>
-    <dl class="cv-skills">${R.skills.map(([a,b])=>`<div><dt>${a}</dt><dd>${b}</dd></div>`).join("")}</dl></div></section>`;
+  return `<section class="c-sec" id="resume-edu"><h2 class="c-h">Education</h2><div class="xps">${eduHTML()}</div></section>
+  <section class="c-sec" id="resume-body"><h2 class="c-h">Experience</h2><div class="xps">${R.experience.map(xpHTML).join("")}</div></section>
+  <section class="c-sec"><h2 class="c-h">Research</h2><ol class="cv-list cv-res">${R.research.map(([t,d,w])=>`<li><div class="cv-h"><b>${esc(t)}</b><span>${esc(w)}</span></div><p class="cv-role">${esc(d)}</p></li>`).join("")}</ol></section>
+  <section class="c-sec"><h2 class="c-h">Strengths</h2>${strengthsHTML()}</section>
+  <section class="c-sec"><h2 class="c-h">Skills</h2><dl class="pf-skills">${R.skills.map(([a,b])=>`<div><dt>${esc(a)}</dt><dd>${esc(b)}</dd></div>`).join("")}</dl></section>`;
 }
 /* Peter’s own words (peterhua.fyi), grammar fixes only. */
 const PROFILE={
@@ -285,6 +294,12 @@ const PROFILE={
   substack:{url:"https://petersworld.substack.com/",label:"petersworld.substack.com",note:"Where I share all things philosophy, art, and meaning."}
 };
 /* One entry layout for Profile and the résumé page: organisation + dates, role, context line, confidential note, bullets. */
+/* Education, one layout for Profile and the résumé page: school + date, degree, minors, school unit, honours and coursework. */
+const strengthsHTML=()=>`<ul class="strengths">${RESUME.strengths.map(([t,d])=>`<li><b>${esc(t)}</b><span>${esc(d)}</span></li>`).join("")}</ul>`;
+function eduHTML(){const E=RESUME.education;
+  return `<article class="xp edu"><div class="cv-h"><b>${esc(E.school)}</b><span>${esc(E.when)}</span></div>
+    <p class="cv-role"><b>${esc(E.degree)}</b></p><p class="cv-role">${esc(E.minors)}</p><p class="edu-unit">${esc(E.unit)}</p>
+    <ul class="xp-pts"><li>${esc(E.extra)}</li><li>Coursework: ${esc(E.courses)}</li></ul></article>`}
 function xpHTML(e){
   return `<article class="xp${e.now?" now":""}"><div class="cv-h"><b>${e.now?`<span class="now-tag">Now</span>`:""}${esc(e.org)}</b><span>${esc(e.when)}</span></div>
     <p class="cv-role">${esc(e.role)}</p>${ctxHTML(e.ctx)}
@@ -303,8 +318,10 @@ function profileHTML(opts={}){
   const H=opts.h||"h2",P=PROFILE,W=P.why;
   return `<${H} class="c-t">Profile</${H}>
   <div class="pf-top"><img class="pf-portrait" src="media/portrait.jpg" alt="Portrait of Peter Huang" width="512" height="512"><div class="pf-about">${P.about.map(x=>`<p>${esc(x)}</p>`).join("")}</div></div>
+  <section class="c-sec" id="education"><h2 class="c-h">Education</h2><div class="xps">${eduHTML()}</div></section>
   <section class="c-sec" id="experience"><h2 class="c-h">Work</h2><div class="xps">${RESUME.experience.filter(e=>e.group==="work").map(xpHTML).join("")}</div></section>
   <section class="c-sec"><h2 class="c-h">Research experience</h2><div class="xps">${RESUME.experience.filter(e=>e.group==="research").map(xpHTML).join("")}</div></section>
+  <section class="c-sec"><h2 class="c-h">Strengths</h2>${strengthsHTML()}</section>
   <section class="c-sec"><h2 class="c-h">Skills</h2><dl class="pf-skills">${RESUME.skills.map(([a,b])=>`<div><dt>${esc(a)}</dt><dd>${esc(b)}</dd></div>`).join("")}</dl></section>
   <h2 class="pf-break">Beyond work</h2>
   <section class="c-sec"><h2 class="c-h">What guides me?</h2><div class="pf-long why">

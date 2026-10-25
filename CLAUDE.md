@@ -4,7 +4,7 @@ UX research + design portfolio for peterhua.fyi. The live site is the repo root 
 
 ## Who it's for
 
-- **Owner:** Peter Huang. B.S. Applied Psychology (NYU, 2026), minors in Philosophy and Integrated Design & Media.
+- **Owner:** Peter Huang. B.S. Applied Psychology (NYU, 2026), minor in Integrated Design & Media (HCI/UX). No Philosophy minor (not completed).
 - **Positioning:** researcher first, designer second. Targets: human factors engineer roles and UX research master's programs; UX research jobs.
 - **Contact:** peterhuangdesign@gmail.com · linkedin.com/in/peterhuaux · Orange County, California.
 - **Résumés:** three versions (human factors PDF, NY PDF, Pages with HereNow). The site uses the human factors one (`media/resume-human-factors.pdf`). GPA differs across versions (3.57 / 3.54 / 3.56), so the site leaves it out. The PDF still shows the NYU email and Irvine.

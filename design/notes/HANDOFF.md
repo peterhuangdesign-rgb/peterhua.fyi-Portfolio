@@ -125,7 +125,7 @@ Every project, job and résumé entry has one **context line** on its own line, 
 | Personality, resilience, and life satisfaction | ux research / research paper |
 | Career within spirituality and religion | ux research / research paper |
 | Wayfarer | ux design / design-a-thon, 1st place |
-| Glenergy | ux design / school project (Peter to confirm "school project") |
+| Glenergy | ux design / team project (worked with other designers) |
 | Chorvivo (work) | design + research / a startup building a rehearsal-capture app for choreographers |
 | Designity (work) | ui/ux design + user research / a "creativity as a service" agency, remote |
 | DOROT | behavioral data research / social programs for older adults, new york city |
@@ -148,7 +148,7 @@ Work context lines were written from Peter's descriptions; he should confirm the
 - Theme switch: all colours change in the same frame, and the background redraws on every switch.
 
 ### Home (opens every visit; no intro)
-1. **Hero:** greeting "Hello! I'm Peter Huang." left, two-line intro that types in about 1 s (`TYPE_MS`, no blinking caret), smiling photo right (`me-smile.jpg`). Intro (25 Oct): "I'm a UX researcher and NYU psychology graduate with a background in digital media and design. I'm curious about how we design safer systems and more effective experiences." After the intro types in, a 2 px violet underline draws quickly under **NYU** (0.35 s) and stays; Land `#57068C`, Sea `#D4B8F2`; reduced motion shows it drawn. Box, fill and badge versions were tried and dropped as too much. Under the intro, a **fact row** (25 Oct; NYU direction 5): Education — NYU, B.S. Applied Psychology · Now — Head of design at Chorvivo · Next — Working toward human factors. Three columns between rules when the text column is at least 600 px wide, otherwise one fact per line. Replaced the "Currently working at Chorvivo." line. "Head of design" matches Profile and the résumé; recruiters skim titles first, so the real title is used. **Nothing else in the hero.**
+1. **Hero:** greeting "Hello! I'm Peter Huang." left, two-line intro that types in about 1 s (`TYPE_MS`, no blinking caret), smiling photo right (`me-smile.jpg`). Intro (25 Oct, Peter's words): "I'm a UX researcher trained in psychology and human-computer interaction at NYU. I'm curious about how we design safer systems and more effective experiences." No underline or box on NYU. Under the intro, a **fact row** (25 Oct; NYU direction 5): Education — NYU, B.S. Applied Psychology / Minor: Integrated Design & Media (HCI) · Now — Founding designer at Chorvivo · Next — Building towards human factors. Three columns between rules when the text column is at least 600 px wide, otherwise one fact per line. Replaced the "Currently working at Chorvivo." line. "Founding designer" is Peter's title everywhere (Home, Profile, résumé page, PDF); recruiters skim titles first. **Nothing else in the hero.**
 2. **Featured work**, in this order (edit `FEATURED` in `site/app.js`; context comes from the project's `ctx`):
    1. **Technology and well-being: an independent interview study**. Image: `paper-codebook.webp` (top of the Appendix B codebook).
    2. **Wayfarer**. Image: `wayfarer/hero.webp`, uncropped.
@@ -173,9 +173,11 @@ Wayfarer and Glenergy (both done, Peter's text and images).
 - No visible "Profile" heading (screen-reader only).
 - Animated logo (snug), Pause under it.
 - Portrait and about (Peter's words).
-- **Work**: Chorvivo (**Now**, Head of design, Sep 2026 – present, no link), then Designity (UI/UX intern, Jun 15 – Sep 15, 2026 · 3 months).
+- **Education** (first section, 25 Oct): New York University, May 2026; B.S. Applied Psychology; Minor: Integrated Design & Media (HCI/UX) (**no Philosophy minor**: Peter didn't complete it, so it must not appear anywhere); Steinhardt School of Culture, Education, and Human Development; Dean's List, Spring 2024; coursework. Rendered by `eduHTML` from `RESUME.education`, same on the résumé page and first on the PDF.
+- **Work**: Chorvivo (**Now**, Founding designer, Sep 2026 – present, no link), then Designity (UI/UX intern, Jun 15 – Sep 15, 2026 · 3 months).
 - **Research experience**, newest first: DOROT, then Nordoff-Robbins.
-- **Skills**.
+- **Strengths** (25 Oct): Cross-functional collaboration, AI fluency, Research design rigour, Product thinking, Agile, 0 to 100, each with one line of context from Peter's work. Data `RESUME.strengths`, rendered by `strengthsHTML`.
+- **Skills** (from `RESUME.skills`).
 - **One source (25 Oct):** Work, Research experience and Skills are rendered from `RESUME` (`experience` with `group: work | research | other`, and `skills`) by the same `xpHTML` used on the résumé page. Each entry: organisation + dates → role → context line → confidential note (if any) → bullets. `DATA.work`, `DATA.field` and `PROFILE.skills` were removed so Profile and résumé can't drift apart.
 - **Chorvivo confidential indicator:** a small lock glyph, **Confidential**, then "Work in progress, so it isn't shown in this portfolio. I'm happy to talk about my role." Shown on Profile and the résumé page (`note` on the Chorvivo entry).
 - **"Beyond work"** heading, then:
@@ -186,10 +188,10 @@ Wayfarer and Glenergy (both done, Peter's text and images).
   - **Photography**: the three real photos only.
 
 ### Résumé page (matches Profile)
-- Same data and renderer as Profile (`xpHTML`), so organisations, roles, dates, context lines, notes and bullets always match. Reached from the rail, Home on phones, Profile and Contact.
+- Sections: Education, Experience, Research, Strengths, Skills (25 Oct). Same data and renderers as Profile (`eduHTML`, `xpHTML`), so organisations, roles, dates, context lines, notes and bullets always match. Reached from the rail, Home on phones, Profile and Contact.
 - Order: Chorvivo, Designity, DOROT, Nordoff-Robbins, NOVA Kitchen and Bar (NOVA is `group: other`, résumé only).
 - Roles in sentence case. Bullets are the full ones from Peter's human factors résumé, in past tense. A Research section lists the three papers. Skills: Research methods, UX design (Figma, Adobe Illustrator, InDesign, Photoshop), UX research (SPSS, Excel, R, Salesforce, qual + quant).
-- **PDF rebuilt 24 Oct** from the same `RESUME` data: one page, real text, brand fonts, contact line "Orange County, CA · (949) 933-0073 · peterhuangdesign@gmail.com · peterhua.fyi · linkedin.com/in/peterhuaux". GPA left off (versions disagree: 3.57 / 3.54 / 3.56).
+- **PDF** is generated from the same `RESUME` data by `design/notes/build-resume-pdf.js` (Node + Playwright). **Any change to `RESUME` means rebuilding the PDF** so Profile, the résumé page and the download stay identical. Last rebuilt 25 Oct: education first, Strengths and Skills side by side, contact in three lines, one page, real text, brand fonts, contact line "Orange County, CA · (949) 933-0073 · peterhuangdesign@gmail.com · peterhua.fyi · linkedin.com/in/peterhuaux". GPA left off (versions disagree: 3.57 / 3.54 / 3.56).
 
 ### LinkedIn banner (24 Oct)
 - 1584 × 396, exported at 2× (3168 × 792), Land and Sea versions. On the brand canvas, Applications page.
@@ -295,6 +297,8 @@ Brand principle agreed: two themes that are distinctly bright and dark, one bar 
 - "Mission" button under the logo. Replaced by "Read my mission" at the end of What guides me?.
 - Blinking caret on the typed intro.
 - Left-border callouts.
+- Underline, box and badge treatments on NYU.
+- "Head of design" as the Chorvivo title. Now "Founding designer".
 - Résumé + Email pair under Profile's work section.
 - Light (300) weight for the rolling traits in the logo.
 - Scroll-scrubbed story drawing (text lagged the drawing).
