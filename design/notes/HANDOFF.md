@@ -104,7 +104,8 @@ Open question: earlier notes said the Sea bar is light earth `#C9A57E`, but the 
 - Darker Grotesque (display, 300/500/600) and Albert Sans (body), **self-hosted** from `media/fonts/` and preloaded.
 - Square corners everywhere.
 - Palette tokens: fog `#DADDD7`, mist `#FCFCFA`, ink `#15181A`, graphite `#585E62`, lichen `#5F6E2E`, earth `#7A5636`. Sea: `#0D3640`, `#9FE0D2`.
-- Two themes, Land and Sea, toggled by the square swatch in the rail. On desktop the swatch has a visible label naming the theme it switches to ("Sea theme" / "Land theme").
+- Two themes, Land and Sea, toggled by the square swatch in the rail. No visible label (removed 25 Oct); the button keeps its accessible name and tooltip ("Switch to Sea theme" / "Sea theme").
+- **Background (25 Oct, still):** the fog and contour texture is drawn once per page, theme or window change and faded 30% toward the page colour (`S.soft` in `Fog`). No cursor lens, no drift, no grain shimmer, no wipe on page or theme change. The live path is kept in `Fog` for reference behind `S.still=false`.
 - Spacing on a 4 px scale (margins, padding, gaps). Captions and labels 12 px minimum. Curly apostrophes in copy.
 - Content column up to 1040 px.
 

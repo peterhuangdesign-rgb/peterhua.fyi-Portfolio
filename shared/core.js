@@ -370,12 +370,12 @@ const THEMES={
 };
 const THEME_ALIAS={light:"land",dark:"sea",fx:"land",sky:"land"};
 const hex=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)/255);
-const FS=`precision highp float;uniform vec2 r,m,b;uniform float t,lens,rev,bs,thin,blob,mode,calm,dpr;uniform vec3 cBg,cFog,cLine,cAcc,cAlt;
+const FS=`precision highp float;uniform vec2 r,m,b;uniform float t,lens,rev,bs,thin,blob,mode,calm,dpr,amp,rmax,soft,gm;uniform vec3 cBg,cFog,cLine,cAcc,cAlt;
 float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
 float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+1.),f.x),f.y);}
 float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<5;i++){v+=a*n(p);p=p*2.03+vec2(1.7,9.2);a*=.5;}return v;}
 void main(){vec2 uv=gl_FragCoord.xy/r;float as=r.x/r.y;vec2 p=uv*vec2(as,1.);float tt=t*.012;float k=1.-thin;
- vec2 mp=m*vec2(as,1.);float d=length(p-mp);float R=.07+.2*lens;float Lm=(1.-smoothstep(R*.7,R,d))*(1.-calm*.75);
+ vec2 mp=m*vec2(as,1.);float d=length(p-mp);float R=.07+rmax*lens;float Lm=(1.-smoothstep(R*.7,R,d))*(1.-calm*.75)*amp;
  float M=max(Lm,rev*(1.-calm)*smoothstep(1.-rev*1.4,1.-rev*1.4+.25,uv.x+(fbm(p*2.)-.5)*.3));
  vec3 col=cBg;
  if(mode<.5){
@@ -402,26 +402,35 @@ void main(){vec2 uv=gl_FragCoord.xy/r;float as=r.x/r.y;vec2 p=uv*vec2(as,1.);flo
   col=mix(col,cFog,M*.4);col=mix(col,cLine,r1*M*.32);col=mix(col,cAcc,r2*M*.6);
   float lum=dot(col,vec3(.2126,.7152,.0722));col*=min(1.,.38/max(lum,.001));
  }
- col+=(h(gl_FragCoord.xy+fract(t*.37))-.5)*(mode>.5&&mode<1.5?.03:.035);gl_FragColor=vec4(col,1.);}`;
+ col=mix(col,cBg,soft);col+=(h(gl_FragCoord.xy+fract(t*.37*gm))-.5)*(mode>.5&&mode<1.5?.03:.035);gl_FragColor=vec4(col,1.);}`;
 function Fog(canvas,{blob=true,blobAt=null}={}){
-  const S={mx:.5,my:.5,tx:.5,ty:.5,last:performance.now(),lens:0,rev:0,revT:0,thin:1,thinT:.8,calm:0,calmT:0,bx:.8,by:.5,blob:blob?1:0,theme:THEMES.land,frame:null};
+  const S={still:true,P:{amp:1,rmax:.2,soft:0,gm:1},soft:.3,mx:.5,my:.5,tx:.5,ty:.5,last:performance.now(),lens:0,rev:0,revT:0,thin:1,thinT:.8,calm:0,calmT:0,bx:.8,by:.5,blob:blob?1:0,theme:THEMES.land,frame:null};
   addEventListener("pointermove",e=>{S.tx=e.clientX/innerWidth;S.ty=1-e.clientY/innerHeight;S.last=performance.now()});
   const gl=canvas.getContext("webgl",{antialias:false});if(!gl)return S;
   const sh=(t,s)=>{const o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);if(!gl.getShaderParameter(o,gl.COMPILE_STATUS))console.error(gl.getShaderInfoLog(o));return o};
   const pr=gl.createProgram();gl.attachShader(pr,sh(gl.VERTEX_SHADER,"attribute vec2 a;void main(){gl_Position=vec4(a,0,1);}"));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,FS));gl.linkProgram(pr);gl.useProgram(pr);
   gl.bindBuffer(gl.ARRAY_BUFFER,gl.createBuffer());gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
   const a=gl.getAttribLocation(pr,"a");gl.enableVertexAttribArray(a);gl.vertexAttribPointer(a,2,gl.FLOAT,false,0,0);
-  const U={};["r","m","b","t","lens","rev","bs","thin","blob","mode","calm","dpr","cBg","cFog","cLine","cAcc","cAlt"].forEach(k=>U[k]=gl.getUniformLocation(pr,k));
+  const U={};["r","m","b","t","lens","rev","bs","thin","blob","mode","calm","dpr","cBg","cFog","cLine","cAcc","cAlt","amp","rmax","soft","gm"].forEach(k=>U[k]=gl.getUniformLocation(pr,k));
   let D=1;const size=()=>{const d=D=Math.min(devicePixelRatio||1,1.5);canvas.width=innerWidth*d;canvas.height=innerHeight*d;gl.viewport(0,0,canvas.width,canvas.height);S.wake&&S.wake()};size();addEventListener("resize",size);
   const t0=performance.now();
   if(blobAt){const [x,y]=blobAt(S);S.bx=x;S.by=y}
-  const loop=now=>{const k=reduce?1:.08;S.mx+=(S.tx-S.mx)*k;S.my+=(S.ty-S.my)*k;
-    const still=Math.max(0,Math.min(1,(now-S.last-250)/2600));const goal=still*still*(3-2*still);S.lens+=(goal-S.lens)*(goal>S.lens?.03:.15);
+  const loop=now=>{
+    /* still background (Oct 2026): the texture is drawn once per state change (page, theme, resize), faded 30% toward the page colour.
+       No cursor lens, no drift, no grain shimmer, no wipe. The live path below is kept only for reference (S.still=false). */
+    if(S.still){S.thin=S.thinT;S.calm=S.calmT;S.rev=0;S.lens=0;const [gx,gy]=blobAt?blobAt(S):[.8,.5];S.bx=gx;S.by=gy;const T=S.theme;
+      gl.uniform2f(U.r,canvas.width,canvas.height);gl.uniform2f(U.m,-9,-9);gl.uniform2f(U.b,S.bx,S.by);gl.uniform1f(U.t,40);
+      gl.uniform1f(U.lens,0);gl.uniform1f(U.rev,0);gl.uniform1f(U.bs,0);gl.uniform1f(U.thin,S.thin);gl.uniform1f(U.blob,S.blob);gl.uniform1f(U.calm,1);
+      gl.uniform1f(U.mode,T.mode);gl.uniform3fv(U.cBg,hex(T.bg));gl.uniform3fv(U.cFog,hex(T.fog));gl.uniform3fv(U.cLine,hex(T.line));gl.uniform3fv(U.cAcc,hex(T.acc));gl.uniform3fv(U.cAlt,hex(T.alt));gl.uniform1f(U.dpr,D);
+      gl.uniform1f(U.amp,0);gl.uniform1f(U.rmax,0);gl.uniform1f(U.soft,S.soft);gl.uniform1f(U.gm,0);
+      gl.drawArrays(gl.TRIANGLES,0,3);running=false;return}
+    const k=reduce?1:.08;S.mx+=(S.tx-S.mx)*k;S.my+=(S.ty-S.my)*k;
+    const still=Math.max(0,Math.min(1,(now-S.last-250)/2600));const goal=still*still*(3-2*still);S.lens+=(goal-S.lens)*(goal>S.lens?.03:.15);if(reduce){S.lens=0;S.revT=0}
     S.rev+=(S.revT-S.rev)*(reduce?1:.045);S.thin+=(S.thinT-S.thin)*(reduce?1:.03);S.calm+=(S.calmT-S.calm)*(reduce?1:.06);
     const [gx,gy]=blobAt?blobAt(S):[.8,.5];S.bx+=(gx-S.bx)*.006;S.by+=(gy-S.by)*.006;const T=S.theme;
-    gl.uniform2f(U.r,canvas.width,canvas.height);gl.uniform2f(U.m,S.mx,S.my);gl.uniform2f(U.b,S.bx,S.by);gl.uniform1f(U.t,reduce?40:(now-t0)/1000);
+    gl.uniform2f(U.r,canvas.width,canvas.height);gl.uniform2f(U.m,reduce?-9:S.mx,reduce?-9:S.my);gl.uniform2f(U.b,S.bx,S.by);gl.uniform1f(U.t,reduce?40:(now-t0)/1000);
     gl.uniform1f(U.lens,S.lens);gl.uniform1f(U.rev,S.rev);gl.uniform1f(U.bs,S.lens);gl.uniform1f(U.thin,S.thin);gl.uniform1f(U.blob,S.blob);gl.uniform1f(U.calm,S.calm);
-    gl.uniform1f(U.mode,T.mode);gl.uniform3fv(U.cBg,hex(T.bg));gl.uniform3fv(U.cFog,hex(T.fog));gl.uniform3fv(U.cLine,hex(T.line));gl.uniform3fv(U.cAcc,hex(T.acc));gl.uniform3fv(U.cAlt,hex(T.alt));gl.uniform1f(U.dpr,D);
+    gl.uniform1f(U.mode,T.mode);gl.uniform3fv(U.cBg,hex(T.bg));gl.uniform3fv(U.cFog,hex(T.fog));gl.uniform3fv(U.cLine,hex(T.line));gl.uniform3fv(U.cAcc,hex(T.acc));gl.uniform3fv(U.cAlt,hex(T.alt));gl.uniform1f(U.dpr,D);gl.uniform1f(U.amp,S.P.amp);gl.uniform1f(U.rmax,S.P.rmax);gl.uniform1f(U.soft,S.P.soft);gl.uniform1f(U.gm,S.P.gm);
     gl.drawArrays(gl.TRIANGLES,0,3);S.frame&&S.frame(S,now);
     /* near-plain pages: stop drawing once the fade has settled; wake() restarts it */
     const settled=S.pause&&Math.abs(S.thinT-S.thin)<.002&&Math.abs(S.calmT-S.calm)<.002&&S.rev<.01;

@@ -83,7 +83,7 @@ html[data-theme="sea"]{--bar:#9FE0D2}
 .themes{display:flex;gap:8px}
 .th{all:unset;box-sizing:border-box;cursor:pointer;min-height:44px;display:inline-flex;align-items:center;gap:12px;color:var(--ink);font:500 12px/1 var(--body);letter-spacing:.1em;text-transform:uppercase}
 .th i{display:block;flex:none;width:44px;height:44px;border:1px solid var(--ink);background-clip:content-box;padding:4px}
-.th:hover .th-l{text-decoration:underline;text-underline-offset:4px}
+
 .th:focus-visible{outline:2px solid var(--lichen);outline-offset:3px}
 .th[data-t="land"] i{background-image:linear-gradient(135deg,#DADDD7 0 50%,#7A5636 50%)}
 .th[data-t="sea"] i{background-image:linear-gradient(135deg,#0D3640 0 50%,#9FE0D2 50%)}
@@ -272,8 +272,6 @@ a:hover .arr,a:focus-visible .arr{background:var(--ink);color:var(--mist)}
 .pf-break+.c-sec{border-top:0}
 
 /* design-grade fixes, Oct 24 */
-.th-l{white-space:nowrap}
-@media (max-width:860px){.th-l{display:none}}
 /* kicker lines wrap only between parts, never inside one */
 .fw-k>span,.work .tag>span{white-space:nowrap}
 .fw-img,.work-img{height:auto;aspect-ratio:auto}

@@ -19,13 +19,13 @@ function setBg(k){const [t,c]=BG[k]||BG.page;S.thinT=t;S.calmT=c;S.blob=k==="hom
    The button shows the swatch of the theme it switches TO. */
 const themesEl=document.querySelector(".themes");
 const TNAMES={land:"Land",sea:"Sea"};
-const tbtn=document.createElement("button");tbtn.className="th";tbtn.type="button";tbtn.innerHTML=`<i aria-hidden="true"></i><span class="th-l" aria-hidden="true"></span>`;themesEl.appendChild(tbtn);
+const tbtn=document.createElement("button");tbtn.className="th";tbtn.type="button";tbtn.innerHTML=`<i aria-hidden="true"></i>`;themesEl.appendChild(tbtn);
 tbtn.onclick=()=>setTheme(document.documentElement.dataset.theme==="sea"?"land":"sea",true);
 function setTheme(id,save){id=THEME_ALIAS[id]||id;if(!THEMES[id])id="land";
   /* switch every colour in the same frame: hover transitions would otherwise lag behind the text */
   const R=document.documentElement;R.classList.add("theme-switch");requestAnimationFrame(()=>requestAnimationFrame(()=>R.classList.remove("theme-switch")));document.documentElement.dataset.theme=id;S.theme=THEMES[id];S.wake&&S.wake();
-  const next=id==="sea"?"land":"sea";tbtn.dataset.t=next;tbtn.setAttribute("aria-label",`Switch to ${TNAMES[next]} theme`);tbtn.title=`${TNAMES[next]} theme`;tbtn.querySelector(".th-l").textContent=`${TNAMES[next]} theme`;
-  if(save){store.set("ph-theme",id);S.revT=1;S.wake&&S.wake();setTimeout(()=>S.revT=0,600)}}
+  const next=id==="sea"?"land":"sea";tbtn.dataset.t=next;tbtn.setAttribute("aria-label",`Switch to ${TNAMES[next]} theme`);tbtn.title=`${TNAMES[next]} theme`;
+  if(save){store.set("ph-theme",id);if(!S.still&&!reduce){S.revT=1;S.wake&&S.wake();setTimeout(()=>S.revT=0,600)}}}
 setTheme(store.get("ph-theme")||"land");
 
 /* ---------- rail ---------- */
@@ -234,7 +234,7 @@ function route(){
     if(key==="profile")wireProfile(main);
     if(p)wireCase(main,p);
     wireLogo(main);typeIntro(main);
-    setBg(p||key==="profile"||key==="contact"?"page":key);S.revT=1;setTimeout(()=>S.revT=0,700);onScroll();current=h};
+    setBg(p||key==="profile"||key==="contact"?"page":key);if(!S.still&&!reduce){S.revT=1;setTimeout(()=>S.revT=0,700)}onScroll();current=h};
   const old=main.querySelector(".page");if(old&&!reduce){old.classList.add("leaving");setTimeout(swap,200)}else swap();
 }
 function toast(t){const el=document.createElement("div");el.className="toast";el.setAttribute("role","status");el.textContent=t;document.body.appendChild(el);setTimeout(()=>el.remove(),1800)}
