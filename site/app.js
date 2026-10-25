@@ -48,12 +48,14 @@ document.addEventListener("click",async e=>{const a=e.target.closest('[data-cta=
    To add a pair, write both words without their first letter: ["ianist","…"] is pianist / h….
    Keep each h-word no wider than "human factors" so it never wraps.
    Screen readers get one label. Pause button for motion that repeats; reduced motion shows the name, still. */
-const PAIRS=[["eter","uang"],["sychology","uman factors"],["resence","umility"]];
+const PAIRS=[["eter","uang"],["sychology","uman factors"],["rototype","ypothesis"],["roduct","euristics"]];
+/* the roll lists end with a copy of the first pair, so the loop always moves forward and snaps back unseen */
+const LOOP=[...PAIRS,PAIRS[0]];
 const ARR=`<span class="arr" aria-hidden="true"><svg viewBox="0 0 18 18"><path d="M3 9H15M10 4L15 9L10 14"/></svg></span>`;
 const roll=list=>`<span class="phm-w"><span class="phm-r">${list.map((w,i)=>`<span${i?' class="lt"':""}>${w}</span>`).join("")}</span></span>`;
 const PHM_LABEL="Peter Huang. The p and h also stand for "+PAIRS.slice(1).map(([a,b])=>`p${a} and h${b}`).join(", ")+".";
-const PHM=`<figure class="phm" role="img" aria-label="${PHM_LABEL}" style="--n:${PAIRS.length};--k:0">
-  <div class="phm-t" aria-hidden="true"><span class="phm-l"><span>p</span>${roll(PAIRS.map(x=>x[0]))}</span><span class="phm-bar"></span><span class="phm-l h"><span>h</span>${roll(PAIRS.map(x=>x[1]))}</span></div></figure>
+const PHM=`<figure class="phm" role="img" aria-label="${PHM_LABEL}" style="--n:${LOOP.length};--k:0">
+  <div class="phm-t" aria-hidden="true"><span class="phm-l"><span>p</span>${roll(LOOP.map(x=>x[0]))}</span><span class="phm-bar"></span><span class="phm-l h"><span>h</span>${roll(LOOP.map(x=>x[1]))}</span></div></figure>
   <div class="phm-act"><button class="replay phm-toggle" type="button" aria-pressed="false">Pause animation</button></div>`;
 let phmT=null;
 function wireLogo(root){
@@ -61,7 +63,9 @@ function wireLogo(root){
   const f=root.querySelector(".phm"),b=root.querySelector(".phm-toggle");if(!f)return;
   if(reduce){b.hidden=true;return}
   let k=0;
-  const run=()=>{phmT=setInterval(()=>{k=(k+1)%PAIRS.length;f.style.setProperty("--k",k)},2800)};
+  const run=()=>{phmT=setInterval(()=>{k++;f.style.setProperty("--k",k);
+    /* reached the copy of the first pair: once both words have rolled in, jump to the real first pair with no motion */
+    if(k===PAIRS.length)setTimeout(()=>{f.classList.add("snap");k=0;f.style.setProperty("--k",0);void f.offsetWidth;f.classList.remove("snap")},1000)},2800)};
   run();
   b.onclick=()=>{const on=!!phmT;if(on){clearInterval(phmT);phmT=null}else run();
     b.textContent=on?"Play animation":"Pause animation";b.setAttribute("aria-pressed",String(on))};
@@ -107,6 +111,7 @@ const featBlocks=()=>FEATURED.map((f,i)=>{const p=byId(f.id);if(!p)return"";
 const PAGES={
   home:()=>`<div class="hi"><div class="hi-txt"><h1 class="ph1 greet">Hello! I’m Peter Huang.</h1>
     <p class="mission">I’m a UX researcher with a background in psychology, digital media, and design. I’m curious about how we design safer systems and more effective experiences.</p>
+    <p class="hi-now"><span class="hi-sq" aria-hidden="true"></span>Currently working at Chorvivo.</p>
     <div class="hi-act">${ctaPair()}</div></div>
     <img class="hi-photo" src="media/me-smile.jpg" alt="Peter Huang, smiling, in a cap" width="556" height="520"></div>
     <h2 class="label feat-h">Featured work</h2>${featBlocks()}
@@ -154,10 +159,21 @@ const hex=(cx,cy)=>({d:`M${cx-66} ${cy} L${cx-46} ${cy-28} L${cx+46} ${cy-28} L$
 const person=(x,s,base=312)=>{const y=base-118*s;return [
   {d:`M${x+12*s} ${y} A${12*s} ${12*s} 0 1 0 ${x-12*s} ${y} A${12*s} ${12*s} 0 1 0 ${x+12*s} ${y}`},
   {d:`M${x} ${y+16*s} L${x} ${y+72*s} L${x-15*s} ${base} M${x} ${y+72*s} L${x+15*s} ${base}`}]};
+/* Experience timeline: one node per step, drawn on as the reader scrolls. Earlier steps stay drawn ("keep"); the timeline is not erased between steps ("hold"). */
+const sq=(cx,cy)=>({d:`M${cx-7} ${cy-7} H${cx+7} V${cy+7} H${cx-7} Z`});
+const TL_X=56,TL=[["Psychology",30],["Observation",94],["Behavioral data",158],["Usability testing",222],["Design + research",286],["Human factors",350]];
+const tlStep=j=>{const art=[],labels=[];TL.slice(0,j+1).forEach(([t,y],m)=>{if(m)art.push({d:`M${TL_X} ${TL[m-1][1]+7} V${y-7}`});art.push(sq(TL_X,y));labels.push([t,TL_X+28,y,"start"])});
+  return {art,labels,keep:j?2*j-1:0,keepT:j,hold:true}};
 const STORY=[
-  {s:"Technology can bring us closer, or distance us from each other.",tiles:true,art:[]},
+  {s:"Technology can bring us closer, or distance us from each other.",art:[]},
   {s:"How we use this power depends upon how we research, develop, and apply it in society.",labels:[["Practice",200,95],["Research",88,300],["Theory",312,300]],
     art:[hex(200,95),...arrow(166,126,104,266),hex(88,300),...arrow(156,300,244,300),hex(312,300),...arrow(296,266,234,126)]},
+  {s:"I studied applied psychology at NYU, fascinated by how people think.",...tlStep(0)},
+  {s:"At Nordoff-Robbins, I coded about 130 music therapy sessions and learned to observe behavior closely.",...tlStep(1)},
+  {s:"At DOROT, I analyzed data from 400+ older adults to find the usability and accessibility barriers in their programs.",...tlStep(2)},
+  {s:"At Designity, I ran usability tests and turned what users showed me into design recommendations.",...tlStep(3)},
+  {s:"Now, at Chorvivo, I lead design and research, from discovery interviews to user flows.",...tlStep(4)},
+  {s:"Safety-critical domains and human error have interested me since graduation, after realizing how AI infrastructure and its consequences have impacted fields such as healthcare, finance, and social well-being.",...tlStep(5)},
   {s:"I believe that through quality, focused research, we can steer technology towards a better world for our friends, family, and future.",art:[]}
 ];
 let storyOn=false,storyCleanup=null;
@@ -168,19 +184,20 @@ function openStory(){
       <div class="tiles">${TILES.map((t,i)=>`<span class="tile t${i%4}" data-i="${i}"><svg viewBox="0 0 48 48"><path d="${t.d}"/></svg></span>`).join("")}</div>
       <svg class="story-svg" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet">
       <defs><filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="4"/></filter></defs>
-      ${STORY.map((c,i)=>`<g class="art" data-i="${i}">${c.art.map(a=>`<path class="halo" d="${a.d}"/>`).join("")}${c.art.map(a=>`<path class="ln" d="${a.d}"/>`).join("")}${(c.labels||[]).map(([t,x,y])=>`<text x="${x}" y="${y+7}" text-anchor="middle">${t}</text>`).join("")}</g>`).join("")}</svg></div>
+      ${STORY.map((c,i)=>`<g class="art" data-i="${i}">${c.art.map(a=>`<path class="halo" d="${a.d}"/>`).join("")}${c.art.map(a=>`<path class="ln" d="${a.d}"/>`).join("")}${(c.labels||[]).map(([t,x,y,a])=>`<text x="${x}" y="${y+7}" text-anchor="${a||"middle"}">${t}</text>`).join("")}</g>`).join("")}</svg></div>
     <div class="story-copy"><p class="story-line" id="sl" aria-live="polite">${STORY[0].s}</p>
       <a class="btn story-enter" id="enter" href="#profile" hidden>Back to profile</a></div></div>
     <div class="story-track" style="height:${N*100}vh"></div><span class="story-prog" aria-hidden="true"><i id="sprog"></i></span>
     <a class="btn story-skip" href="#profile" id="skip">Close story</a><span class="story-hint" id="hint" aria-hidden="true">Scroll</span>`;
-  const G=[...story.querySelectorAll(".art")].map(g=>{const ln=[...g.querySelectorAll(".ln")],ha=[...g.querySelectorAll(".halo")],tx=[...g.querySelectorAll("text")];
-    const L=ln.map(p=>p.getTotalLength());const st=[];let acc=0;L.forEach(l=>{st.push(acc);acc+=l});
-    [...ln,...ha].forEach((p,k)=>{const l=L[k%ln.length];p.style.strokeDasharray=`${l} ${l}`;p.style.strokeDashoffset=l});return {ln,ha,tx,L,st,total:acc}});
+  const G=[...story.querySelectorAll(".art")].map((g,gi)=>{const ln=[...g.querySelectorAll(".ln")],ha=[...g.querySelectorAll(".halo")],tx=[...g.querySelectorAll("text")];
+    const keep=STORY[gi].keep||0,keepT=STORY[gi].keepT||0;
+    const L=ln.map(p=>p.getTotalLength());const st=[];let acc=0;L.forEach((l,k)=>{if(k<keep){st.push(-1e9);return}st.push(acc);acc+=l});
+    [...ln,...ha].forEach((p,k)=>{const l=L[k%ln.length];p.style.strokeDasharray=`${l} ${l}`;p.style.strokeDashoffset=l});return {ln,ha,tx,L,st,total:acc||1,keepT}});
   const tiles=[...story.querySelectorAll(".tile")];
   const ease=x=>x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2,cl=x=>Math.max(0,Math.min(1,x));
-  function paint(g,draw,erase){g.ln.forEach((p,k)=>{const l=g.L[k],s=g.st[k];const shown=Math.max(0,Math.min(l,draw*g.total-s));const gone=Math.max(0,Math.min(l,erase*g.total-s));
+  function paint(g,draw,erase){g.ln.forEach((p,k)=>{const l=g.L[k],s=g.st[k];const shown=draw<=0?0:Math.max(0,Math.min(l,draw*g.total-s));const gone=erase<=0?0:Math.max(0,Math.min(l,erase*g.total-s));
     const off=gone>0?-gone:l-shown;const vis=shown>.5&&gone<l-.5?"visible":"hidden";[p,g.ha[k]].forEach(e=>{e.style.strokeDashoffset=off;e.style.visibility=vis})});
-    g.tx.forEach(t=>t.style.opacity=cl((draw-.55)*4)*(1-cl(erase*3)))}
+    g.tx.forEach((t,k)=>t.style.opacity=(k<g.keepT&&draw>0?1:cl((draw-.55)*4))*(1-cl(erase*3)))}
   /* tiles: pop in one by one (0–.5), stay stacked, drift apart (.55–.8), fade (.85–1) */
   function paintTiles(lp,active){const n=tiles.length;tiles.forEach((el,i)=>{
     if(!active){el.style.opacity=0;return}
@@ -194,9 +211,9 @@ function openStory(){
     paintTiles(lp,STORY[i].tiles);stage.classList.toggle("solo",!STORY[i].tiles&&!STORY[i].art.length);
     G.forEach((g,k)=>{if(k!==i||STORY[k].tiles){paint(g,0,0);return}
       if(reduce){paint(g,1,0);return}
-      const draw=ease(Math.min(1,lp/(fin?.65:.5)));const erase=fin?0:ease(Math.max(0,(lp-.82)/.18));paint(g,draw,erase)});
+      const draw=Math.max(.001,ease(Math.min(1,lp/(fin?.65:.5))));const erase=fin||STORY[k].hold?0:ease(Math.max(0,(lp-.82)/.18));paint(g,draw,erase)});
     hint.style.opacity=p>.02?0:1;enter.hidden=!fin;$("sprog").style.setProperty("--p",p.toFixed(3));
-    if(i!==last){last=i;if(reduce){sl.textContent=STORY[i].s}else{sl.classList.add("swap");setTimeout(()=>{sl.textContent=STORY[i].s;sl.classList.remove("swap")},220)}}};
+    if(i!==last){last=i;const put=()=>{sl.textContent=STORY[i].s;sl.classList.toggle("long",STORY[i].s.length>140)};if(reduce){put()}else{sl.classList.add("swap");setTimeout(()=>{put();sl.classList.remove("swap")},220)}}};
   addEventListener("scroll",onScroll,{passive:true});scrollTo(0,0);onScroll();
   storyCleanup=()=>{removeEventListener("scroll",onScroll);story.hidden=true;story.innerHTML="";document.body.classList.remove("story-mode");storyOn=false};
   document.title="Peter Huang";

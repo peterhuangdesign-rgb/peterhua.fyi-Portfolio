@@ -90,19 +90,6 @@ const DATA={
         {h:"Limitations",p:["A single researcher and a single subject limit generalizability. A stronger observation site would have been a social and religious setting, such as a Sunday service or a university club."]}
       ]}
   ],
-  field:[
-    {id:"nordoff",kind:"research",field:true,t:"Nordoff-Robbins Center for Music Therapy",short:"Nordoff-Robbins",tag:"Clinical observation",ctx:["Clinical observational research","Music therapy for mental health, New York City"],
-      line:"Structured observational research in a clinical mental-health setting.",
-      meta:[["Role","Clinical observational researcher"],["Where","New York City"],["When","Jan – May 2025"],["Data","~130 sessions"]],
-      sections:[["Setting","Music therapy sessions at a clinical center, reviewed with licensed therapists after each session."],
-        ["What I did","Coded and managed a behavioral database of about 130 therapy sessions, using structured tracking protocols to map client progress over time."],
-        ["Outcome","A detailed longitudinal case study of one client’s growth, synthesized from the coded observations."]]},
-    {id:"dorot",kind:"research",field:true,t:"DOROT",short:"DOROT",tag:"Behavioral data",ctx:["Behavioral data research","Social programs for older adults, New York City"],
-      line:"Program data from 400+ older adults, analyzed for usability and access barriers.",
-      meta:[["Role","Research & operations assistant"],["Where","New York City"],["When","Aug – Dec 2025"],["Tools","SPSS, Salesforce"]],
-      sections:[["What I did","Ran quantitative behavioral analysis in SPSS across 400+ program participants to find usability and accessibility barriers. Kept data collection reliable across a diverse population."],
-        ["Outcome","Recommendations and stakeholder reports that fed the organization’s impact assessments."]]}
-  ],
   design:[
     /* Chorvivo: in progress and under wraps. Not a project page; it appears only under Work on Profile. */
     {id:"wayfarer",kind:"design",t:"Wayfarer",short:"Wayfarer",tag:"Design-a-thon winner",ctx:["UX design","Design-a-thon, 1st place"],
@@ -195,15 +182,7 @@ const isLorem=v=>/lorem/i.test(String(v));
 /* Music: the three tracks are 24-second placeholders. Set SHOW_MUSIC to true once real tracks or links are in. */
 const SHOW_MUSIC=false;
 if(!SHOW_MUSIC)DATA.tracks=[];
-/* Work shown at the top of Profile, newest first. Chorvivo is current; Designity is the internship.
-   Only facts Peter has given: the Designity bullets come from his résumé. Add impact numbers here when he has them. */
-DATA.work=[
-  {t:"Chorvivo",now:true,ctx:["Design + research","A startup building a rehearsal-capture app for choreographers"],meta:[["Role","Head of design"],["Where","Startup, rehearsal-capture app for choreographers"],["When","Sep 2026 – present"]],
-    sections:[["What I do","Lead the UI/UX and customer discovery interviews. I turn what choreographers tell us into user flows, a design system, and brand fundamentals, working with the founder and an engineer."]]},
-  {t:"Designity",ctx:["UI/UX design + user research","A “creativity as a service” agency, remote"],meta:[["Role","UI/UX intern"],["Where","“Creativity as a service” agency · Remote"],["When","Jun 15 – Sep 15, 2026 · 3 months"]],
-    sections:[["What I did","User research and usability testing with qualitative and quantitative methods. Turned research insights into design recommendations, balancing user needs with business and stakeholder constraints."],
-      ["How I worked","Ran structured feedback loops with cross-functional stakeholders to keep usability standards and design consistent, and kept research documentation organised across touchpoints."]]}
-];
+/* Work and research experience on Profile come from RESUME.experience (one source for Profile, the résumé page and the PDF). */
 DATA.researchAll=[...DATA.research]; /* field work (Nordoff-Robbins, DOROT) lives on Profile, not here */
 DATA.all=[...DATA.researchAll,...DATA.design];
 
@@ -212,11 +191,11 @@ const RESUME={
   /* One source for the in-site résumé and media/resume-human-factors.pdf (rebuilt Oct 24, 2026 from Peter's human factors résumé). */
   contact:"Orange County, CA · (949) 933-0073 · peterhuangdesign@gmail.com · peterhua.fyi · linkedin.com/in/peterhuaux",
   experience:[
-    {role:"Head of design",org:"Chorvivo",when:"Sep 2026 – present",ctx:["Design + research","A startup building a rehearsal-capture app for choreographers"],pts:["Lead the UI/UX and customer discovery interviews","Turn what choreographers tell us into user flows, a design system, and brand fundamentals, working with the founder and an engineer"]},
-    {role:"UI/UX intern",org:"Designity",when:"Jun 15 – Sep 15, 2026 · 3 months",ctx:["UI/UX design + user research","A “creativity as a service” agency, remote"],pts:["Conducted user research and usability testing, applying qualitative and quantitative methods to evaluate product usability and inform human-centered design decisions","Translated research insights into actionable design recommendations, balancing user needs with business and stakeholder constraints","Facilitated structured feedback loops with cross-functional stakeholders to uphold usability standards and design consistency","Maintained research documentation systems to ensure scalability and coherence across usability research touchpoints"]},
-    {role:"Research & operations assistant",org:"DOROT",when:"Aug – Dec 2025",ctx:["Behavioral data research","Social programs for older adults, New York City"],pts:["Executed quantitative behavioral data analysis (SPSS) across 400+ program participants to identify usability and accessibility barriers for older adult users","Translated behavioral research findings into actionable recommendations and stakeholder reports","Applied user-centered communication methods across diverse populations to ensure high-quality, reliable data collection for impact assessments"]},
-    {role:"Clinical observational researcher",org:"Nordoff-Robbins Center for Music Therapy",when:"Jan – May 2025",ctx:["Clinical observational research","Music therapy for mental health, New York City"],pts:["Conducted structured qualitative observational research in a clinical mental-health setting, collaborating with licensed therapists on post-session analysis","Coded and managed a behavioral database of ~130 therapy sessions using structured tracking protocols to map client progress","Synthesized complex behavioral data into a detailed longitudinal case study"]},
-    {role:"Operations intern",org:"NOVA Kitchen and Bar",when:"Jul – Aug 2024",ctx:["Operations","A restaurant in Orange, California"],pts:["Identified and resolved operational pain points for 100+ daily guests in a high-volume, fast-paced environment","Collaborated with a 30+ member team to develop efficient operational workflows under time pressure"]}
+    {role:"Head of design",org:"Chorvivo",group:"work",now:true,note:"Work in progress, so it isn’t shown in this portfolio. I’m happy to talk about my role.",when:"Sep 2026 – present",ctx:["Design + research","A startup building a rehearsal-capture app for choreographers"],pts:["Lead the UI/UX and customer discovery interviews","Turn what choreographers tell us into user flows, a design system, and brand fundamentals, working with the founder and an engineer"]},
+    {role:"UI/UX intern",org:"Designity",group:"work",when:"Jun 15 – Sep 15, 2026 · 3 months",ctx:["UI/UX design + user research","A “creativity as a service” agency, remote"],pts:["Conducted user research and usability testing, applying qualitative and quantitative methods to evaluate product usability and inform human-centered design decisions","Translated research insights into actionable design recommendations, balancing user needs with business and stakeholder constraints","Facilitated structured feedback loops with cross-functional stakeholders to uphold usability standards and design consistency","Maintained research documentation systems to ensure scalability and coherence across usability research touchpoints"]},
+    {role:"Research & operations assistant",org:"DOROT",group:"research",when:"Aug – Dec 2025",ctx:["Behavioral data research","Social programs for older adults, New York City"],pts:["Executed quantitative behavioral data analysis (SPSS) across 400+ program participants to identify usability and accessibility barriers for older adult users","Translated behavioral research findings into actionable recommendations and stakeholder reports","Applied user-centered communication methods across diverse populations to ensure high-quality, reliable data collection for impact assessments"]},
+    {role:"Clinical observational researcher",org:"Nordoff-Robbins Center for Music Therapy",group:"research",when:"Jan – May 2025",ctx:["Clinical observational research","Music therapy for mental health, New York City"],pts:["Conducted structured qualitative observational research in a clinical mental-health setting, collaborating with licensed therapists on post-session analysis","Coded and managed a behavioral database of ~130 therapy sessions using structured tracking protocols to map client progress","Synthesized complex behavioral data into a detailed longitudinal case study"]},
+    {role:"Operations intern",org:"NOVA Kitchen and Bar",group:"other",when:"Jul – Aug 2024",ctx:["Operations","A restaurant in Orange, California"],pts:["Identified and resolved operational pain points for 100+ daily guests in a high-volume, fast-paced environment","Collaborated with a 30+ member team to develop efficient operational workflows under time pressure"]}
   ],
   research:[
     ["Technology and well-being: an independent interview study","7 semi-structured interviews, grounded-theory coding, 27-page paper","Oct – Dec 2025"],
@@ -283,7 +262,7 @@ function wireCase(root,p){if(!p||!p._imgs)return;root.querySelectorAll(".cf-z").
 function resumeHTML(){
   const R=RESUME;
   return `<section class="c-sec" id="resume-body"><h3>Human factors focus</h3><div class="cv">
-    <ol class="cv-list">${R.experience.map(e=>`<li><div class="cv-h"><b>${esc(e.org)}</b><span>${esc(e.when)}</span></div><p class="cv-role">${esc(e.role)}</p>${ctxHTML(e.ctx)}<ul>${e.pts.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></li>`).join("")}</ol>
+    <div class="xps">${R.experience.map(xpHTML).join("")}</div>
     <ol class="cv-list cv-res">${R.research.map(([t,d,w])=>`<li><div class="cv-h"><b>${esc(t)}</b><span>${esc(w)}</span></div><p class="cv-role">${esc(d)}</p></li>`).join("")}</ol>
     <div class="cv-ed"><div class="cv-h"><b>${R.education.degree}</b><span>${R.education.when}</span></div><p class="cv-org">${R.education.school}</p><p>${R.education.minors}. ${R.education.extra}.</p><p class="cv-muted">${R.education.courses}</p></div>
     <dl class="cv-skills">${R.skills.map(([a,b])=>`<div><dt>${a}</dt><dd>${b}</dd></div>`).join("")}</dl></div></section>`;
@@ -294,7 +273,6 @@ const PROFILE={
     "I translate quantitative and qualitative data into a clear direction for design.",
     "I’m fascinated by art and science, I prioritize physical and mental health, and I’m inspired to build a future with integrity and humility.",
     "My approach is guided by curiosity, creativity, and a constant search for better ways to understand the human experience."],
-  skills:[["UX design","Figma, Adobe Illustrator, Adobe InDesign, Adobe Photoshop"],["UX research","SPSS, Excel, R, qualitative and quantitative analysis"]],
   memory:{q:"To feel the memory forming while living the moment.",p:[
     "During my time at NYU in New York City, I met many unique individuals, each with their own story and journey.",
     "I explored topics in philosophy and art, music and media, and research and science. I’m now an avid climber, jazz enthusiast, and cat owner.",
@@ -306,11 +284,12 @@ const PROFILE={
     "I hope to explore and excel in this career with communication, agency, and an open curiosity."],
   substack:{url:"https://petersworld.substack.com/",label:"petersworld.substack.com",note:"Where I share all things philosophy, art, and meaning."}
 };
-function fieldHTML(f){
-  const name=f.href?`<a href="${f.href}">${esc(f.t)}</a>`:esc(f.t);
-  return `<article class="xp${f.now?" now":""}"><div class="cv-h"><b>${f.now?`<span class="now-tag">Now</span>`:""}${name}</b><span>${esc(f.meta.find(m=>m[0]==="When")[1])}</span></div>
-    <p class="cv-role">${esc(f.meta[0][1])}</p>${ctxHTML(f.ctx)}
-    <dl class="xp-d">${f.sections.map(([h,b])=>`<div><dt>${esc(h)}</dt><dd>${esc(b)}</dd></div>`).join("")}</dl></article>`;
+/* One entry layout for Profile and the résumé page: organisation + dates, role, context line, confidential note, bullets. */
+function xpHTML(e){
+  return `<article class="xp${e.now?" now":""}"><div class="cv-h"><b>${e.now?`<span class="now-tag">Now</span>`:""}${esc(e.org)}</b><span>${esc(e.when)}</span></div>
+    <p class="cv-role">${esc(e.role)}</p>${ctxHTML(e.ctx)}
+    ${e.note?`<p class="xp-note"><span class="xp-lock" aria-hidden="true"></span><span><b>Confidential</b> ${esc(e.note)}</span></p>`:""}
+    <ul class="xp-pts">${e.pts.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></article>`;
 }
 /* What guides me (was "What is my why"): the same words, split into short parts so it reads in steps.
    The first paragraph is split at its sentence breaks; nothing is reworded. */
@@ -324,9 +303,10 @@ function profileHTML(opts={}){
   const H=opts.h||"h2",P=PROFILE,W=P.why;
   return `<${H} class="c-t">Profile</${H}>
   <div class="pf-top"><img class="pf-portrait" src="media/portrait.jpg" alt="Portrait of Peter Huang" width="512" height="512"><div class="pf-about">${P.about.map(x=>`<p>${esc(x)}</p>`).join("")}</div></div>
-  <section class="c-sec" id="experience"><h3>Work</h3><div class="xps">${DATA.work.map(fieldHTML).join("")}</div></section>
-  <section class="c-sec"><h3>Research experience</h3><div class="xps">${[...DATA.field].reverse().map(fieldHTML).join("")}</div></section>
-  <section class="c-sec"><h3>Skills</h3><dl class="pf-skills">${P.skills.map(([a,b])=>`<div><dt>${a}</dt><dd>${esc(b)}</dd></div>`).join("")}</dl></section>
+  <section class="c-sec" id="experience"><h3>Work</h3><div class="xps">${RESUME.experience.filter(e=>e.group==="work").map(xpHTML).join("")}</div></section>
+  <section class="c-sec"><h3>Research experience</h3><div class="xps">${RESUME.experience.filter(e=>e.group==="research").map(xpHTML).join("")}</div></section>
+  <section class="c-sec"><h3>Skills</h3><dl class="pf-skills">${RESUME.skills.map(([a,b])=>`<div><dt>${esc(a)}</dt><dd>${esc(b)}</dd></div>`).join("")}</dl></section>
+  <div class="pf-cta"><div class="cta"><a class="btn" href="#resume" data-cta="resume">Résumé</a><a class="btn" href="mailto:${CONTACT.email}" data-cta="email">Email</a></div></div>
   <h2 class="pf-break">Beyond work</h2>
   <section class="c-sec"><h3>What guides me?</h3><div class="pf-long why">
     ${whyParts().map(ps=>`<div class="why-part">${ps}</div>`).join("")}

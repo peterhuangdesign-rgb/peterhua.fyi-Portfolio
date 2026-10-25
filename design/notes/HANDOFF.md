@@ -1,6 +1,6 @@
 # peterhua.fyi — portfolio and personal brand handoff
 
-Context for a new chat. Status as of 24 Oct 2026, evening (portfolio artifact version 24, GitHub `main`). Peter is connecting the domain now.
+Context for a new chat. Status as of 25 Oct 2026. Round 5 is on branch `round-5`, **not pushed or published yet**: Peter is reviewing it first. Artifact version 24 and GitHub `main` are still round 4.
 Paste this file in first, then give the next request.
 
 ---
@@ -30,7 +30,7 @@ Rules for any new chat:
 | Portfolio (claude.ai artifact, multi-file) | https://claude.ai/artifact/83J6u88WPmagR5GSvvcx3S |
 | Logo and brand canvas (Design artifact) | https://claude.ai/artifact/F2jJWEpkSJRC1GDA1opfM9 (pages: Logo rounds, Applications incl. **LinkedIn banner**, Round 5, **Palettes · bright + dark**) |
 | Code | github.com/peterhuangdesign-rgb/peterhua.fyi-portfolio, branch `main` (private repo) |
-| Backups | branches `backup/before-fixes`, `backup/before-round-2`, `backup/before-round-3`, `backup/before-round-4` |
+| Backups | branches `backup/before-fixes`, `backup/before-round-2`, `backup/before-round-3`, `backup/before-round-4`, `backup/before-round-5` |
 | Live site today | Moving from **Framer** to GitHub Pages. Domain is on **Namecheap**; DNS change in progress (see §4). |
 | Model portfolio Peter admires | https://www.dennisquizhpi.com/ and https://www.dennisquizhpi.com/lawnstack |
 
@@ -91,7 +91,8 @@ Open question: earlier notes said the Sea bar is light earth `#C9A57E`, but the 
 
 ### Animated main logo (Profile page, top)
 - p and h stay fixed; the rest of each word rolls.
-- Pairs, in order: **peter / huang → psychology / human factors → presence / humility**, then loop. **The only allowed pairs.** (presence replaced patience on 24 Oct.)
+- Pairs, in order: **peter / huang → psychology / human factors → prototype / hypothesis → product / heuristics**, then loop. **The only allowed pairs.** (25 Oct: presence / humility removed as corny.)
+- The loop is seamless: the roll lists end with a copy of the first pair (`LOOP` in `site/app.js`), so it always rolls forward and snaps back to the real first pair with no motion.
 - Lowercase. 2.8 s per pair, 0.8 s transition. Pause button (WCAG 2.2.2). Reduced motion = still. Screen readers get one label (built from `PAIRS`).
 - Size `font-size:min(140px,17cqi)` so "human factors" never wraps. Any new h-word must be no wider than "human factors".
 - Geometry (em, Darker Grotesque 500): line-height 1.16; bar margin `.04em 0 .051em .042em`; bar `.402em` × `.05em`; h line `.78em` with `margin-top:-.38em`.
@@ -114,7 +115,7 @@ Open question: earlier notes said the Sea bar is light earth `#C9A57E`, but the 
 Every project, job and résumé entry has one **context line** on its own line, directly under the title, before any description. Lowercase, graphite, no letter-spacing, parts separated by " / ".
 - **Projects:** `project type / format`. Type is ux research or ux design. Format is research paper, school project, work, or the competition. **No dates, no field.**
 - **Work and research experience:** `kind of work / what the work is for`.
-- Data: `ctx:[…]` on each item in `DATA.research`, `DATA.design`, `DATA.work`, `DATA.field` and `RESUME.experience`. Rendered by `ctxHTML` in `shared/core.js`.
+- Data: `ctx:[…]` on each item in `DATA.research`, `DATA.design` and `RESUME.experience`. Rendered by `ctxHTML` in `shared/core.js`.
 - The old uppercase tracked kicker above titles is gone everywhere.
 
 | Item | Context line |
@@ -146,14 +147,14 @@ Work context lines were written from Peter's descriptions; he should confirm the
 - Theme switch: all colours change in the same frame, and the background redraws on every switch.
 
 ### Home (opens every visit; no intro)
-1. **Hero:** greeting "Hello! I'm Peter Huang." left, two-line intro that types in about 1 s (`TYPE_MS`, no blinking caret), smiling photo right (`me-smile.jpg`). Intro ends "…safer systems and more effective experiences." **Nothing else in the hero.**
+1. **Hero:** greeting "Hello! I'm Peter Huang." left, two-line intro that types in about 1 s (`TYPE_MS`, no blinking caret), smiling photo right (`me-smile.jpg`). Intro ends "…safer systems and more effective experiences." Under the intro, one small graphite line with an 8 px ink square: **"Currently working at Chorvivo."** (25 Oct). **Nothing else in the hero.**
 2. **Featured work**, in this order (edit `FEATURED` in `site/app.js`; context comes from the project's `ctx`):
    1. **Technology and well-being: an independent interview study**. Image: `paper-codebook.webp` (top of the Appendix B codebook).
    2. **Wayfarer**. Image: `wayfarer/hero.webp`, uncropped.
    3. **Glenergy**. Image: `glenergy/feature.webp` (crop of the high-fidelity Give Back screen).
    All three pictures share one frame, Wayfarer's own ratio (1414:920), cropped from the top.
 3. Links: "All research" and "All design".
-- **Chorvivo is not a project.** Peter can't talk about it. It appears only under Work on Profile and on the résumé, with no link and no case page.
+- **Chorvivo is not a project.** Peter can't talk about it. It appears only as the Home line above, under Work on Profile and on the résumé, with no link and no case page.
 
 ### Research (three papers)
 | Project | Status |
@@ -171,9 +172,12 @@ Wayfarer and Glenergy (both done, Peter's text and images).
 - No visible "Profile" heading (screen-reader only).
 - Animated logo (snug), Pause under it.
 - Portrait and about (Peter's words).
-- **Work**: Chorvivo (**Now**, Head of design, Sep 2026 – present, no link), then Designity (UI/UX intern, Jun 15 – Sep 15, 2026 · 3 months). Each entry: name + dates → role → context line → sections.
-- **Research experience**, newest first: DOROT, then Nordoff-Robbins. Same layout.
+- **Work**: Chorvivo (**Now**, Head of design, Sep 2026 – present, no link), then Designity (UI/UX intern, Jun 15 – Sep 15, 2026 · 3 months).
+- **Research experience**, newest first: DOROT, then Nordoff-Robbins.
 - **Skills**.
+- **Résumé + Email** button pair (same `ctaPair` markup), closing the professional half.
+- **One source (25 Oct):** Work, Research experience and Skills are rendered from `RESUME` (`experience` with `group: work | research | other`, and `skills`) by the same `xpHTML` used on the résumé page. Each entry: organisation + dates → role → context line → confidential note (if any) → bullets. `DATA.work`, `DATA.field` and `PROFILE.skills` were removed so Profile and résumé can't drift apart.
+- **Chorvivo confidential indicator:** a small lock glyph, **Confidential**, then "Work in progress, so it isn't shown in this portfolio. I'm happy to talk about my role." Shown on Profile and the résumé page (`note` on the Chorvivo entry).
 - **"Beyond work"** heading, then:
   - **What guides me?** Peter's exact words in five short parts separated by rules. No numbers. Substack button, then **"Read my mission"** as the last thing in the section.
   - Photos of Peter (3).
@@ -182,8 +186,8 @@ Wayfarer and Glenergy (both done, Peter's text and images).
   - **Photography**: the three real photos only.
 
 ### Résumé page (matches Profile)
-- Same organisations, roles, dates and context lines as Profile; entries read name + dates → role → context → bullets.
-- Order: Chorvivo, Designity, DOROT, Nordoff-Robbins, NOVA Kitchen and Bar.
+- Same data and renderer as Profile (`xpHTML`), so organisations, roles, dates, context lines, notes and bullets always match. Reached from the rail, Home on phones, Profile and Contact.
+- Order: Chorvivo, Designity, DOROT, Nordoff-Robbins, NOVA Kitchen and Bar (NOVA is `group: other`, résumé only).
 - Roles in sentence case. Bullets are the full ones from Peter's human factors résumé, in past tense. A Research section lists the three papers. Skills: Research methods, UX design (Figma, Adobe Illustrator, InDesign, Photoshop), UX research (SPSS, Excel, R, Salesforce, qual + quant).
 - **PDF rebuilt 24 Oct** from the same `RESUME` data: one page, real text, brand fonts, contact line "Orange County, CA · (949) 933-0073 · peterhuangdesign@gmail.com · peterhua.fyi · linkedin.com/in/peterhuaux". GPA left off (versions disagree: 3.57 / 3.54 / 3.56).
 
@@ -196,8 +200,21 @@ Wayfarer and Glenergy (both done, Peter's text and images).
 - Heading "Seems like you're curious!" with "I'm open to connecting and collaborating on new projects!" under it.
 - Email address, button pair + Copy email, LinkedIn, Based in Orange County, California.
 
-### Story / mission
+### Story / mission (rewritten 25 Oct)
 - Reached only from "Read my mission" on Profile. Buttons "Close story" and "Back to profile". Scroll is 100vh per chapter with a progress line at the bottom.
+- Nine chapters, one sentence each:
+  1. "Technology can bring us closer, or distance us from each other." Sentence alone (the app-tile animation is removed).
+  2. "How we use this power depends upon how we research, develop, and apply it in society." Research ↔ Theory ↔ Practice line drawing (kept).
+  3–8. **Experience timeline**: a vertical line with square nodes that grows one step per chapter; earlier steps stay drawn. Nodes: Psychology → Observation → Behavioral data → Usability testing → Design + research → Human factors.
+     - "I studied applied psychology at NYU, fascinated by how people think."
+     - "At Nordoff-Robbins, I coded about 130 music therapy sessions and learned to observe behavior closely."
+     - "At DOROT, I analyzed data from 400+ older adults to find the usability and accessibility barriers in their programs."
+     - "At Designity, I ran usability tests and turned what users showed me into design recommendations."
+     - "Now, at Chorvivo, I lead design and research, from discovery interviews to user flows."
+     - "Safety-critical domains and human error have interested me since graduation, after realizing how AI infrastructure and its consequences have impacted fields such as healthcare, finance, and social well-being." (Peter's words; "infastructure" typo fixed.)
+  9. "I believe that through quality, focused research, we can steer technology towards a better world for our friends, family, and future." Sentence alone.
+- Chapters 3–7 were written from Peter's résumé facts; Peter should confirm the wording.
+- Timeline data: `TL` and `tlStep()` in `site/app.js`. `keep` = earlier paths shown at once, `hold` = not erased.
 
 ---
 
@@ -222,6 +239,8 @@ Ranked by how much a research hiring team would weigh it.
 - [ ] **8. Case length.** Case pages are long; the Key finding now leads, but sections could be trimmed once impact is added.
 
 ### Content and decisions needed from Peter
+- [ ] **Review round 5** (branch `round-5`), then push to `main` and publish the artifact.
+- [ ] **Confirm** the mission timeline sentences (chapters 3–7) and the Chorvivo confidential note wording.
 - [ ] **Confirm** the paper title, "school project" for Glenergy, the Key finding sentences, and the work context lines.
 - [ ] **GPA** on the PDF: which number, or leave off.
 - [ ] **Theme switching**: Peter saw visibility problems; not reproduced in Chromium. If it still happens, note the page and browser (Safari untested).
@@ -263,7 +282,7 @@ Brand principle agreed: two themes that are distinctly bright and dark, one bar 
 - The bar as a site-wide device. Reverted; logo only.
 - Ink line-drawing headshot.
 - Featured projects as a 3-card row.
-- Pairs "paddleboarder / hiker" and "patience / humility". Unused: pianist / hobbyist, philosopher / humanist, piano / harmony, perception / heuristics.
+- Pairs "paddleboarder / hiker", "patience / humility" and "presence / humility" (corny). Unused: pianist / hobbyist, philosopher / humanist, piano / harmony, perception / heuristics.
 - First-visit intro. Removed for recruiter speed.
 - The line "I check the context before I apply the rule."
 - Inline "→" after titles and "Open case" text buttons. Replaced by the square arrow box.
@@ -278,3 +297,5 @@ Brand principle agreed: two themes that are distinctly bright and dark, one bar 
 - Description lines and dates on Home featured projects. Home shows title, type / format and picture only.
 - Field and date parts in project context lines.
 - Paper title page as the Home picture.
+- App-tile animation on the first mission chapter.
+- Separate Profile copies of work data (`DATA.work`, `DATA.field`, `PROFILE.skills`) and the dl "What I do / Setting / Outcome" layout. Replaced by the shared résumé entries.
