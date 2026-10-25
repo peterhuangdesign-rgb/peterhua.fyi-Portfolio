@@ -140,25 +140,9 @@ function projectPage(p){const list=p.kind==="design"?DATA.design:DATA.researchAl
    2 · research ↔ theory ↔ practice, drawn as a line diagram.
    3 · the sentence alone for now (illustration options are a separate project).
    Drawings are drawn with scroll, held, then erased in the direction they were drawn. */
-const TILES=[ /* generic glyphs, not brand marks */
-  {k:"chat",d:"M10 12 H38 V30 H22 L14 37 V30 H10 Z"},
-  {k:"photo",d:"M9 15 H17 L20 11 H28 L31 15 H39 V36 H9 Z M24 31 A6 6 0 1 0 24 19 A6 6 0 1 0 24 31"},
-  {k:"assistant",d:"M24 8 C25 18 30 23 40 24 C30 25 25 30 24 40 C23 30 18 25 8 24 C18 23 23 18 24 8 Z"},
-  {k:"team",d:"M18 10 L15 38 M33 10 L30 38 M10 19 H39 M9 29 H38"},
-  {k:"video",d:"M9 12 H39 V36 H9 Z M20 18 V30 L31 24 Z"},
-  {k:"mail",d:"M9 14 H39 V34 H9 Z M9 14 L24 26 L39 14"},
-  {k:"heart",d:"M24 37 C12 29 8 23 8 18 C8 13 12 10 16 10 C20 10 22 13 24 15 C26 13 28 10 32 10 C36 10 40 13 40 18 C40 23 36 29 24 37 Z"}
-];
-/* stacked (close) and spread (distanced) positions, in % of the stage */
-const NEAR=[[44,40,-6],[50,44,4],[46,50,-2],[54,38,7],[40,47,3],[52,52,-5],[48,45,0]];
-const FAR=[[10,14,-14],[86,10,12],[12,82,9],[88,84,-10],[50,4,6],[4,48,-6],[94,46,8]];
 const arrow=(x1,y1,x2,y2)=>{const a=Math.atan2(y2-y1,x2-x1),h=11,w=.45;const hd=(x,y,dir)=>{const b=a+(dir?0:Math.PI);return `M${(x-h*Math.cos(b-w)).toFixed(1)} ${(y-h*Math.sin(b-w)).toFixed(1)} L${x} ${y} L${(x-h*Math.cos(b+w)).toFixed(1)} ${(y-h*Math.sin(b+w)).toFixed(1)}`};
   return [{d:`M${x1} ${y1} L${x2} ${y2}`},{d:hd(x2,y2,1)},{d:hd(x1,y1,0)}]};
 const hex=(cx,cy)=>({d:`M${cx-66} ${cy} L${cx-46} ${cy-28} L${cx+46} ${cy-28} L${cx+66} ${cy} L${cx+46} ${cy+28} L${cx-46} ${cy+28} Z`});
-/* person() kept for the illustration exploration */
-const person=(x,s,base=312)=>{const y=base-118*s;return [
-  {d:`M${x+12*s} ${y} A${12*s} ${12*s} 0 1 0 ${x-12*s} ${y} A${12*s} ${12*s} 0 1 0 ${x+12*s} ${y}`},
-  {d:`M${x} ${y+16*s} L${x} ${y+72*s} L${x-15*s} ${base} M${x} ${y+72*s} L${x+15*s} ${base}`}]};
 /* Experience timeline: one node per step, drawn on as the reader scrolls. Earlier steps stay drawn ("keep"); the timeline is not erased between steps ("hold"). */
 const sq=(cx,cy)=>({d:`M${cx-7} ${cy-7} H${cx+7} V${cy+7} H${cx-7} Z`});
 const TL_X=56,TL=[["Psychology",30],["Observation",94],["Behavioral data",158],["Usability testing",222],["Design + research",286],["Human factors",350]];
@@ -177,48 +161,55 @@ const STORY=[
   {s:"I believe that through quality, focused research, we can steer technology towards a better world for our friends, family, and future.",art:[]}
 ];
 let storyOn=false,storyCleanup=null;
+/* Story, step by step (best practice for scrollytelling):
+   - one 100vh step per chapter, native scroll with CSS scroll snap, so every scroll settles on a chapter (no scroll-jacking: wheel, touch, keys and scrollbar behave normally)
+   - the active step is read once per frame (passive scroll listener, requestAnimationFrame): the step whose half the viewport is past
+   - when the step changes, the sentence and the drawing change together on one clock (time-based, interruptible), so the text never lags the picture
+   - reduced motion: no fades or drawing, the finished frame appears at once */
 function openStory(){
   storyOn=true;document.body.classList.add("story-mode");story.hidden=false;main.innerHTML="";setBg("story");
-  const N=STORY.length;
+  const N=STORY.length,R=document.documentElement;
   story.innerHTML=`<div class="story-stage"><div class="story-vis" aria-hidden="true">
-      <div class="tiles">${TILES.map((t,i)=>`<span class="tile t${i%4}" data-i="${i}"><svg viewBox="0 0 48 48"><path d="${t.d}"/></svg></span>`).join("")}</div>
       <svg class="story-svg" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet">
       <defs><filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="4"/></filter></defs>
       ${STORY.map((c,i)=>`<g class="art" data-i="${i}">${c.art.map(a=>`<path class="halo" d="${a.d}"/>`).join("")}${c.art.map(a=>`<path class="ln" d="${a.d}"/>`).join("")}${(c.labels||[]).map(([t,x,y,a])=>`<text x="${x}" y="${y+7}" text-anchor="${a||"middle"}">${t}</text>`).join("")}</g>`).join("")}</svg></div>
-    <div class="story-copy"><p class="story-line" id="sl" aria-live="polite">${STORY[0].s}</p>
+    <div class="story-copy"><p class="story-line" id="sl" aria-live="polite"></p>
       <a class="btn story-enter" id="enter" href="#profile" hidden>Back to profile</a></div></div>
-    <div class="story-track" style="height:${N*100}vh"></div><span class="story-prog" aria-hidden="true"><i id="sprog"></i></span>
+    <div class="story-track">${STORY.map((c,i)=>`<div class="story-step" data-i="${i}"></div>`).join("")}</div>
+    <span class="story-prog" aria-hidden="true"><i id="sprog"></i></span>
     <a class="btn story-skip" href="#profile" id="skip">Close story</a><span class="story-hint" id="hint" aria-hidden="true">Scroll</span>`;
   const G=[...story.querySelectorAll(".art")].map((g,gi)=>{const ln=[...g.querySelectorAll(".ln")],ha=[...g.querySelectorAll(".halo")],tx=[...g.querySelectorAll("text")];
     const keep=STORY[gi].keep||0,keepT=STORY[gi].keepT||0;
     const L=ln.map(p=>p.getTotalLength());const st=[];let acc=0;L.forEach((l,k)=>{if(k<keep){st.push(-1e9);return}st.push(acc);acc+=l});
     [...ln,...ha].forEach((p,k)=>{const l=L[k%ln.length];p.style.strokeDasharray=`${l} ${l}`;p.style.strokeDashoffset=l});return {ln,ha,tx,L,st,total:acc||1,keepT}});
-  const tiles=[...story.querySelectorAll(".tile")];
   const ease=x=>x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2,cl=x=>Math.max(0,Math.min(1,x));
-  function paint(g,draw,erase){g.ln.forEach((p,k)=>{const l=g.L[k],s=g.st[k];const shown=draw<=0?0:Math.max(0,Math.min(l,draw*g.total-s));const gone=erase<=0?0:Math.max(0,Math.min(l,erase*g.total-s));
-    const off=gone>0?-gone:l-shown;const vis=shown>.5&&gone<l-.5?"visible":"hidden";[p,g.ha[k]].forEach(e=>{e.style.strokeDashoffset=off;e.style.visibility=vis})});
-    g.tx.forEach((t,k)=>t.style.opacity=(k<g.keepT&&draw>0?1:cl((draw-.55)*4))*(1-cl(erase*3)))}
-  /* tiles: pop in one by one (0–.5), stay stacked, drift apart (.55–.8), fade (.85–1) */
-  function paintTiles(lp,active){const n=tiles.length;tiles.forEach((el,i)=>{
-    if(!active){el.style.opacity=0;return}
-    const pop=reduce?1:ease(cl((lp-i*(.5/n))/(.5/n)));const spread=reduce?0:ease(cl((lp-.55)/.25));const fade=reduce?0:cl((lp-.86)/.14);
-    const [x0,y0,r0]=NEAR[i],[x1,y1,r1]=FAR[i];const x=x0+(x1-x0)*spread,y=y0+(y1-y0)*spread,r=r0+(r1-r0)*spread;
-    el.style.left=x+"%";el.style.top=y+"%";el.style.zIndex=i;
-    el.style.transform=`translate(-50%,-50%) rotate(${r}deg) scale(${.55+.45*pop})`;el.style.opacity=pop*(1-fade)*(1-.25*spread)})}
-  let last=0;const sl=$("sl"),hint=$("hint"),enter=$("enter"),stage=story.querySelector(".story-stage");
-  const onScroll=()=>{const max=document.documentElement.scrollHeight-innerHeight;const p=max>0?Math.min(1,scrollY/max):0;
-    const f=Math.min(N-.0001,p*N);const i=Math.floor(f);const lp=f-i;const fin=i===N-1;
-    paintTiles(lp,STORY[i].tiles);stage.classList.toggle("solo",!STORY[i].tiles&&!STORY[i].art.length);
-    G.forEach((g,k)=>{if(k!==i||STORY[k].tiles){paint(g,0,0);return}
-      if(reduce){paint(g,1,0);return}
-      const draw=Math.max(.001,ease(Math.min(1,lp/(fin?.65:.5))));const erase=fin||STORY[k].hold?0:ease(Math.max(0,(lp-.82)/.18));paint(g,draw,erase)});
-    hint.style.opacity=p>.02?0:1;enter.hidden=!fin;$("sprog").style.setProperty("--p",p.toFixed(3));
-    if(i!==last){last=i;const put=()=>{sl.textContent=STORY[i].s;sl.classList.toggle("long",STORY[i].s.length>140)};if(reduce){put()}else{sl.classList.add("swap");setTimeout(()=>{put();sl.classList.remove("swap")},220)}}};
-  addEventListener("scroll",onScroll,{passive:true});scrollTo(0,0);onScroll();
-  storyCleanup=()=>{removeEventListener("scroll",onScroll);story.hidden=true;story.innerHTML="";document.body.classList.remove("story-mode");storyOn=false};
+  function paint(g,draw){g.ln.forEach((p,k)=>{const l=g.L[k],s=g.st[k];const shown=draw<=0?0:Math.max(0,Math.min(l,draw*g.total-s));
+    const vis=shown>.5?"visible":"hidden";[p,g.ha[k]].forEach(e=>{e.style.strokeDashoffset=l-shown;e.style.visibility=vis})});
+    g.tx.forEach((t,k)=>t.style.opacity=k<g.keepT&&draw>0?1:cl((draw-.55)*4))}
+  const sl=$("sl"),hint=$("hint"),enter=$("enter"),stage=story.querySelector(".story-stage"),prog=$("sprog");
+  const OUT=reduce?0:180,DRAW=reduce?0:1100;
+  let cur=-1,raf=0,tOut=0;
+  /* show step i: fade the sentence out, then swap sentence and drawing in the same frame and draw the new part */
+  function show(i){if(i===cur)return;const from=cur;cur=i;cancelAnimationFrame(raf);clearTimeout(tOut);
+    const c=STORY[i];enter.hidden=i!==N-1;hint.style.opacity=i?0:1;
+    const swap=()=>{G.forEach((g,k)=>{if(k!==i)paint(g,0)});
+      stage.classList.toggle("solo",!c.art.length);
+      sl.textContent=c.s;sl.classList.toggle("long",c.s.length>140);sl.classList.remove("swap");
+      if(!DRAW){paint(G[i],1);return}
+      const t0=performance.now();const tick=t=>{const k=cl((t-t0)/DRAW);paint(G[i],Math.max(.001,ease(k)));if(k<1)raf=requestAnimationFrame(tick)};raf=requestAnimationFrame(tick)};
+    if(from<0||!OUT){swap();return}
+    sl.classList.add("swap");tOut=setTimeout(swap,OUT)}
+  const steps=[...story.querySelectorAll(".story-step")];
+  let ticking=0;
+  const read=()=>{ticking=0;const h=steps[0].offsetHeight||innerHeight;show(Math.max(0,Math.min(N-1,Math.round(scrollY/h))));
+    const max=R.scrollHeight-innerHeight;prog.style.setProperty("--p",(max>0?Math.min(1,scrollY/max):0).toFixed(3))};
+  const onScroll=()=>{if(!ticking){ticking=1;requestAnimationFrame(read)}};
+  addEventListener("scroll",onScroll,{passive:true});
+  R.classList.add("story-snap");scrollTo(0,0);show(0);read();
+  storyCleanup=()=>{cancelAnimationFrame(raf);clearTimeout(tOut);removeEventListener("scroll",onScroll);R.classList.remove("story-snap");
+    story.hidden=true;story.innerHTML="";document.body.classList.remove("story-mode");storyOn=false};
   document.title="Peter Huang";
 }
-
 /* ---------- router ---------- */
 let current=null,io=null;
 function route(){

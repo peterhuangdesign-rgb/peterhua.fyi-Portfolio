@@ -306,7 +306,6 @@ function profileHTML(opts={}){
   <section class="c-sec" id="experience"><h3>Work</h3><div class="xps">${RESUME.experience.filter(e=>e.group==="work").map(xpHTML).join("")}</div></section>
   <section class="c-sec"><h3>Research experience</h3><div class="xps">${RESUME.experience.filter(e=>e.group==="research").map(xpHTML).join("")}</div></section>
   <section class="c-sec"><h3>Skills</h3><dl class="pf-skills">${RESUME.skills.map(([a,b])=>`<div><dt>${esc(a)}</dt><dd>${esc(b)}</dd></div>`).join("")}</dl></section>
-  <div class="pf-cta"><div class="cta"><a class="btn" href="#resume" data-cta="resume">Résumé</a><a class="btn" href="mailto:${CONTACT.email}" data-cta="email">Email</a></div></div>
   <h2 class="pf-break">Beyond work</h2>
   <section class="c-sec"><h3>What guides me?</h3><div class="pf-long why">
     ${whyParts().map(ps=>`<div class="why-part">${ps}</div>`).join("")}

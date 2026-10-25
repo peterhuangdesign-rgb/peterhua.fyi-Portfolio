@@ -1,6 +1,6 @@
 # peterhua.fyi — portfolio and personal brand handoff
 
-Context for a new chat. Status as of 25 Oct 2026 (portfolio artifact version 25, GitHub `main`, round 5). Peter asks to review before changes are pushed; wait for his go-ahead.
+Context for a new chat. Status as of 25 Oct 2026 (portfolio artifact version 25, GitHub `main`, round 5). Round 6 is on branch `round-6`, not pushed yet. Peter asks to review before changes are pushed; wait for his go-ahead.
 Paste this file in first, then give the next request.
 
 ---
@@ -30,7 +30,7 @@ Rules for any new chat:
 | Portfolio (claude.ai artifact, multi-file) | https://claude.ai/artifact/83J6u88WPmagR5GSvvcx3S |
 | Logo and brand canvas (Design artifact) | https://claude.ai/artifact/F2jJWEpkSJRC1GDA1opfM9 (pages: Logo rounds, Applications incl. **LinkedIn banner**, Round 5, **Palettes · bright + dark**) |
 | Code | github.com/peterhuangdesign-rgb/peterhua.fyi-portfolio, branch `main` (private repo) |
-| Backups | branches `backup/before-fixes`, `backup/before-round-2`, `backup/before-round-3`, `backup/before-round-4`, `backup/before-round-5` |
+| Backups | branches `backup/before-fixes`, `backup/before-round-2`, `backup/before-round-3`, `backup/before-round-4`, `backup/before-round-5`, `backup/before-round-6` |
 | Live site today | Moving from **Framer** to GitHub Pages. Domain is on **Namecheap**; DNS change in progress (see §4). |
 | Model portfolio Peter admires | https://www.dennisquizhpi.com/ and https://www.dennisquizhpi.com/lawnstack |
 
@@ -92,6 +92,7 @@ Open question: earlier notes said the Sea bar is light earth `#C9A57E`, but the 
 ### Animated main logo (Profile page, top)
 - p and h stay fixed; the rest of each word rolls.
 - Pairs, in order: **peter / huang → psychology / human factors → prototype / hypothesis → product / heuristics**, then loop. **The only allowed pairs.** (25 Oct: presence / humility removed as corny.)
+- **All rolling words use weight 500**, the same as the fixed p and h, so no pair changes weight mid-loop (the light 300 traits are retired).
 - The loop is seamless: the roll lists end with a copy of the first pair (`LOOP` in `site/app.js`), so it always rolls forward and snaps back to the real first pair with no motion.
 - Lowercase. 2.8 s per pair, 0.8 s transition. Pause button (WCAG 2.2.2). Reduced motion = still. Screen readers get one label (built from `PAIRS`).
 - Size `font-size:min(140px,17cqi)` so "human factors" never wraps. Any new h-word must be no wider than "human factors".
@@ -175,12 +176,11 @@ Wayfarer and Glenergy (both done, Peter's text and images).
 - **Work**: Chorvivo (**Now**, Head of design, Sep 2026 – present, no link), then Designity (UI/UX intern, Jun 15 – Sep 15, 2026 · 3 months).
 - **Research experience**, newest first: DOROT, then Nordoff-Robbins.
 - **Skills**.
-- **Résumé + Email** button pair (same `ctaPair` markup), closing the professional half.
 - **One source (25 Oct):** Work, Research experience and Skills are rendered from `RESUME` (`experience` with `group: work | research | other`, and `skills`) by the same `xpHTML` used on the résumé page. Each entry: organisation + dates → role → context line → confidential note (if any) → bullets. `DATA.work`, `DATA.field` and `PROFILE.skills` were removed so Profile and résumé can't drift apart.
 - **Chorvivo confidential indicator:** a small lock glyph, **Confidential**, then "Work in progress, so it isn't shown in this portfolio. I'm happy to talk about my role." Shown on Profile and the résumé page (`note` on the Chorvivo entry).
 - **"Beyond work"** heading, then:
   - **What guides me?** Peter's exact words in five short parts separated by rules. No numbers. Substack button, then **"Read my mission"** as the last thing in the section.
-  - Photos of Peter (3): `me-03.jpg` (outside a chicken restaurant, thumbs up; replaced the duplicate of the top portrait on 25 Oct), `me-01.jpg` (with his cat), `me-02.jpg` (hillside).
+  - Photos of Peter (3): `me-03.jpg` (outside Kkanbu Chicken, thumbs up, cropped to include the framed photo of the Jensen Huang table; replaced the duplicate of the top portrait on 25 Oct), `me-01.jpg` (with his cat), `me-02.jpg` (hillside).
   - **Outside of work**: Jazz Piano, Videogame Music Production, Climbing, Weightlifting, Meditating, Photography. Titles only.
   - My music: hidden (`SHOW_MUSIC=false`) until real tracks or links.
   - **Photography**: the three real photos only.
@@ -201,7 +201,8 @@ Wayfarer and Glenergy (both done, Peter's text and images).
 - Email address, button pair + Copy email, LinkedIn, Based in Orange County, California.
 
 ### Story / mission (rewritten 25 Oct)
-- Reached only from "Read my mission" on Profile. Buttons "Close story" and "Back to profile". Scroll is 100vh per chapter with a progress line at the bottom.
+- Reached only from "Read my mission" on Profile. Buttons "Close story" and "Back to profile". Progress line at the bottom.
+- **How it moves (round 6, scrollytelling best practice):** one 100vh step per chapter over a fixed stage. Native scroll with CSS `scroll-snap-type: y mandatory`, so every scroll stops on a chapter; wheel, touch, keyboard and scrollbar work normally (no scroll-jacking). The active chapter is read once per frame (passive listener + `requestAnimationFrame`). On a change, the sentence fades out (180 ms), then sentence and drawing swap in the same frame and the new part draws over 1.1 s, interruptible. Reduced motion: the finished frame appears at once. The app tiles code is gone.
 - Nine chapters, one sentence each:
   1. "Technology can bring us closer, or distance us from each other." Sentence alone (the app-tile animation is removed).
   2. "How we use this power depends upon how we research, develop, and apply it in society." Research ↔ Theory ↔ Practice line drawing (kept).
@@ -239,6 +240,7 @@ Ranked by how much a research hiring team would weigh it.
 - [ ] **8. Case length.** Case pages are long; the Key finding now leads, but sections could be trimmed once impact is added.
 
 ### Content and decisions needed from Peter
+- [ ] **Review round 6** (branch `round-6`): Profile button pair removed, story stepping, logo weight, new photo crop.
 - [ ] **Confirm** the mission timeline sentences (chapters 3–7) and the Chorvivo confidential note wording.
 - [ ] **Confirm** the paper title, "school project" for Glenergy, the Key finding sentences, and the work context lines.
 - [ ] **GPA** on the PDF: which number, or leave off.
@@ -293,6 +295,9 @@ Brand principle agreed: two themes that are distinctly bright and dark, one bar 
 - "Mission" button under the logo. Replaced by "Read my mission" at the end of What guides me?.
 - Blinking caret on the typed intro.
 - Left-border callouts.
+- Résumé + Email pair under Profile's work section.
+- Light (300) weight for the rolling traits in the logo.
+- Scroll-scrubbed story drawing (text lagged the drawing).
 - Description lines and dates on Home featured projects. Home shows title, type / format and picture only.
 - Field and date parts in project context lines.
 - Paper title page as the Home picture.
