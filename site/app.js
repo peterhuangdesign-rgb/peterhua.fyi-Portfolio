@@ -77,12 +77,16 @@ const TYPE_MS=1000;
 let typed=false,twT=null;
 function typeIntro(root){
   cancelAnimationFrame(twT);
-  const p=root.querySelector(".mission");if(!p||typed||reduce)return;typed=true;
-  const full=p.textContent.trim();
-  p.innerHTML=`<span class="sr">${esc(full)}</span><span class="tw" aria-hidden="true"><span class="tw-g">${esc(full)}</span><span class="tw-l"></span></span>`;
+  const p=root.querySelector(".mission");if(!p)return;
+  const nyu=p.querySelector(".nyu");
+  /* NYU: a quick violet underline once the intro has typed in, then it stays */
+  if(typed||reduce){nyu&&nyu.classList.add("drawn");return}typed=true;
+  const full=p.textContent.trim(),mark=p.innerHTML;
+  p.innerHTML=`<span class="sr">${esc(full)}</span><span class="tw" aria-hidden="true"><span class="tw-g">${mark}</span><span class="tw-l"></span></span>`;
+  const box=p.querySelector(".tw-g .nyu");
   const l=p.querySelector(".tw-l");let t0=null;
   const tick=t=>{if(t0===null)t0=t;const k=Math.min(1,(t-t0)/TYPE_MS);l.textContent=full.slice(0,Math.round(k*full.length));
-    if(k<1)twT=requestAnimationFrame(tick);else l.classList.add("done")};
+    if(k<1)twT=requestAnimationFrame(tick);else{l.classList.add("done");box&&setTimeout(()=>box.classList.add("draw"),200)}};
   setTimeout(()=>{twT=requestAnimationFrame(tick)},250);
 }
 
@@ -110,7 +114,7 @@ const featBlocks=()=>FEATURED.map((f,i)=>{const p=byId(f.id);if(!p)return"";
     ${f.img?`<img class="fw-img" src="${f.img}" alt="${esc(f.alt||"")}" loading="lazy"${f.w?` width="${f.w}" height="${f.h}"`:""}>`:""}</a></article>`}).join("");
 const PAGES={
   home:()=>`<div class="hi"><div class="hi-txt"><h1 class="ph1 greet">Hello! I’m Peter Huang.</h1>
-    <p class="mission">I’m a UX researcher with a background in psychology, digital media, and design. I’m curious about how we design safer systems and more effective experiences.</p>
+    <p class="mission">I’m a UX researcher and <span class="nyu">NYU</span> psychology graduate with a background in digital media and design. I’m curious about how we design safer systems and more effective experiences.</p>
     <p class="hi-now"><span class="hi-sq" aria-hidden="true"></span>Currently working at Chorvivo.</p>
     <div class="hi-act">${ctaPair()}</div></div>
     <img class="hi-photo" src="media/me-smile.jpg" alt="Peter Huang, smiling, in a cap" width="556" height="520"></div>

@@ -223,7 +223,7 @@ function caseHTML(p,opts={}){
   if(p.body){
     const hero=p.hero?figHTML(p.hero,reg(p.hero)).replace('class="cf"','class="cf cf-hero"'):"";
     const blocks=p.body.map(b=>{
-      let h=`<section class="c-sec cb"><h3>${esc(b.h)}</h3><div class="cb-b">`;
+      let h=`<section class="c-sec cb"><h2 class="c-h">${esc(b.h)}</h2><div class="cb-b">`;
       if(b.quote)h+=`<blockquote class="c-quote">${esc(b.quote)}</blockquote>`;
       (b.p||[]).forEach(x=>h+=`<p>${esc(x)}</p>`);
       if(b.pivot)h+=`<p class="c-pivot">${esc(b.pivot)}</p>`;
@@ -238,7 +238,7 @@ function caseHTML(p,opts={}){
       if(b.paper){const P=b.paper;h+=`<div class="c-paper-card"><a href="${P.href}" target="_blank" rel="noopener" class="c-paper-cov"><img src="${P.cover.src}" alt="${esc(P.cover.alt)}" width="${P.cover.w}" height="${P.cover.h}" loading="lazy"></a><div><p>${esc(P.note)}</p><b>${esc(P.title)}</b><span class="c-paper-meta">${esc(P.meta)}</span><p class="c-links"><a class="btn" href="${P.href}" target="_blank" rel="noopener">Read the paper ↗</a><a class="btn" href="${P.href}" download>Download PDF</a></p></div></div>`}
       if(b.links)h+=`<p class="c-links">${b.links.map(([t,u])=>`<a class="btn" href="${esc(u)}" target="_blank" rel="noopener">${esc(t)} ↗</a>`).join("")}</p>`;
       h+=`</div></section>`;
-      if(b.themes)h+=`<div class="c-themes">${b.themes.map((t,k)=>`<section class="c-theme"><h4><span>Theme ${k+1}</span>${esc(t.t)}</h4><dl>${t.codes.map(([c,d,qs])=>`<div class="c-code"><dt>${esc(c)}</dt><dd class="def">${esc(d)}</dd>${qs.map(q=>`<dd><blockquote>“${esc(q)}”</blockquote></dd>`).join("")}</div>`).join("")}</dl></section>`).join("")}</div>`;
+      if(b.themes)h+=`<div class="c-themes">${b.themes.map((t,k)=>`<section class="c-theme"><h3><span>Theme ${k+1}</span>${esc(t.t)}</h3><dl>${t.codes.map(([c,d,qs])=>`<div class="c-code"><dt>${esc(c)}</dt><dd class="def">${esc(d)}</dd>${qs.map(q=>`<dd><blockquote>“${esc(q)}”</blockquote></dd>`).join("")}</div>`).join("")}</dl></section>`).join("")}</div>`;
       if(b.figs)h+=`<div class="c-figs">${b.figs.map(f=>figHTML(f,reg(f))).join("")}</div>`;
       if(b.pair)h+=`<div class="c-figs c-pair">${b.pair.map(f=>figHTML(f,reg(f))).join("")}</div>`;
       if(b.figs2)h+=`<div class="c-figs">${b.figs2.map(f=>figHTML(f,reg(f))).join("")}</div>`;
@@ -256,12 +256,12 @@ function caseHTML(p,opts={}){
   <dl class="c-meta">${p.meta.map(([a,b])=>`<div><dt>${a}</dt><dd>${esc(b)}</dd></div>`).join("")}</dl>
   ${p.line?`<p class="c-line">${esc(p.line)}</p>`:""}
   ${secs.length?"":`<p class="c-wip"><span class="label">Write-up in progress</span>The full case study is being written. Ask me about it: <a href="mailto:${CONTACT.email}" data-cta="email">${CONTACT.email}</a></p>`}
-  ${secs.map(([h,b])=>`<section class="c-sec"><h3>${h}</h3><p>${b}</p></section>`).join("")}`;
+  ${secs.map(([h,b])=>`<section class="c-sec"><h2 class="c-h">${h}</h2><p>${b}</p></section>`).join("")}`;
 }
 function wireCase(root,p){if(!p||!p._imgs)return;root.querySelectorAll(".cf-z").forEach(b=>b.onclick=()=>Lightbox.open(+b.dataset.z,b,p._imgs))}
 function resumeHTML(){
   const R=RESUME;
-  return `<section class="c-sec" id="resume-body"><h3>Human factors focus</h3><div class="cv">
+  return `<section class="c-sec" id="resume-body"><h2 class="c-h">Human factors focus</h2><div class="cv">
     <div class="xps">${R.experience.map(xpHTML).join("")}</div>
     <ol class="cv-list cv-res">${R.research.map(([t,d,w])=>`<li><div class="cv-h"><b>${esc(t)}</b><span>${esc(w)}</span></div><p class="cv-role">${esc(d)}</p></li>`).join("")}</ol>
     <div class="cv-ed"><div class="cv-h"><b>${R.education.degree}</b><span>${R.education.when}</span></div><p class="cv-org">${R.education.school}</p><p>${R.education.minors}. ${R.education.extra}.</p><p class="cv-muted">${R.education.courses}</p></div>
@@ -303,22 +303,22 @@ function profileHTML(opts={}){
   const H=opts.h||"h2",P=PROFILE,W=P.why;
   return `<${H} class="c-t">Profile</${H}>
   <div class="pf-top"><img class="pf-portrait" src="media/portrait.jpg" alt="Portrait of Peter Huang" width="512" height="512"><div class="pf-about">${P.about.map(x=>`<p>${esc(x)}</p>`).join("")}</div></div>
-  <section class="c-sec" id="experience"><h3>Work</h3><div class="xps">${RESUME.experience.filter(e=>e.group==="work").map(xpHTML).join("")}</div></section>
-  <section class="c-sec"><h3>Research experience</h3><div class="xps">${RESUME.experience.filter(e=>e.group==="research").map(xpHTML).join("")}</div></section>
-  <section class="c-sec"><h3>Skills</h3><dl class="pf-skills">${RESUME.skills.map(([a,b])=>`<div><dt>${esc(a)}</dt><dd>${esc(b)}</dd></div>`).join("")}</dl></section>
+  <section class="c-sec" id="experience"><h2 class="c-h">Work</h2><div class="xps">${RESUME.experience.filter(e=>e.group==="work").map(xpHTML).join("")}</div></section>
+  <section class="c-sec"><h2 class="c-h">Research experience</h2><div class="xps">${RESUME.experience.filter(e=>e.group==="research").map(xpHTML).join("")}</div></section>
+  <section class="c-sec"><h2 class="c-h">Skills</h2><dl class="pf-skills">${RESUME.skills.map(([a,b])=>`<div><dt>${esc(a)}</dt><dd>${esc(b)}</dd></div>`).join("")}</dl></section>
   <h2 class="pf-break">Beyond work</h2>
-  <section class="c-sec"><h3>What guides me?</h3><div class="pf-long why">
+  <section class="c-sec"><h2 class="c-h">What guides me?</h2><div class="pf-long why">
     ${whyParts().map(ps=>`<div class="why-part">${ps}</div>`).join("")}
     <p class="pf-sub"><a class="btn" href="${P.substack.url}" target="_blank" rel="noopener">Substack ↗</a> <span class="pf-note">${esc(P.substack.note)}</span></p>
     <p class="pf-mission"><a class="btn" href="#story">Read my mission</a></p></div></section>
   <section class="pf-photos" aria-label="Photos of Peter"><ul class="photos me-photos">${DATA.mePhotos.map((p,i)=>`<li><button class="ph" data-set="me" data-i="${i}" aria-label="Open ${esc(p.alt)}"><img src="${p.src}" alt="${esc(p.alt)}" loading="lazy"></button></li>`).join("")}</ul></section>
-  <section class="c-sec"><h3>Outside of work</h3><ul class="me">${DATA.me.map(a=>`<li><b>${esc(a)}</b></li>`).join("")}</ul></section>
+  <section class="c-sec"><h2 class="c-h">Outside of work</h2><ul class="me">${DATA.me.map(a=>`<li><b>${esc(a)}</b></li>`).join("")}</ul></section>
   ${opts.resume?resumeHTML():""}
-  ${DATA.tracks.length?`<section class="c-sec"><h3>My music</h3><div data-player>
+  ${DATA.tracks.length?`<section class="c-sec"><h2 class="c-h">My music</h2><div data-player>
     <ol class="tracks">${DATA.tracks.map((t,i)=>`<li><button class="trk" data-i="${i}" aria-pressed="false"><span class="glyph" aria-hidden="true"></span><span class="tt">${esc(t.t)}</span><span class="tn">${esc(t.note)}</span><span class="td" data-d>–:––</span></button></li>`).join("")}</ol>
     <div class="seekbar"><input type="range" min="0" max="1000" value="0" step="1" aria-label="Seek" data-seek><span data-time>0:00</span></div>
     <audio preload="none"></audio></div></section>`:""}
-  <section class="c-sec"><h3>Photography</h3><ul class="photos">${DATA.photos.map((p,i)=>`<li><button class="ph" data-set="photos" data-i="${i}" aria-label="Open ${esc(p.alt)}"><img src="${p.src}" alt="${esc(p.alt)}" loading="lazy" width="400" height="400"></button></li>`).join("")}</ul></section>`;
+  <section class="c-sec"><h2 class="c-h">Photography</h2><ul class="photos">${DATA.photos.map((p,i)=>`<li><button class="ph" data-set="photos" data-i="${i}" aria-label="Open ${esc(p.alt)}"><img src="${p.src}" alt="${esc(p.alt)}" loading="lazy" width="400" height="400"></button></li>`).join("")}</ul></section>`;
 }
 const fmt=s=>!isFinite(s)?"–:––":`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,"0")}`;
 function wireProfile(root){

@@ -49,7 +49,7 @@ a{color:var(--ink);text-underline-offset:4px}
   background:repeating-linear-gradient(135deg,transparent 0 11px,#15181A1c 11px 12px);
   font:500 12px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--graphite)}
 .c-sec{display:grid;grid-template-columns:120px minmax(0,1fr);gap:8px 24px;padding:20px 0;border-top:1px solid var(--rule)}
-.c-sec h3{margin:0;font:500 12px/1.6 var(--body);text-transform:uppercase;letter-spacing:.14em;color:var(--graphite)}
+.c-sec .c-h{margin:0;font:500 12px/1.6 var(--body);text-transform:uppercase;letter-spacing:.14em;color:var(--graphite)}
 .c-sec p{margin:0;max-width:62ch}
 .c-paper{margin:24px 0 0}
 @media (max-width:560px){.c-sec{grid-template-columns:minmax(0,1fr)}}
@@ -138,8 +138,8 @@ a{color:var(--ink);text-underline-offset:4px}
 .c-tbl .n{text-align:right;width:1%;white-space:nowrap;padding-right:20px}
 .c-themes{display:grid;gap:8px;margin:4px 0 28px}
 .c-theme{border:1px solid var(--ink);padding:20px}
-.c-theme h4{margin:0 0 16px;font:500 clamp(24px,2.4vw,32px)/1.05 var(--display);display:grid;gap:8px}
-.c-theme h4 span{font:500 12px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--graphite)}
+.c-theme h3{margin:0 0 16px;font:500 clamp(24px,2.4vw,32px)/1.05 var(--display);display:grid;gap:8px}
+.c-theme h3 span{font:500 12px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--graphite)}
 .c-theme dl{margin:0;display:grid}
 .c-code{display:grid;grid-template-columns:minmax(0,200px) minmax(0,1fr);gap:4px 24px;padding:16px 0;border-top:1px solid var(--rule)}
 .c-code dt{font:500 20px/1.1 var(--display);grid-row:span 9}

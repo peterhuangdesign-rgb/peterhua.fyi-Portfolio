@@ -325,3 +325,15 @@ html.story-snap{scroll-snap-type:y mandatory}
 .story-stage{position:fixed;inset:0;z-index:2}
 .story-step{height:100vh;height:100svh;scroll-snap-align:start}
 .story-skip,.story-hint,.story-prog{z-index:7}
+
+/* NYU in the intro: one quick violet underline after the intro types in, then it stays.
+   Land #57068C on the ground 11.3:1; Sea #D4B8F2 on the ground 7.4:1. Only transform animates. */
+html[data-theme="land"]{--nyu-line:#57068C}
+html[data-theme="sea"]{--nyu-line:#D4B8F2}
+.nyu{position:relative;display:inline-block;white-space:nowrap}
+.tw-g .nyu{visibility:visible;color:transparent}
+.nyu::after{content:"";position:absolute;left:0;right:0;bottom:-.08em;height:2px;background:var(--nyu-line);transform:scaleX(0);transform-origin:left}
+.nyu.draw::after{animation:nyux .35s cubic-bezier(.2,.7,.2,1) forwards}
+.nyu.drawn::after{transform:none}
+@keyframes nyux{to{transform:scaleX(1)}}
+@media (prefers-reduced-motion:reduce){.nyu::after{transform:none!important;animation:none!important}}
