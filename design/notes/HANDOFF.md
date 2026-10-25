@@ -148,7 +148,7 @@ Work context lines were written from Peter's descriptions; he should confirm the
 - Theme switch: all colours change in the same frame, and the background redraws on every switch.
 
 ### Home (opens every visit; no intro)
-1. **Hero:** greeting "Hello! I'm Peter Huang." left, two-line intro that types in about 1 s (`TYPE_MS`, no blinking caret), smiling photo right (`me-smile.jpg`). Intro (25 Oct, Peter's words): "I'm a UX researcher trained in psychology and human-computer interaction at NYU. I'm curious about how we design safer systems and more effective experiences." No underline or box on NYU. Under the intro, a **fact row** (25 Oct; NYU direction 5): Education — NYU, B.S. Applied Psychology / Minor: Integrated Design & Media (HCI) · Now — Founding designer at Chorvivo · Next — Building towards human factors. Three columns between rules when the text column is at least 600 px wide, otherwise one fact per line. Replaced the "Currently working at Chorvivo." line. "Founding designer" is Peter's title everywhere (Home, Profile, résumé page, PDF); recruiters skim titles first. **Nothing else in the hero.**
+1. **Hero:** greeting "Hello! I'm Peter Huang." left, two-line intro that types in about 1 s (`TYPE_MS`, no blinking caret), smiling photo right (`me-smile.jpg`). Intro (25 Oct, Peter's words): "I'm a UX researcher trained in psychology and human-computer interaction at NYU. I'm curious about how we design safer systems and more effective experiences." No underline or box on NYU. Under the intro, a **fact row** (25 Oct; NYU direction 5): Education — NYU, B.S. Applied Psychology / Minor: Integrated Design & Media (HCI) · Now — Founding Designer at Chorvivo · Next — Building towards human factors. Three columns between rules when the text column is at least 600 px wide, otherwise one fact per line. Replaced the "Currently working at Chorvivo." line. "Founding Designer" is Peter's title everywhere (Home, Profile, résumé page, PDF); recruiters skim titles first. **Nothing else in the hero.**
 2. **Featured work**, in this order (edit `FEATURED` in `site/app.js`; context comes from the project's `ctx`):
    1. **Technology and well-being: an independent interview study**. Image: `paper-codebook.webp` (top of the Appendix B codebook).
    2. **Wayfarer**. Image: `wayfarer/hero.webp`, uncropped.
@@ -174,7 +174,7 @@ Wayfarer and Glenergy (both done, Peter's text and images).
 - Animated logo (snug), Pause under it.
 - Portrait and about (Peter's words).
 - **Education** (first section, 25 Oct): New York University, May 2026; B.S. Applied Psychology; Minor: Integrated Design & Media (HCI/UX) (**no Philosophy minor**: Peter didn't complete it, so it must not appear anywhere); Steinhardt School of Culture, Education, and Human Development; Dean's List, Spring 2024; coursework. Rendered by `eduHTML` from `RESUME.education`, same on the résumé page and first on the PDF.
-- **Work**: Chorvivo (**Now**, Founding designer, Sep 2026 – present, no link), then Designity (UI/UX intern, Jun 15 – Sep 15, 2026 · 3 months).
+- **Work**: Chorvivo (**Now**, Founding Designer, Sep 2026 – present, no link), then Designity (UI/UX intern, Jun 15 – Sep 15, 2026 · 3 months).
 - **Research experience**, newest first: DOROT, then Nordoff-Robbins.
 - **Strengths** (25 Oct): Cross-functional collaboration, AI fluency, Research design rigour, Product thinking, Agile, 0 to 100, each with one line of context from Peter's work. Data `RESUME.strengths`, rendered by `strengthsHTML`.
 - **Skills** (from `RESUME.skills`).
@@ -190,7 +190,7 @@ Wayfarer and Glenergy (both done, Peter's text and images).
 ### Résumé page (matches Profile)
 - Sections: Education, Experience, Research, Strengths, Skills (25 Oct). Same data and renderers as Profile (`eduHTML`, `xpHTML`), so organisations, roles, dates, context lines, notes and bullets always match. Reached from the rail, Home on phones, Profile and Contact.
 - Order: Chorvivo, Designity, DOROT, Nordoff-Robbins, NOVA Kitchen and Bar (NOVA is `group: other`, résumé only).
-- Roles in sentence case. Bullets are the full ones from Peter's human factors résumé, in past tense. A Research section lists the three papers. Skills: Research methods, UX design (Figma, Adobe Illustrator, InDesign, Photoshop), UX research (SPSS, Excel, R, Salesforce, qual + quant).
+- Job titles in Title Case (25 Oct): Founding Designer, UI/UX Intern, Research & Operations Assistant, Clinical Observational Researcher, Operations Intern. Bullets are the full ones from Peter's human factors résumé, in past tense. A Research section lists the three papers. Skills: Research methods, UX design (Figma, Adobe Illustrator, InDesign, Photoshop), UX research (SPSS, Excel, R, Salesforce, qual + quant).
 - **PDF** is generated from the same `RESUME` data by `design/notes/build-resume-pdf.js` (Node + Playwright). **Any change to `RESUME` means rebuilding the PDF** so Profile, the résumé page and the download stay identical. Last rebuilt 25 Oct: education first, Strengths and Skills side by side, contact in three lines, one page, real text, brand fonts, contact line "Orange County, CA · (949) 933-0073 · peterhuangdesign@gmail.com · peterhua.fyi · linkedin.com/in/peterhuaux". GPA left off (versions disagree: 3.57 / 3.54 / 3.56).
 
 ### LinkedIn banner (24 Oct)
