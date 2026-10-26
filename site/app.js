@@ -101,7 +101,7 @@ const FEATURED=[
     line:"How relationships through technology relate to life satisfaction among emerging adults. 7 semi-structured interviews, grounded-theory coding, and a 27-page paper."},
   {id:"wayfarer",kind:"UX design + research",format:"Design-a-thon winner",year:"2026",img:"media/wayfarer/hero.webp",w:1414,h:920,alt:"Three Wayfarer app screens",
     line:"Winner of Cornell University’s CU Design-a-thon 2026: a two-day sprint, 71 participants. An app that accompanies you on your walk, with asynchronous social connection and easy journaling."},
-  {id:"glenergy",kind:"UX design + research",format:"Dark patterns study · Team of 3",year:"2025",img:"media/glenergy/feature.webp",w:1728,h:1100,alt:"Glenergy high-fidelity screen: the Give Back retirement plan page, $1 to $2 employer match",
+  {id:"glenergy",kind:"UX design + research",format:"Dark patterns study · Team of 3",year:"2025",img:"media/glenergy/home.webp",w:1717,h:1117,alt:"Glenergy logo: a glowing light bulb beside the Glenergy wordmark",
     line:"A design of an Employee Onboarding Portal that incentivizes users to choose cost-effective options for the distributor/business. We tested to identify the effectiveness of “Dark Patterns” and discern perceptions of AI integration in business applications."}
 ];
 const featBlocks=()=>FEATURED.map((f,i)=>{const p=byId(f.id);if(!p)return"";

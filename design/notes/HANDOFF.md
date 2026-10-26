@@ -153,7 +153,7 @@ Work context lines were written from Peter's descriptions; he should confirm the
 2. **Featured work**, in this order (edit `FEATURED` in `site/app.js`; context comes from the project's `ctx`):
    1. **Technology and well-being: an independent interview study**. Image: `paper-codebook.webp` (top of the Appendix B codebook).
    2. **Wayfarer**. Image: `wayfarer/hero.webp`, uncropped.
-   3. **Glenergy**. Image: `glenergy/feature.webp` (crop of the high-fidelity Give Back screen).
+   3. **Glenergy**. Image: `glenergy/home.webp` (Glenergy logo on its gradient, 26 Oct; replaced the Give Back screen crop `feature.webp`, which is kept).
    All three pictures share one frame, Wayfarer's own ratio (1414:920), cropped from the top.
 3. Links: "All research" and "All design".
 - **Chorvivo is not a project.** Peter can't talk about it. It appears only in the Home fact row, under Work on Profile and on the résumé, with no link and no case page.
