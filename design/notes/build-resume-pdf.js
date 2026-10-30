@@ -6,7 +6,7 @@ const src=fs.readFileSync('/home/claude/peterhua.fyi-portfolio/shared/core.js','
 const RES=window.Presence.RESUME;
 const e=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
 const F="/home/claude/peterhua.fyi-portfolio/media/fonts/";
-const mark=fs.readFileSync('/tmp/claude-0/-home-claude/14443b14-da4d-5824-afaf-a52cd0bd127b/scratchpad/mark.svg.txt','utf8').replace('class="mark"','width="15" height="50"').replace("<path ",'<path fill="#15181A" ').replace("<rect ",'<rect fill="#7A5636" ').replace(/<path d=/g,'<path fill="#15181A" d=');
+const mark=fs.readFileSync('/home/claude/peterhua.fyi-portfolio/index.html','utf8').match(/<svg class="mark"[\s\S]*?<\/svg>/)[0].replace('class="mark"','width="15" height="50"').replace("<path ",'<path fill="#15181A" ').replace("<rect ",'<rect fill="#7A5636" ').replace(/<path d=/g,'<path fill="#15181A" d=');
 const html=`<!doctype html><html><head><meta charset="utf-8"><title>Peter Huang — Résumé</title><style>
 @font-face{font-family:DG;font-weight:500;src:url(file://${F}darker-grotesque-latin-500-normal.woff2)}
 @font-face{font-family:DG;font-weight:600;src:url(file://${F}darker-grotesque-latin-600-normal.woff2)}
