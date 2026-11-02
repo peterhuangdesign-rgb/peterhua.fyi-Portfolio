@@ -313,7 +313,7 @@ function leaveRoom(){
 }
 async function makeLobby(){
   const name = entry.name.trim().toLowerCase();
-  if (!name) { entry.err = "type your name first"; return render(); }
+  if (!name) { entry.err = "name first"; return render(); }
   entry.busy = true; entry.err = ""; render();
   ls.set("spookee:name", name);
   try {
@@ -322,22 +322,22 @@ async function makeLobby(){
       const made = await online.createRoom(code, { seats:{ a:uid }, names:{ a:name, b:"" }, presence:{ a:Date.now() }, created:Date.now() });
       if (made) { entry.busy = false; location.hash = "who"; enterRoom(code); return; }
     }
-    entry.err = "couldn't make a lobby. try again.";
-  } catch (e) { console.error(e); entry.err = "couldn't reach the crystal ball. check your connection."; }
+    entry.err = "try again";
+  } catch (e) { console.error(e); entry.err = "offline?"; }
   entry.busy = false; render();
 }
 async function joinLobby(codeIn){
   const name = entry.name.trim().toLowerCase(), code = cleanCode(codeIn || entry.code);
-  if (!name) { entry.err = "type your name first"; return render(); }
-  if (!code) { entry.err = "type the lobby code"; return render(); }
+  if (!name) { entry.err = "name first"; return render(); }
+  if (!code) { entry.err = "code?"; return render(); }
   entry.busy = true; entry.err = ""; render();
   ls.set("spookee:name", name);
   try {
     const res = await online.joinRoom(code, uid, name);
     entry.busy = false;
-    if (res === "missing") { entry.err = `no lobby called "${code}". check the code.`; forgetLobby(code); return render(); }
+    if (res === "missing") { entry.err = `no lobby "${code}"`; forgetLobby(code); return render(); }
     location.hash = "ball"; enterRoom(code); // "full" still enters, to watch
-  } catch (e) { console.error(e); entry.busy = false; entry.err = "couldn't reach the crystal ball. check your connection."; render(); }
+  } catch (e) { console.error(e); entry.busy = false; entry.err = "offline?"; render(); }
 }
 
 /* ---------- rendering ---------- */
@@ -382,7 +382,7 @@ function whoView(){
         <input id="entry-name" class="big-in" value="${esc(entry.name)}" maxlength="16" spellcheck="false">
         <button class="btn" type="button" data-act="make" ${entry.busy ? "disabled" : ""}>make a lobby</button>
         <p class="or">or</p>
-        <label class="lbl" for="entry-code">lobby code</label>
+        <label class="lbl" for="entry-code">code</label>
         <input id="entry-code" class="big-in" value="${esc(entry.code)}" maxlength="24" spellcheck="false" placeholder="moth-42">
         <button class="btn ghost" type="submit" ${entry.busy ? "disabled" : ""}>join</button>
         ${entry.err ? `<p class="warn" role="alert">${esc(entry.err)}</p>` : ""}
@@ -401,7 +401,7 @@ function whoView(){
   const full = !seat;
   const row = s => {
     const has = game && game.seats && game.seats[s];
-    return `<li class="${seat === s ? "me" : ""}">${dot(s)}<span>${has ? esc(nm(s)) : "waiting for someone to join…"}</span>${seat === s ? `<small>you</small>` : ""}</li>`;
+    return `<li class="${seat === s ? "me" : ""}">${dot(s)}<span>${has ? esc(nm(s)) : "…"}</span>${seat === s ? `<small>you</small>` : ""}</li>`;
   };
   return page(`<h1>who are you?</h1>
     <section class="lobby">
@@ -412,9 +412,7 @@ function whoView(){
         <button class="btn ghost" data-act="copy">copy link</button>
       </div>
       <ul class="players">${row("a")}${row("b")}</ul>
-      ${full ? `<p class="warn">this lobby is full. you can watch.</p>` : `
-        <label class="lbl" for="my-name">your name</label>
-        <input id="my-name" class="big-in" value="${esc(names()[seat])}" maxlength="16" spellcheck="false">`}
+      ${full ? `<p class="note">full. watching.</p>` : ""}
       <div class="row"><a class="btn" href="#ball" style="text-decoration:none">go to the crystal ball</a></div>
       ${accountLine()}
       <button class="link" data-act="leave">leave this lobby</button>
@@ -424,18 +422,17 @@ function whoView(){
 let signErr = "";
 function accountLine(){
   if (mode !== "online") return "";
-  if (!online.anonymous()) return `<p class="note acct">signed in as ${esc(online.email() || "you")}. your seats follow you to any device.</p>`;
-  return `<div class="acct"><button class="btn ghost" data-act="google">keep my seat on any device</button>
-    ${signErr ? `<p class="warn" role="alert">${esc(signErr)}</p>` : `<p class="note">sign in with google so your phone and laptop are the same player.</p>`}</div>`;
+  if (!online.anonymous()) return `<p class="note acct">${esc(online.email() || "signed in")}</p>`;
+  return `<div class="acct"><button class="link" data-act="google">play on any device</button>
+    ${signErr ? `<p class="warn" role="alert">${esc(signErr)}</p>` : ""}</div>`;
 }
 async function google(){
   signErr = "";
   try { await online.signInGoogle(); location.reload(); }
   catch (e) {
     console.error(e);
-    signErr = e && e.code === "auth/operation-not-allowed" ? "google sign-in isn't turned on for this game yet."
-      : e && e.code === "auth/popup-blocked" ? "your browser blocked the sign-in window. allow pop-ups and try again."
-      : e && e.code === "auth/popup-closed-by-user" ? "" : "couldn't sign in. try again.";
+    signErr = e && e.code === "auth/popup-blocked" ? "allow pop-ups, then try again"
+      : e && e.code === "auth/popup-closed-by-user" ? "" : "couldn't sign in";
     render();
   }
 }
@@ -448,24 +445,23 @@ function header(){
   return `<div class="meta">${left}${who}${right}</div>`;
 }
 const handoff = them => mode === "local" ? `<div class="row"><button class="btn ghost" data-act="switch">hand to ${esc(nm(them))}</button></div>` : "";
-const awayNote = them => mode === "local" ? "" : `<p class="note">${isHere(them) ? esc(nm(them)) + " is here now." : esc(nm(them)) + " will see it when they open the lobby."} you can close this. it'll be here when you come back.</p>`;
+const awayNote = them => mode === "local" ? "" : `<p class="note">come back anytime</p>`;
 
 function ballView(){
-  const notes = (readOnly && mode !== "online" ? `<p class="warn">you can watch, but your moves can't be saved. ask the owner for contributor access.</p>` : "")
-              + (slow && !loaded ? `<p class="note">the ball is cloudy. still trying to reach the other side.</p>` : "");
+  const notes = (readOnly && mode !== "online" ? `<p class="note">view only</p>` : "")
+              + (slow && !loaded ? `<p class="note">connecting…</p>` : "");
   if (mode === "online" && !lobbyCode) return page(`<div class="orb" aria-hidden="true"></div><h1>crystal ball</h1>
     <div class="row"><a class="btn" href="#who" style="text-decoration:none">make or join a lobby</a></div>`);
   if (mode !== "online" && !seat) return page(`<div class="orb" aria-hidden="true"></div><h1>crystal ball</h1>
     <div class="row"><a class="btn" href="#who" style="text-decoration:none">choose who you are</a></div>`);
   if (!loaded) return page(`<div class="orb" aria-hidden="true"></div><h1>gazing…</h1>${notes}`);
   if (mode === "online" && game && !(game.seats && game.seats.b)) return page(`<div class="orb" aria-hidden="true"></div>
-    <h1>waiting for someone to join…</h1>
-    <p class="note">send them the code <b>${esc(lobbyCode)}</b> or the link.</p>
+    <h1>send them ${esc(lobbyCode)}</h1>
     <div class="row"><button class="btn ghost" data-act="copy">copy link</button></div>`);
   if (!game || !game.reading) return page(`<div class="orb" aria-hidden="true"></div><h1>crystal ball</h1>${notes}
     <div class="row"><button class="btn" data-act="begin" ${readOnly ? "disabled" : ""}>begin</button></div>`);
   if (!seat) { // watcher
-    return page(`${header()}<p class="warn">this lobby is full. you're watching.</p>
+    return page(`${header()}<p class="note">watching</p>
       <div class="small-pair"><span>${esc((game.cards || {}).a || "✦")}</span><i aria-hidden="true">✦</i><span>${esc((game.cards || {}).b || "✦")}</span></div>`);
   }
 
@@ -497,14 +493,19 @@ function ballView(){
         <div class="deck" role="group" aria-label="your five cards">
           ${((game.decks || {})[me] || []).map(w => `<button class="card" data-card="${esc(w)}" aria-pressed="${pick === w}">${esc(w)}</button>`).join("")}
         </div>
-        <p class="note">${theirsIn ? esc(nm(them)) + " has locked in" : esc(nm(them)) + " is choosing"}</p>
+        <p class="note">${theirsIn ? esc(nm(them)) + " locked in" : esc(nm(them)) + " is choosing"}</p>
         <div class="row"><button class="btn" data-act="lock-card" ${pick && !readOnly ? "" : "disabled"}>lock in</button></div>`;
     }
   } else {
     const cards = game.cards || {};
-    const tries = (game.attempts || []).map(t => `<li><span class="rn">${ROMAN[t.round]}</span><span>${esc(t.a)} / ${esc(t.b)}</span></li>`).join("");
-    const pairLine = `<div class="small-pair"><span>${esc(cards.a)}</span><i aria-hidden="true">✦</i><span>${esc(cards.b)}</span></div>`
-      + (tries ? `<ul class="tries" aria-label="earlier tries">${tries}</ul>` : "");
+    // the pool: both cards plus every word guessed so far this reading. The newest two are what you're
+    // connecting this round; everything before them is context the new word has to fit too.
+    const seq = [cards.a, cards.b, ...(game.attempts || []).flatMap(t => [t.a, t.b])].filter(Boolean);
+    const seen = new Set(), pool = [];
+    seq.forEach((w, i) => { const k = w.toLowerCase(); if (seen.has(k)) { pool.find(x => x.k === k).i = i; return; } seen.add(k); pool.push({ w, k, i }); });
+    const newest = new Set(seq.slice(-2).map(w => w.toLowerCase()));
+    const pairLine = `<ul class="pool" aria-label="the pool: connect all of these">
+      ${pool.map(x => `<li class="${newest.has(x.k) ? "new" : ""}">${esc(x.w)}</li>`).join("")}</ul>`;
     if (bothOut) {
       const key = "b" + game.reading + "-" + game.round, anim = lastReveal !== key ? "flip" : ""; lastReveal = key;
       body = `${pairLine}<h1>poof</h1>
@@ -525,7 +526,7 @@ function ballView(){
     } else {
       body = `${pairLine}
         <form class="field" id="bridge-form" autocomplete="off">
-          <label for="bridge-input">${theirsIn ? esc(nm(them)) + " has locked in" : esc(nm(them)) + " is thinking"}</label>
+          <label for="bridge-input">${theirsIn ? esc(nm(them)) + " locked in" : esc(nm(them)) + " is thinking"}</label>
           <input id="bridge-input" value="${esc(draft)}" maxlength="24" spellcheck="false">
           <button class="btn" type="submit" id="lock-word" ${draft.trim() && !readOnly ? "" : "disabled"}>lock in</button>
         </form>`;
@@ -540,7 +541,7 @@ function pastView(){
   const st = statsOf(list), rk = rankOf(st);
   const summary = (game && list.length) ? `<p class="summary">${lobbyCode ? esc(lobbyCode) + " · " : ""}${esc(nm("a"))} & ${esc(nm("b"))} · ${st.successes} of ${st.readings} · ${esc(rankLabel(rk))}</p>` : "";
   if (!list.length) return page(`<h1>see the past</h1>
-    <div class="empty"><p class="note" style="margin:0">nothing yet. finish a reading in the crystal ball.</p>
+    <div class="empty"><p class="note" style="margin:0">nothing yet</p>
     <a class="btn ghost" href="#ball" style="text-decoration:none">go to the crystal ball</a></div>`);
   return page(`<h1>see the past</h1>${summary}<div class="games">
     ${list.map(r => {
@@ -571,10 +572,9 @@ function ranksView(){
   rows.sort((x, y) => (y.rk.tier * 10 + y.rk.sub) - (x.rk.tier * 10 + x.rk.sub) || y.score - x.score || y.readings - x.readings);
   const ladder = `<details class="ladder"><summary>the ranks</summary><ol>
       ${TIERS.slice().reverse().map(t => `<li>${t} <span>I–VI</span></li>`).join("")}
-      <li>${UNRANKED} <span>under ${MIN_READINGS} readings</span></li></ol>
-      <p class="note">ranked by success rate, with quicker agreement worth more. the crystal ball needs 20+ readings.</p></details>`;
+      <li>${UNRANKED} <span>&lt; ${MIN_READINGS} readings</span></li></ol></details>`;
   if (!rows.length) return page(`<h1>leaderboard</h1>
-    <div class="empty"><p class="note" style="margin:0">${mode === "online" ? "no pairs yet. finish a reading to appear." : "finish a reading to see your rank."}</p></div>${ladder}`);
+    <div class="empty"><p class="note" style="margin:0">nothing yet</p></div>${ladder}`);
   return page(`<h1>leaderboard</h1>
     <div class="board-wrap"><table class="board">
       <thead><tr><th scope="col">#</th><th scope="col">pair</th><th scope="col">rank</th><th scope="col" class="num">success</th><th scope="col" class="num">won</th><th scope="col" class="num">failed</th><th scope="col" class="num">guesses</th></tr></thead>

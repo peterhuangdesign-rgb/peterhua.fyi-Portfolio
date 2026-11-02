@@ -157,6 +157,13 @@ input{text-transform:lowercase}
   .card{width:92px;font-size:16px}
   .slot .card{width:120px;font-size:19px}
 }
+/* the pool of words to connect */
+.pool{list-style:none;margin:0 auto;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:8px 14px;max-width:560px;
+  font-family:var(--display);font-weight:700}
+.pool li{color:var(--dim);font-size:17px}
+.pool li.new{color:var(--mist);font-size:24px;text-shadow:0 0 18px #cfa8ff55}
+.pool li+li::before{content:"✦";color:#cfa8ff55;margin-right:14px;font-size:12px;vertical-align:middle}
+
 /* lobby entry and lobby card */
 .entry,.lobby{display:flex;flex-direction:column;gap:10px;align-items:stretch;max-width:420px;width:100%;margin:0 auto}
 .lbl{margin:0;color:var(--dim);font-family:var(--display);font-weight:700;font-size:14px}

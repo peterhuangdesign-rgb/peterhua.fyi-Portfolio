@@ -39,7 +39,7 @@ A **reading** is one pair of cards:
 
 1. **choose... your fate...** Each player gets their own five cards. The hands never overlap, and no word is dealt again until the 400-word pool runs low, then it reshuffles.
 2. Both lock in, then **poof**: both cards flip at once.
-3. **pick a word.. any word..** Each player types a word that bridges the two cards, locks in, then poof.
+3. **pick a word.. any word..** Each player types a word that connects the pool, locks in, then poof. In round i the pool is the two cards. Every wrong round adds both guesses to the pool, so in round ii you connect the two newest words (your round i guesses, shown largest) while still fitting the cards, and round iii adds the round ii guesses on top.
 4. Either player marks it **right** or **wrong**.
    - right: +1 point, a short "spookee, you guys said the same thing!" celebration plays for both players, and a new reading starts at round I with new cards.
    - wrong in round I or II: same two cards, next round.
