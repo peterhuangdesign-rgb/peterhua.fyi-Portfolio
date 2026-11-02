@@ -1,5 +1,5 @@
 /* spookee background: ASCII lilies by chernobayv (github.com/chernobayv/asciiFlowers),
-   used with her permission. Adapted for spookee: recoloured to greyscale,
+   used with her permission. Adapted for spookee: recoloured into the velvet palette,
    drawn behind the game on a transparent canvas, no click/key controls, slows to a
    sway after the bloom, stops when the tab is hidden, one still frame under reduced motion. */
 // ASCII lilies: the scene is painted with vector shapes onto a tiny offscreen
@@ -466,7 +466,7 @@
   screen.id = 'bloom';
   screen.setAttribute('aria-hidden', 'true');
   // self-positioning, so a stale or missing stylesheet can never let it widen the page
-  screen.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-events:none;opacity:.3';
+  screen.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-events:none;opacity:.42';
   document.body.prepend(screen);
   const sctx = screen.getContext('2d');
   const off = document.createElement('canvas');
@@ -512,7 +512,7 @@
     sctx.clearRect(0, 0, screen.width, screen.height);
     // soft glow of the same image underneath the glyphs, like a CRT bloom
     sctx.save();
-    sctx.globalAlpha = 0.08;
+    sctx.globalAlpha = 0.18;
     sctx.filter = `blur(${Math.round(cellH * 0.4)}px)`;
     sctx.imageSmoothingEnabled = true;
     sctx.drawImage(off, 0, 0, cols * cellW, rows * cellH);
@@ -531,9 +531,12 @@
         const h = ((x * 73856093) ^ (y * 19349663) ^ (flick * 83492791)) >>> 0;
         const j = h % 7 === 0 ? (h & 8 ? 1 : -1) : 0;
         const idx = clamp(Math.round(Math.pow(v, 0.7) * n) + j, 1, n);
-        // 1-bit-ish: grey to white by brightness, a faint cool cast
-        const q = Math.pow(v, 0.8), gr = Math.round(lerp(70, 240, q));
-        sctx.fillStyle = style(gr & 0xf8, gr & 0xf8, Math.min(255, gr + 6) & 0xf8);
+        // velvet ramp: deep plum -> orchid -> pale mist, by brightness
+        const q = Math.pow(v, 0.8);
+        const cr = q < 0.6 ? lerp(70, 207, q / 0.6) : lerp(207, 239, (q - 0.6) / 0.4);
+        const cg = q < 0.6 ? lerp(28, 168, q / 0.6) : lerp(168, 228, (q - 0.6) / 0.4);
+        const cb = q < 0.6 ? lerp(110, 255, q / 0.6) : 255;
+        sctx.fillStyle = style(cr & 0xf8, cg & 0xf8, cb & 0xf8);
         sctx.fillText(RAMP[idx], x * cellW, y * cellH);
       }
     }

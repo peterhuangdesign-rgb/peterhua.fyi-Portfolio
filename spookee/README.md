@@ -11,12 +11,12 @@ Two players share a **lobby**. A **reading** is one pair of cards:
 3. **pick a word.. any word..** Each player types one word that connects them, locks in, then poof.
 4. Either player taps **right** or **wrong**.
    - **right:** +1 point and the "spookee, you guys said the same thing!" screen, for both players. A new reading starts with new cards.
-   - **wrong in round i or ii:** both guesses join the **pool**, and the next word has to connect all of it. The two newest words are lit in the word wall; older words stay as context.
+   - **wrong in round i or ii:** both guesses join the **pool**, and the next word has to connect all of it. The two newest words are shown largest; older words stay as context.
    - **wrong in round iii (final):** the reading fails.
 
 **It is played asynchronously.** Lock in, close the page, come back any time. Each pick is saved on the server, and the rules let the other player read it only after both have locked that step. So neither side can peek, and whoever locks second sees the reveal straight away. The tab title shows "(your move)" when it's your turn, and "your lobbies" shows which lobbies are waiting on you.
 
-The **[?] what do i do?** button in the top bar opens a short how-to for new players.
+The **what do i do?** link next to the spookee wordmark opens a short how-to for new players.
 
 ### Tabs
 
@@ -49,19 +49,15 @@ If `firebase-config.js` still holds the placeholder, the game runs as one-device
 
 ## Design
 
-A debugger or terminal window in 1-bit black and white, drawn from terminal debuggers, word-wall type posters, tech-label micro-typography and pixel-sort glitch art.
+Dark velvet: black and deep purple with a lilac accent.
 
-- **Type:** IBM Plex Mono only, all lowercase.
-- **Frame:** square corners and 1px rules. The window has a top bar, numbered tabs, a pane title set as `─ crystal.ball ─`, and an inverted status line along the bottom.
-- **Cards:** a code listing (line number, fake address, word). The picked card is the inverted "current line".
-- **The pool:** a wall of repeated words, with the newest two inverted.
-- **Reveals:** words type themselves in out of glyphs.
-- **Win screen:** the shared word fills the screen like a type poster, with letters dropping out.
-- **Background:** ASCII lilies by chernobayv, in greyscale.
+- **Type:** Courier Prime, a clean typewriter serif that sits well beside the ASCII art, all lowercase.
+- **Cards:** five cards to choose from. Both flip at once on "poof".
+- **The pool:** a line of words, with the newest two set largest.
+- **Win screen:** a burst of ✦ around the shared word.
+- **Background:** ASCII lilies by chernobayv, recoloured into the velvet palette.
 
-**Colour:** right (green) and wrong (dark red) are the only colours.
-
-**Keys:** `1`–`4` switch tabs. `↑` `↓` (or `j` `k`) move between cards, and `enter` locks one in.
+**Colour:** green marks right and dark red marks wrong.
 
 **Motion:** it stops when the tab is hidden and respects reduced motion.
 
