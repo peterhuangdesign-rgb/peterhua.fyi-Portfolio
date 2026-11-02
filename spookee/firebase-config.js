@@ -1,12 +1,10 @@
-/* spookee: Firebase web config. Paste the firebaseConfig object from
-   Firebase console -> Project settings -> Your apps -> Web app.
-   These values are meant to be public; firestore.rules is what protects the data.
-   While apiKey starts with "PASTE", spookee runs as one-device pass-and-play. */
+/* spookee: Firebase web config (project spookee-bcf91).
+   These values are meant to be public; firestore.rules is what protects the data. */
 window.SPOOKEE_FIREBASE = {
-  apiKey: "PASTE_API_KEY",
-  authDomain: "",
-  projectId: "",
-  storageBucket: "",
-  messagingSenderId: "",
-  appId: ""
+  apiKey: "AIzaSyCHm4tuvks9TiXi1UY1jePiQNavaXiYKSQ",
+  authDomain: "spookee-bcf91.firebaseapp.com",
+  projectId: "spookee-bcf91",
+  storageBucket: "spookee-bcf91.firebasestorage.app",
+  messagingSenderId: "470657060665",
+  appId: "1:470657060665:web:de3ecefba6335af8ab62e8"
 };
