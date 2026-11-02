@@ -18,6 +18,18 @@ A small side game by Peter Huang. It lives at `peterhua.fyi/spookee/` and is lin
 spookee/
   index.html   page shell: back link, #game mount, loads style.css and game.js
   style.css    the game's styles only
-  game.js      game entry point
+  game.js      game entry point (mounts into #game)
+  words.js     the 400-word card pool
   README.md    this file
 ```
+
+## How the game works
+
+Two players (default names Peter and Emma, editable on "who are you?"). Three rounds per reading:
+
+1. **choose... your fate...** Each player gets their own five cards. The two hands never overlap, and no word is dealt again until the 400-word pool runs low, then it reshuffles.
+2. Both lock in, then **poof**: both cards flip at once.
+3. **pick a word.. any word..** Each player types the word that bridges the two cards, locks in, then poof.
+4. Either player marks it **Right** (+1) or **Wrong**. Every round is kept in "see the past".
+
+On this site it is pass-and-play on one device ("hand to …" swaps sides) and the game is saved in the browser. Two-device play needs a shared backend; the claude.ai artifact version syncs through its own store.
