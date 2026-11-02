@@ -17,7 +17,8 @@ root.innerHTML = `<div class="wrap">
 const WORDS = (window.SPOOKEE_WORDS || []).slice();
 const ROMAN = ["","I","II","III"];
 const other = s => s === "a" ? "b" : "a";
-const DEFAULT_NAMES = {a:"Peter", b:"Emma"};
+const DEFAULT_NAMES = {a:"", b:""};
+const FALLBACK = {a:"player one", b:"player two"};
 
 const ls = {
   get(k){ try { return localStorage.getItem(k); } catch { return null; } },
@@ -50,7 +51,7 @@ let localNames = {...DEFAULT_NAMES};
 let lastReveal = "";      // to animate only the first time a reveal appears
 
 /* ---------- store: shared (db) or local fallback ---------- */
-const SAVE_KEY = "spookee:v1";
+const SAVE_KEY = "spookee:v2";
 function persist(){ if (!store.db) ls.set(SAVE_KEY, JSON.stringify({ game, lineage })); }
 function restore(){
   try { const s = JSON.parse(ls.get(SAVE_KEY) || "null"); if (s) { game = s.game || null; lineage = s.lineage || []; } } catch {}
@@ -66,7 +67,7 @@ const store = {
     game = deepMerge(game, patch); persist(); render();
   },
   async saveRound(id, rec){
-    if (this.db) return this.db.collection("lineage").doc(id).set(rec);
+    if (this.db) return this.db.collection("readings").doc(id).set(rec);
     lineage = lineage.filter(r => r.id !== id).concat([{...rec, id}]); persist(); render();
   }
 };
@@ -80,13 +81,13 @@ async function write(fn){
 }
 
 function names(){ return (game && game.names) ? {...DEFAULT_NAMES, ...game.names} : localNames; }
-function nm(s){ return (names()[s] || "").trim() || (s === "a" ? "Peter" : "Emma"); }
+function nm(s){ return (names()[s] || "").trim() || FALLBACK[s]; }
 
 /* ---------- actions ---------- */
 function begin(){
   const n = names();
   const d = deal(game && game.used);
-  const doc = { names:n, gameNo:(game && game.gameNo || 0) + 1, round:1, stage:"cards", decks:d.decks, used:d.used, cards:{}, bridge:{}, score:0 };
+  const doc = { names:n, gameNo:1, reading:1, round:1, stage:"cards", decks:d.decks, used:d.used, cards:{}, bridge:{}, attempts:[], score:0 };
   pick = null; draft = "";
   write(() => store.set(doc));
 }
@@ -100,14 +101,23 @@ function lockWord(){
   if (!w || !seat) return;
   write(() => store.update({ bridge:{ [seat]: w } }));
 }
+// A reading is one pair of chosen cards. Up to three rounds to find a shared word:
+// right ends the reading (+1, back to round I with new cards), wrong tries again,
+// wrong in round III fails the reading automatically.
 function verdict(v){
   const g = game;
-  const id = "g" + g.gameNo + "r" + g.round;
-  const rec = { game:g.gameNo, round:g.round, names:names(), cards:g.cards, bridge:g.bridge, verdict:v, at:Date.now() };
-  const d = deal(g.used);
-  const next = { ...g, round:g.round + 1, stage:"cards", decks:d.decks, used:d.used, cards:{}, bridge:{}, score:(g.score||0) + (v === "right" ? 1 : 0) };
+  const attempts = (g.attempts || []).concat([{ round:g.round, a:g.bridge.a, b:g.bridge.b, verdict:v }]);
   pick = null; draft = "";
-  write(async () => { await store.saveRound(id, rec); await store.set(next); });
+  if (v === "right" || g.round >= 3) {
+    const result = v === "right" ? "right" : "wrong";
+    const rec = { reading:g.reading, names:names(), cards:g.cards, attempts, result, at:Date.now() };
+    const d = deal(g.used);
+    const next = { ...g, reading:g.reading + 1, round:1, stage:"cards", decks:d.decks, used:d.used, cards:{}, bridge:{}, attempts:[], score:(g.score||0) + (result === "right" ? 1 : 0) };
+    if (result === "right") next.lastWin = { reading:g.reading, word:g.bridge.a, at:Date.now() };
+    write(async () => { await store.saveRound("r" + g.reading, rec); await store.set(next); });
+  } else {
+    write(() => store.set({ ...g, round:g.round + 1, stage:"bridge", bridge:{}, attempts }));
+  }
 }
 let nameTimer = null;
 function setName(s, v){
@@ -117,7 +127,10 @@ function setName(s, v){
     nameTimer = setTimeout(() => write(() => store.update({ names:{ [s]: v } })), 500);
   } else localNames[s] = v;
 }
-function chooseSeat(s){ seat = s; ls.set("seat", s); location.hash = "ball"; }
+function chooseSeat(s){
+  if (!(names()[s] || "").trim()) { const i = document.getElementById("name-" + s); if (i) i.focus(); return; }
+  seat = s; ls.set("seat", s); location.hash = "ball";
+}
 
 /* ---------- rendering ---------- */
 const view = document.getElementById("view");
@@ -140,9 +153,9 @@ function render(){
 function whoView(){
   const side = s => `
     <section class="side ${seat === s ? "mine" : ""}">
-      <div class="sigil" aria-hidden="true">${esc((nm(s)[0] || "?").toUpperCase())}</div>
-      <input id="name-${s}" data-name="${s}" value="${esc(names()[s])}" maxlength="16" autocomplete="off" aria-label="Name for this side">
-      <button class="btn ${seat === s ? "" : "ghost"}" data-seat="${s}">${seat === s ? "This is me" : "Be " + esc(nm(s))}</button>
+      <div class="sigil" aria-hidden="true">${esc((names()[s] || "").trim()[0] || "?")}</div>
+      <input id="name-${s}" data-name="${s}" value="${esc(names()[s])}" maxlength="16" autocomplete="off" placeholder="your name" aria-label="name for ${FALLBACK[s]}">
+      <button class="btn ${seat === s ? "" : "ghost"}" data-seat="${s}" ${(names()[s] || "").trim() ? "" : "disabled"}>${seat === s ? "this is me" : "i'm " + esc(nm(s))}</button>
     </section>`;
   return `<div class="wrap" style="padding:0">
     <h1>who are you?</h1>
@@ -154,8 +167,8 @@ function handoff(them){
   return mode === "local" ? `<div class="row"><button class="btn ghost" data-act="switch">hand to ${esc(nm(them))}</button></div>` : "";
 }
 function header(){
-  return `<div class="meta"><span>Round <b>${ROMAN[game.round] || "III"}</b> of III</span>
-    <span class="who">You are <b>${esc(nm(seat))}</b> · <button class="link" data-act="switch">switch</button></span>
+  return `<div class="meta"><span>round <b>${ROMAN[game.round] || "III"}</b> of III${game.round === 3 ? " · final" : ""}</span>
+    <span class="who">you are <b>${esc(nm(seat))}</b> · <button class="link" data-act="switch">switch</button></span>
     <span><b>${game.score || 0}</b> ${game.score === 1 ? "point" : "points"}</span></div>`;
 }
 
@@ -163,14 +176,12 @@ function ballView(){
   const notes = (readOnly ? `<p class="warn">You can watch, but your moves can't be saved. Ask the owner for Contributor access.</p>` : "")
               + (slow && !loaded ? `<p class="note">The ball is cloudy. Still trying to reach the other side.</p>` : "");
   if (!seat) return `<div class="wrap" style="padding:0"><div class="orb" aria-hidden="true"></div><h1>crystal ball</h1>
-    <div class="row"><a class="btn" href="#who" style="text-decoration:none">Choose who you are</a></div></div>`;
-  if (!loaded) return `<div class="wrap" style="padding:0"><div class="orb" aria-hidden="true"></div><h1>Gazing…</h1>${notes}</div>`;
-  if (!game || game.round > 3) {
-    const done = game && game.round > 3;
+    <div class="row"><a class="btn" href="#who" style="text-decoration:none">choose who you are</a></div></div>`;
+  if (!loaded) return `<div class="wrap" style="padding:0"><div class="orb" aria-hidden="true"></div><h1>gazing…</h1>${notes}</div>`;
+  if (!game || !game.reading) {
     return `<div class="wrap" style="padding:0"><div class="orb" aria-hidden="true"></div>
-      <h1>${done ? `${game.score} of 3` : "crystal ball"}</h1>${notes}
-      <div class="row"><button class="btn" data-act="begin" ${readOnly ? "disabled" : ""}>${done ? "begin again" : "begin"}</button>
-      ${done ? `<a class="btn ghost" href="#past" style="text-decoration:none">see the past</a>` : ""}</div></div>`;
+      <h1>crystal ball</h1>${notes}
+      <div class="row"><button class="btn" data-act="begin" ${readOnly ? "disabled" : ""}>begin</button></div></div>`;
   }
   const me = seat, them = other(seat);
   let body = "";
@@ -178,7 +189,7 @@ function ballView(){
   if (game.stage === "cards") {
     const mine = game.cards && game.cards[me], theirs = game.cards && game.cards[them];
     if (mine && theirs) {
-      const key = "c" + game.gameNo + game.round, anim = lastReveal !== key ? "flip" : ""; lastReveal = key;
+      const key = "c" + game.reading, anim = lastReveal !== key ? "flip" : ""; lastReveal = key;
       body = `<h1>poof</h1>
         <div class="pair">
           <div class="slot"><div class="card static ${anim}">${esc(game.cards.a)}</div>${esc(nm("a"))}</div>
@@ -186,35 +197,37 @@ function ballView(){
         </div>
         <div class="row"><button class="btn" data-act="bridge">pick a word.. any word..</button></div>`;
     } else if (mine) {
-      body = `<h1>Waiting for ${esc(nm(them))}</h1>
+      body = `<h1>waiting for ${esc(nm(them))}</h1>
         <div class="pair">
           <div class="slot"><div class="card static">${esc(mine)}</div>${esc(nm(me))}</div>
           <div class="slot"><div class="card static back" aria-label="${esc(nm(them))}'s card, hidden">✦</div>${esc(nm(them))}${theirs ? " · locked" : " · choosing"}</div>
         </div>${handoff(them)}`;
     } else {
       body = `<h1>choose... your fate...</h1>
-        <div class="deck" role="group" aria-label="Your five cards">
+        <div class="deck" role="group" aria-label="your five cards">
           ${(game.decks && game.decks[me] || []).map(w => `<button class="card" data-card="${esc(w)}" aria-pressed="${pick === w}">${esc(w)}</button>`).join("")}
         </div>
         <p class="note">${theirs ? esc(nm(them)) + " has locked in" : esc(nm(them)) + " is choosing"}</p>
-        <div class="row"><button class="btn" data-act="lock-card" ${pick && !readOnly ? "" : "disabled"}>Lock in</button></div>`;
+        <div class="row"><button class="btn" data-act="lock-card" ${pick && !readOnly ? "" : "disabled"}>lock in</button></div>`;
     }
   } else {
     const mine = game.bridge && game.bridge[me], theirs = game.bridge && game.bridge[them];
-    const pairLine = `<div class="small-pair"><span>${esc(game.cards.a)}</span><i aria-hidden="true">✦</i><span>${esc(game.cards.b)}</span></div>`;
+    const tries = (game.attempts || []).map(t => `<li><span class="rn">${ROMAN[t.round]}</span><span>${esc(t.a)} / ${esc(t.b)}</span></li>`).join("");
+    const pairLine = `<div class="small-pair"><span>${esc(game.cards.a)}</span><i aria-hidden="true">✦</i><span>${esc(game.cards.b)}</span></div>`
+      + (tries ? `<ul class="tries" aria-label="earlier tries">${tries}</ul>` : "");
     if (mine && theirs) {
-      const key = "b" + game.gameNo + game.round, anim = lastReveal !== key ? "flip" : ""; lastReveal = key;
+      const key = "b" + game.reading + "-" + game.round, anim = lastReveal !== key ? "flip" : ""; lastReveal = key;
       body = `${pairLine}<h1>poof</h1>
         <div class="words">
           <div class="word ${anim}"><small>${esc(nm("a"))}</small><strong>${esc(game.bridge.a)}</strong></div>
           <div class="word ${anim}" style="animation-delay:.15s"><small>${esc(nm("b"))}</small><strong>${esc(game.bridge.b)}</strong></div>
         </div>
         <div class="row">
-          <button class="btn right" data-verdict="right" ${readOnly ? "disabled" : ""}>Right</button>
-          <button class="btn wrong" data-verdict="wrong" ${readOnly ? "disabled" : ""}>Wrong</button>
+          <button class="btn right" data-verdict="right" ${readOnly ? "disabled" : ""}>right</button>
+          <button class="btn wrong" data-verdict="wrong" ${readOnly ? "disabled" : ""}>wrong</button>
         </div>`;
     } else if (mine) {
-      body = `${pairLine}<h1>Waiting for ${esc(nm(them))}</h1>
+      body = `${pairLine}<h1>waiting for ${esc(nm(them))}</h1>
         <div class="words">
           <div class="word"><small>${esc(nm(me))}</small><strong>${esc(mine)}</strong></div>
           <div class="word"><small>${esc(nm(them))}</small><strong style="color:var(--orchid)">✦</strong></div>
@@ -224,7 +237,7 @@ function ballView(){
         <form class="field" id="bridge-form" autocomplete="off">
           <label for="bridge-input">${theirs ? esc(nm(them)) + " has locked in" : esc(nm(them)) + " is thinking"}</label>
           <input id="bridge-input" value="${esc(draft)}" maxlength="24" spellcheck="false">
-          <button class="btn" type="submit" id="lock-word" ${draft.trim() && !readOnly ? "" : "disabled"}>Lock in</button>
+          <button class="btn" type="submit" id="lock-word" ${draft.trim() && !readOnly ? "" : "disabled"}>lock in</button>
         </form>`;
     }
   }
@@ -232,24 +245,24 @@ function ballView(){
 }
 
 function pastView(){
-  if (!lineage.length) return `<div class="wrap" style="padding:0"><h1>see the past</h1>
-    <div class="empty"><p class="note" style="margin:0">Nothing yet. Finish a round in the crystal ball.</p>
+  const list = lineage.filter(r => r.attempts).sort((a,b) => b.reading - a.reading);
+  if (!list.length) return `<div class="wrap" style="padding:0"><h1>see the past</h1>
+    <div class="empty"><p class="note" style="margin:0">nothing yet. finish a reading in the crystal ball.</p>
     <a class="btn ghost" href="#ball" style="text-decoration:none">go to the crystal ball</a></div></div>`;
-  const byGame = {};
-  lineage.forEach(r => (byGame[r.game] = byGame[r.game] || []).push(r));
-  const games = Object.keys(byGame).map(Number).sort((a,b) => b - a);
+  const nmOf = (r, s) => ((r.names && r.names[s]) || "").trim() || FALLBACK[s];
   return `<div class="wrap" style="padding:0"><h1>see the past</h1><div class="games">
-    ${games.map(g => {
-      const rs = byGame[g].sort((a,b) => a.round - b.round);
-      return `<section class="game"><h2>Reading ${g}</h2><ul class="rounds">
-        ${rs.map(r => {
-          const a = r.bridge.a, b = r.bridge.b;
-          const final = a.toLowerCase() === b.toLowerCase() ? esc(a) : esc(a) + " / " + esc(b);
-          return `<li><span class="rn">${ROMAN[r.round]}</span>
-            <span class="chain"><span class="from">${esc(r.cards.a)} + ${esc(r.cards.b)} → </span><span class="to ${r.verdict}">${final}</span></span>
-            <span class="tag ${r.verdict}">${r.verdict === "right" ? "Right" : "Wrong"}</span></li>`;
-        }).join("")}
-      </ul></section>`;
+    ${list.map(r => {
+      const last = r.attempts[r.attempts.length - 1];
+      const final = last.a.toLowerCase() === last.b.toLowerCase() ? esc(last.a) : esc(last.a) + " / " + esc(last.b);
+      return `<section class="game">
+        <h2>${esc(nmOf(r,"a"))}: ${esc(r.cards.a)} <i aria-hidden="true">✦</i> ${esc(nmOf(r,"b"))}: ${esc(r.cards.b)}</h2>
+        <ul class="rounds">
+          ${r.attempts.map(t => `<li><span class="rn">${ROMAN[t.round]}</span>
+            <span class="chain">${esc(nmOf(r,"a"))}: <b>${esc(t.a)}</b> · ${esc(nmOf(r,"b"))}: <b>${esc(t.b)}</b></span>
+            <span class="tag ${t.verdict}">${t.verdict}</span></li>`).join("")}
+          <li class="final"><span class="rn">✦</span><span class="chain"><span class="to ${r.result}">${final}</span></span>
+            <span class="tag ${r.result}">${r.result === "right" ? "success" : "fail"}</span></li>
+        </ul></section>`;
     }).join("")}
   </div></div>`;
 }
@@ -259,8 +272,9 @@ function wire(){
   view.querySelectorAll("[data-name]").forEach(i => i.oninput = () => {
     setName(i.dataset.name, i.value);
     const s = i.dataset.name, side = i.closest(".side");
-    side.querySelector(".sigil").textContent = (nm(s)[0] || "?").toUpperCase();
-    const btn = side.querySelector("[data-seat]"); if (seat !== s) btn.textContent = "Be " + nm(s);
+    const has = !!i.value.trim();
+    side.querySelector(".sigil").textContent = has ? i.value.trim()[0] : "?";
+    const btn = side.querySelector("[data-seat]"); btn.disabled = !has; if (seat !== s) btn.textContent = "i'm " + nm(s);
   });
   view.querySelectorAll("[data-card]").forEach(b => b.onclick = () => { pick = b.dataset.card; render(); });
   view.querySelectorAll("[data-verdict]").forEach(b => b.onclick = () => verdict(b.dataset.verdict));
@@ -272,6 +286,39 @@ function wire(){
   const form = document.getElementById("bridge-form");
   if (form) form.onsubmit = e => { e.preventDefault(); lockWord(); };
 }
+
+/* ---------- the win moment: both players see it ---------- */
+const celebrated = new Set();
+let winTimer = null;
+function closeWin(){
+  const el = document.getElementById("win");
+  if (!el) return;
+  clearTimeout(winTimer);
+  el.classList.add("out");
+  setTimeout(() => el.remove(), 350);
+}
+function maybeCelebrate(){
+  const w = game && game.lastWin;
+  if (!w || celebrated.has(w.reading) || ls.get("spookee:won") === String(w.at)) return;
+  celebrated.add(w.reading); ls.set("spookee:won", String(w.at));
+  if (Date.now() - (w.at || 0) > 20000) return; // an old win, don't replay it on load
+  const sparks = Array.from({length:14}, (_, i) =>
+    `<i style="--a:${i * (360/14)}deg;--d:${110 + (i % 3) * 40}px;--t:${(i % 4) * 60}ms">✦</i>`).join("");
+  const el = document.createElement("div");
+  el.id = "win";
+  el.setAttribute("role", "status");
+  el.innerHTML = `<div class="win-card">
+      <div class="sparks" aria-hidden="true">${sparks}</div>
+      <p class="win-word">${esc(w.word)}</p>
+      <p class="win-line"><span>spookee,</span> <span>you guys said the same thing!</span></p>
+    </div>`;
+  el.onclick = closeWin;
+  document.body.appendChild(el);
+  winTimer = setTimeout(closeWin, 4200);
+}
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeWin(); });
+const _render = render;
+render = function(){ _render(); maybeCelebrate(); };
 
 window.addEventListener("hashchange", render);
 document.addEventListener("visibilitychange", () => document.body.classList.toggle("paused", document.hidden));
@@ -297,7 +344,7 @@ if (!(window.claude && window.claude.use)) { mode = "local"; restore(); loaded =
     if (game && game.stage === "cards" && pick && !(game.decks && seat && (game.decks[seat] || []).includes(pick))) pick = null;
     render();
   }, err => { console.error(err); clearTimeout(slowTimer); loaded = true; render(); });
-  db.collection("lineage").onSnapshot(qs => {
+  db.collection("readings").onSnapshot(qs => {
     lineage = qs.docs.map(d => ({ id:d.id, ...d.data() }));
     render();
   }, err => console.error(err));

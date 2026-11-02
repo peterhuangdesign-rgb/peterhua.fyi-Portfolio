@@ -30,12 +30,19 @@ spookee/
 
 ## How the game works
 
-Two players (default names Peter and Emma, editable on "who are you?"). Three rounds per reading:
+Two players. On first visit each picks a side on "who are you?" and types a name (no default names).
 
-1. **choose... your fate...** Each player gets their own five cards. The two hands never overlap, and no word is dealt again until the 400-word pool runs low, then it reshuffles.
+A **reading** is one pair of cards:
+
+1. **choose... your fate...** Each player gets their own five cards. The hands never overlap, and no word is dealt again until the 400-word pool runs low, then it reshuffles.
 2. Both lock in, then **poof**: both cards flip at once.
-3. **pick a word.. any word..** Each player types the word that bridges the two cards, locks in, then poof.
-4. Either player marks it **Right** (+1) or **Wrong**. Every round is kept in "see the past".
+3. **pick a word.. any word..** Each player types a word that bridges the two cards, locks in, then poof.
+4. Either player marks it **right** or **wrong**.
+   - right: +1 point, a short "spookee, you guys said the same thing!" celebration plays for both players, and a new reading starts at round I with new cards.
+   - wrong in round I or II: same two cards, next round.
+   - wrong in round III (final): the reading fails automatically.
+
+"see the past" lists every reading: who drew which card, each round's words with right or wrong, and the final word as success or fail.
 
 On this site it is pass-and-play on one device ("hand to …" swaps sides) and the game is saved in the browser. Two-device play needs a shared backend; the claude.ai artifact version syncs through its own store.
 
