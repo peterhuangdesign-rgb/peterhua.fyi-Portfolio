@@ -137,7 +137,7 @@ function stepId(st){ return `${game.reading}_${st === "cards" ? "c" : "b" + game
 function secretKey(st){ return `spookee:secret:${lobbyCode || mode}:${seat}:${game.reading}:${st === "cards" ? 0 : game.round}:${st}`; }
 const myPicks = {}; // step -> my locked pick, fetched from the server when this device doesn't have it
 let revealing = "";
-async function revealOnline(){
+async function revealOnline(tries = 0){
   if (!game || !game.reading || !seat || readOnly) return;
   const st = game.stage, locks = (game.locks || {})[st] || {}, pub = game[st] || {};
   if (pub.a && pub.b) return;
@@ -148,6 +148,9 @@ async function revealOnline(){
     const [va, vb] = await Promise.all(["a", "b"].map(s => pub[s] || online.getSecret(lobbyCode, s, step)));
     if (va && vb) await store.update({ [st]:{ a:va, b:vb } });
     else if (!(seat === "a" ? va : vb)) await store.update({ locks:{ [st]:{ [seat]:false } } }); // my pick never saved: choose again
+    else if (tries < 6) { // the server may not have recorded my own lock yet, so the rules still hide theirs: ask again shortly
+      revealing = ""; setTimeout(() => revealOnline(tries + 1), 800 * (tries + 1)); return;
+    }
   } catch (e) { console.error(e); }
   finally { if (revealing === key) revealing = ""; }
 }
@@ -182,7 +185,7 @@ function lockCard(){
   if (mode === "local") return write(() => store.update({ cards:{ [seat]: pick } }));
   ls.set(secretKey("cards"), pick);
   if (mode === "online") { const p = pick, step = stepId("cards"); myPicks[step] = p;
-    return write(async () => { await online.setSecret(lobbyCode, seat, step, p); await store.update({ locks:{ cards:{ [seat]: true } } }); }); }
+    return write(async () => { await online.setSecret(lobbyCode, seat, step, p); await store.update({ locks:{ cards:{ [seat]: true } } }); revealOnline(); }); }
   write(() => store.update({ locks:{ cards:{ [seat]: true } } }));
 }
 function lockWord(){
@@ -191,7 +194,7 @@ function lockWord(){
   if (mode === "local") return write(() => store.update({ bridge:{ [seat]: w } }));
   ls.set(secretKey("bridge"), w);
   if (mode === "online") { const step = stepId("bridge"); myPicks[step] = w;
-    return write(async () => { await online.setSecret(lobbyCode, seat, step, w); await store.update({ locks:{ bridge:{ [seat]: true } } }); }); }
+    return write(async () => { await online.setSecret(lobbyCode, seat, step, w); await store.update({ locks:{ bridge:{ [seat]: true } } }); revealOnline(); }); }
   write(() => store.update({ locks:{ bridge:{ [seat]: true } } }));
 }
 function toBridge(){
