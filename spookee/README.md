@@ -20,6 +20,7 @@ spookee/
   style.css    the game's styles only
   game.js      game entry point (mounts into #game)
   words.js     the 400-word card pool
+  bouquet.js   ASCII lilies background, adapted from chernobayv/asciiFlowers (used with permission)
   README.md    this file
 ```
 
@@ -33,3 +34,7 @@ Two players (default names Peter and Emma, editable on "who are you?"). Three ro
 4. Either player marks it **Right** (+1) or **Wrong**. Every round is kept in "see the past".
 
 On this site it is pass-and-play on one device ("hand to …" swaps sides) and the game is saved in the browser. Two-device play needs a shared backend; the claude.ai artifact version syncs through its own store.
+
+## Credit
+
+The ASCII lilies in the background are by chernobayv ([asciiFlowers](https://github.com/chernobayv/asciiFlowers)), used with her permission and recoloured for spookee.
