@@ -1,0 +1,45 @@
+rules_version = '2';
+// spookee Firestore rules. Paste into Firebase console -> Firestore -> Rules -> Publish.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function room(code) { return get(/databases/$(database)/documents/rooms/$(code)).data; }
+    function seatedIn(d) { return request.auth.uid == d.seats.get('a', '') || request.auth.uid == d.seats.get('b', ''); }
+    function codeOk(code) { return code.matches('^[a-z]{2,20}-[0-9]{2}$'); }
+
+    // a lobby: two seats, the game state, names, presence
+    match /rooms/{code} {
+      allow read: if signedIn();
+      // whoever makes a lobby takes seat a
+      allow create: if signedIn() && codeOk(code)
+        && request.resource.data.seats.a == request.auth.uid
+        && request.resource.data.seats.get('b', '') == '';
+      allow update: if signedIn() && (
+        // a seated player plays; seats can't be reassigned
+        (seatedIn(resource.data) && request.resource.data.seats == resource.data.seats)
+        // someone new takes the empty seat b, and nothing else about the seats changes
+        || (resource.data.seats.get('b', '') == ''
+            && request.resource.data.seats.b == request.auth.uid
+            && request.resource.data.seats.a == resource.data.seats.a)
+      );
+      allow delete: if false;
+
+      // finished readings: written by the two players, readable by anyone with the code
+      match /readings/{id} {
+        allow read: if signedIn();
+        allow create, update: if signedIn() && seatedIn(room(code));
+        allow delete: if false;
+      }
+    }
+
+    // leaderboard: one row per lobby, written only by that lobby's players
+    match /board/{code} {
+      allow read: if true;
+      allow create, update: if signedIn() && seatedIn(room(code))
+        && request.resource.data.readings is int && request.resource.data.readings >= 0
+        && request.resource.data.successes is int && request.resource.data.successes <= request.resource.data.readings;
+      allow delete: if false;
+    }
+  }
+}
