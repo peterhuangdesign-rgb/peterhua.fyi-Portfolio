@@ -187,6 +187,7 @@ Wayfarer and Glenergy (both done, Peter's text and images).
   - **Outside of work**: Jazz Piano, Videogame Music Production, Climbing, Weightlifting, Meditating, Photography. Titles only.
   - My music: hidden (`SHOW_MUSIC=false`) until real tracks or links.
   - **Photography**: the three real photos only.
+- **spookee link (2 Nov):** a small 12 px graphite "spookee" text link, right-aligned at the very end of Profile, to `spookee/` (a separate side game, not part of the portfolio). Rules for adding the game: `spookee/README.md`.
 
 ### Résumé page (matches Profile)
 - Sections: Education, Experience, Research, Strengths, Skills (25 Oct). Same data and renderers as Profile (`eduHTML`, `xpHTML`), so organisations, roles, dates, context lines, notes and bullets always match. Reached from the rail, Home on phones, Profile and Contact.

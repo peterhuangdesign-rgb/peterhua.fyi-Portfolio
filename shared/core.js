@@ -335,7 +335,8 @@ function profileHTML(opts={}){
     <ol class="tracks">${DATA.tracks.map((t,i)=>`<li><button class="trk" data-i="${i}" aria-pressed="false"><span class="glyph" aria-hidden="true"></span><span class="tt">${esc(t.t)}</span><span class="tn">${esc(t.note)}</span><span class="td" data-d>–:––</span></button></li>`).join("")}</ol>
     <div class="seekbar"><input type="range" min="0" max="1000" value="0" step="1" aria-label="Seek" data-seek><span data-time>0:00</span></div>
     <audio preload="none"></audio></div></section>`:""}
-  <section class="c-sec"><h2 class="c-h">Photography</h2><ul class="photos">${DATA.photos.map((p,i)=>`<li><button class="ph" data-set="photos" data-i="${i}" aria-label="Open ${esc(p.alt)}"><img src="${p.src}" alt="${esc(p.alt)}" loading="lazy" width="400" height="400"></button></li>`).join("")}</ul></section>`;
+  <section class="c-sec"><h2 class="c-h">Photography</h2><ul class="photos">${DATA.photos.map((p,i)=>`<li><button class="ph" data-set="photos" data-i="${i}" aria-label="Open ${esc(p.alt)}"><img src="${p.src}" alt="${esc(p.alt)}" loading="lazy" width="400" height="400"></button></li>`).join("")}</ul></section>
+  <p class="spk"><a href="spookee/">spookee</a></p>`;
 }
 const fmt=s=>!isFinite(s)?"–:––":`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,"0")}`;
 function wireProfile(root){

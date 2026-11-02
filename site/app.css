@@ -344,3 +344,8 @@ html.story-snap{scroll-snap-type:y mandatory}
 .strengths li{display:grid;gap:2px}
 .strengths b{font:500 20px/1.15 var(--display)}
 .strengths span{font-size:15px;color:var(--graphite);max-width:62ch}
+
+/* spookee: a small side project, linked quietly at the very end of Profile (2 Nov) */
+.spk{margin:48px 0 0;display:flex;justify-content:flex-end}
+.spk a{display:inline-flex;align-items:center;min-height:44px;padding:0 4px;font:400 12px/1 var(--body);color:var(--graphite);text-decoration:none;letter-spacing:.04em}
+.spk a:hover{color:var(--ink);text-decoration:underline;text-underline-offset:4px}

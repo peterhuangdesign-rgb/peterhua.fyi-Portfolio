@@ -1,0 +1,9 @@
+/* spookee: the game's own styles. Nothing here affects the portfolio. */
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:#15181A;color:#FCFCFA;font:400 16px/1.5 ui-sans-serif,system-ui,sans-serif;display:flex;flex-direction:column}
+.back{display:inline-flex;align-items:center;min-height:44px;padding:0 max(16px,env(safe-area-inset-left,0px));color:#DADDD7;font-size:13px;text-decoration:none}
+.back:hover{color:#FCFCFA;text-decoration:underline;text-underline-offset:4px}
+.back:focus-visible{outline:2px solid #9FE0D2;outline-offset:3px}
+#game{flex:1;display:grid;place-items:center;padding:16px max(16px,env(safe-area-inset-right,0px)) 32px max(16px,env(safe-area-inset-left,0px))}
+.soon{margin:0;font-size:14px;letter-spacing:.2em;color:#DADDD7}
