@@ -24,6 +24,9 @@ spookee/
   style.css    the game's styles only
   game.js      game entry point (mounts into #game)
   words.js     the 400-word card pool
+  firebase-config.js  Firebase web config (placeholder until set up)
+  online.js    lobbies + leaderboard on Firebase (loads only when configured)
+  firestore.rules     database rules to paste into the Firebase console
   bouquet.js   ASCII lilies background, adapted from chernobayv/asciiFlowers (used with permission)
   README.md    this file
 ```
@@ -44,7 +47,23 @@ A **reading** is one pair of cards:
 
 "see the past" lists every reading: who drew which card, each round's words with right or wrong, and the final word as success or fail.
 
-On this site it is pass-and-play on one device ("hand to …" swaps sides) and the game is saved in the browser. Two-device play needs a shared backend; the claude.ai artifact version syncs through its own store.
+### Playing across the world (lobbies)
+
+With Firebase configured, "who are you?" asks for a name, then **make a lobby** (you get a code like `oak-46` and a link to send) or **join** with a code. Each lobby is one pair of people: its points, history and rank stay with that code. A third person opening the code can only watch. Picks stay on the picker's device until both have locked in, so neither side can peek. A green dot means the other player has the page open.
+
+Without Firebase configured, the game runs as one-device pass-and-play ("hand to …" swaps sides), saved in the browser.
+
+### Leaderboard and ranks
+
+"leaderboard" lists every lobby: success rate, readings won and failed, total guesses, and a rank. The ladder copies Deadlock's shape (11 tiers with subranks I–VI, plus unranked) with crystal-ball names, lowest to highest: dabbler, leaf reader, candle keeper, palm reader, card reader, séance holder, medium, seer, wraith, star gazer, the crystal ball. Under 5 readings a pair is "in the fog". The rating is the success rate, with agreement in round i worth more than round iii, smoothed so a few lucky readings don't top the board; the crystal ball needs 20+ readings.
+
+### Firebase setup (one time)
+
+1. console.firebase.google.com: create a project (Analytics off is fine).
+2. Build > Authentication > Get started > Sign-in method: enable **Anonymous**. Settings > Authorized domains: add `peterhua.fyi`.
+3. Build > Firestore Database > Create database, production mode, a US region.
+4. Firestore > Rules: paste `firestore.rules`, Publish.
+5. Project settings > Your apps > Web (`</>`): register an app, copy the `firebaseConfig` values into `firebase-config.js`.
 
 ## Credit
 
