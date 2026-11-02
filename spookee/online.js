@@ -6,7 +6,7 @@ const cfg = window.SPOOKEE_FIREBASE || {};
 
 window.SpookeeOnline = (async () => {
   if (!cfg.apiKey || String(cfg.apiKey).startsWith("PASTE")) return null;
-  const [{ initializeApp }, { getAuth, signInAnonymously }, fs] = await Promise.all([
+  const [{ initializeApp }, { getAuth, signInAnonymously, onAuthStateChanged, GoogleAuthProvider, linkWithPopup, signInWithPopup, signInWithCredential }, fs] = await Promise.all([
     import(`https://www.gstatic.com/firebasejs/${V}/firebase-app.js`),
     import(`https://www.gstatic.com/firebasejs/${V}/firebase-auth.js`),
     import(`https://www.gstatic.com/firebasejs/${V}/firebase-firestore.js`),
@@ -15,8 +15,10 @@ window.SpookeeOnline = (async () => {
   const app = initializeApp(cfg);
   const auth = getAuth(app);
   const db = getFirestore(app);
-  const cred = await signInAnonymously(auth);
-  const uid = cred.user.uid;
+  // reuse whoever is already signed in on this browser (anonymous or google), else sign in anonymously
+  const existing = await new Promise(res => { const off = onAuthStateChanged(auth, u => { off(); res(u); }); });
+  const user = existing || (await signInAnonymously(auth)).user;
+  const uid = user.uid;
 
   const roomRef = code => doc(db, "rooms", code);
 
@@ -65,5 +67,26 @@ window.SpookeeOnline = (async () => {
     onBoard: (cb, err) => onSnapshot(query(collection(db, "board"), orderBy("rank", "desc"), limit(50)),
       qs => cb(qs.docs.map(d => ({ id: d.id, ...d.data() }))), err),
     exists: async code => (await getDoc(roomRef(code))).exists(),
+    // hidden picks: rooms/{code}/secrets/{seat}_{reading}_{step}
+    setSecret: (code, seat, step, v) => setDoc(doc(db, "rooms", code, "secrets", `${seat}_${step}`), { v }),
+    getSecret: async (code, seat, step) => {
+      try { const s = await getDoc(doc(db, "rooms", code, "secrets", `${seat}_${step}`)); return s.exists() ? s.data().v : null; }
+      catch (e) { if (e.code === "permission-denied") return null; throw e; }
+    },
+    anonymous: () => !auth.currentUser || auth.currentUser.isAnonymous,
+    email: () => (auth.currentUser && auth.currentUser.email) || "",
+    // link this browser's anonymous player to google (keeps the same player);
+    // if that google account is already a player elsewhere, switch to it
+    signInGoogle: async () => {
+      const provider = new GoogleAuthProvider();
+      if (auth.currentUser && auth.currentUser.isAnonymous) {
+        try { return await linkWithPopup(auth.currentUser, provider); }
+        catch (e) {
+          if (e.code === "auth/credential-already-in-use") { const c = GoogleAuthProvider.credentialFromError(e); if (c) return signInWithCredential(auth, c); }
+          throw e;
+        }
+      }
+      return signInWithPopup(auth, provider);
+    },
   };
 })().catch(e => { console.error("spookee online is off:", e); return null; });
