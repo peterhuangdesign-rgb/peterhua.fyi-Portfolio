@@ -1,73 +1,106 @@
 # spookee
 
-A small side game by Peter Huang. It lives at `peterhua.fyi/spookee/` and is linked only by a small "spookee" text link at the very bottom of the Profile page. It is not part of the portfolio design.
+A small two-player word game by Peter Huang. It lives at `peterhua.fyi/spookee/` and is linked only by a small "spookee" text link at the very end of the Profile page. It is not part of the portfolio design.
 
-## Instructions for whoever adds the game (person or AI)
+## How the game works
+
+Two players share a **lobby**. A **reading** is one pair of cards:
+
+1. **choose... your fate...** Each player gets their own five cards from a 400-word pool. The two hands never overlap, and no word comes back until the pool runs low.
+2. Both lock in, then **poof**: both cards show.
+3. **pick a word.. any word..** Each player types one word that connects them, locks in, then poof.
+4. Either player taps **right** or **wrong**.
+   - **right:** +1 point and the "spookee, you guys said the same thing!" screen, for both players. A new reading starts with new cards.
+   - **wrong in round i or ii:** both guesses join the **pool**, and the next word has to connect all of it. The two newest words are lit in the word wall; older words stay as context.
+   - **wrong in round iii (final):** the reading fails.
+
+**It is played asynchronously.** Lock in, close the page, come back any time. Each pick is saved on the server, and the rules let the other player read it only after both have locked that step. So neither side can peek, and whoever locks second sees the reveal straight away. The tab title shows "(your move)" when it's your turn, and "your lobbies" shows which lobbies are waiting on you.
+
+The **[?] what do i do?** button in the top bar opens a short how-to for new players.
+
+### Tabs
+
+- **who are you?** Type a name, then make a lobby (you get a code like `oak-46` and a link to send) or join one. Each lobby is one pair, and its points and history stay with the code. A third person opening the code can only watch. "play on any device" links your player to Google so a phone and a laptop are the same player.
+- **crystal ball** The game.
+- **see the past** Every reading in this lobby: who drew which card, each round's words with right or wrong, and the final word as success or fail.
+- **leaderboard** Every lobby's success rate, wins, fails, guesses and rank.
+
+### Ranks
+
+Ranks follow Deadlock's ladder shape: 11 tiers with subranks I–VI, plus unranked. The names are crystal-ball themed, lowest to highest:
+
+1. dabbler
+2. leaf reader
+3. candle keeper
+4. palm reader
+5. card reader
+6. séance holder
+7. medium
+8. seer
+9. wraith
+10. star gazer
+11. the crystal ball
+
+Under 5 readings a pair is "in the fog". The rating is the success rate, with agreement in round i worth more than in round iii, smoothed so a few lucky readings don't top the board. The crystal ball needs 20+ readings.
+
+### Without Firebase
+
+If `firebase-config.js` still holds the placeholder, the game runs as one-device pass-and-play ("hand to …" swaps sides), saved in that browser.
+
+## Design
+
+A debugger or terminal window in 1-bit black and white, drawn from terminal debuggers, word-wall type posters, tech-label micro-typography and pixel-sort glitch art.
+
+- **Type:** IBM Plex Mono only, all lowercase.
+- **Frame:** square corners and 1px rules. The window has a top bar, numbered tabs, a pane title set as `─ crystal.ball ─`, and an inverted status line along the bottom.
+- **Cards:** a code listing (line number, fake address, word). The picked card is the inverted "current line".
+- **The pool:** a wall of repeated words, with the newest two inverted.
+- **Reveals:** words type themselves in out of glyphs.
+- **Win screen:** the shared word fills the screen like a type poster, with letters dropping out.
+- **Background:** ASCII lilies by chernobayv, in greyscale.
+
+**Colour:** right (green) and wrong (dark red) are the only colours.
+
+**Keys:** `1`–`4` switch tabs. `↑` `↓` (or `j` `k`) move between cards, and `enter` locks one in.
+
+**Motion:** it stops when the tab is hidden and respects reduced motion.
+
+## Instructions for whoever changes the game (person or AI)
 
 1. **Work only inside `spookee/`.** Do not edit any portfolio file: `index.html`, `shared/`, `site/`, `media/`, `design/` stay as they are. The Profile link already exists (`.spk` in `site/app.css`, last line of `profileHTML` in `shared/core.js`).
 2. **Entry point:** `spookee/index.html`. Keep the `← Peter Huang` back link (it returns to `../#profile`) and the `noindex` meta tag.
-3. **Mount the game in `<main id="game">`**, replacing the placeholder `<p class="soon">`. Code goes in `game.js`, styles in `style.css`; add more files or folders inside `spookee/` as needed (for example `spookee/assets/`).
-4. **Relative paths only** (`assets/ghost.png`, not `/assets/ghost.png`). GitHub Pages serves the repo root, so a leading `/` breaks.
-5. **No build step required.** Plain HTML, CSS and JS that run as-is on GitHub Pages. If the game is built with a bundler, commit the built output here, not the source tooling.
-6. **Keep it light:** no autoplaying sound (start audio from a click), pause when the tab is hidden, respect `prefers-reduced-motion`, keyboard playable, works at phone width.
-7. **Branch and review:** work on a branch (e.g. `feature/spookee-game`). Peter reviews before anything merges to `main`, which is the live site.
-
-## Updating
-
-When you change `style.css` or a `.js` file, bump the `?v=` number on its tag in `index.html`, so browsers holding the old file fetch the new one.
+3. **Relative paths only** (`assets/ghost.png`, not `/assets/ghost.png`). GitHub Pages serves the repo root, so a leading `/` breaks.
+4. **No build step.** Plain HTML, CSS and JS that run as-is on GitHub Pages.
+5. **Keep it light:** no autoplaying sound, pause when the tab is hidden, respect `prefers-reduced-motion`, keyboard playable, works at phone width.
+6. **Keep on-screen text to the minimum.** Explanations belong in the help dialog or this README, not on the game screens.
+7. **When you change a `.js` or `.css` file, bump its `?v=` number in `index.html`,** so browsers holding the old file fetch the new one.
+8. **Changing the database shape?** Update `firestore.rules` too, and paste it into the Firebase console (Firestore > Rules > Publish) *before* the code goes live, or moves will be refused.
+9. **Branch:** work on `feature/spookee-game`; `main` is the live site.
 
 ## Files
 
 ```
 spookee/
-  index.html   page shell: back link, #game mount, loads style.css and game.js
-  style.css    the game's styles only
-  game.js      game entry point (mounts into #game)
-  words.js     the 400-word card pool
-  firebase-config.js  Firebase web config (placeholder until set up)
-  online.js    lobbies + leaderboard on Firebase (loads only when configured)
-  firestore.rules     database rules to paste into the Firebase console
-  bouquet.js   ASCII lilies background, adapted from chernobayv/asciiFlowers (used with permission)
-  README.md    this file
+  index.html          page shell: back link, #game mount, loads the scripts below
+  style.css           the game's styles only
+  bouquet.js          ASCII lilies background, adapted from chernobayv/asciiFlowers (used with permission)
+  words.js            the 400-word card pool
+  firebase-config.js  Firebase web config (project spookee-bcf91; public by design)
+  online.js           lobbies, hidden picks and the leaderboard on Firebase (loads only when configured)
+  game.js             the game: state, rules, screens, keyboard, help dialog
+  firestore.rules     database rules; paste into the Firebase console when they change
+  README.md           this file
 ```
 
-## How the game works
+## Firebase setup (already done for spookee-bcf91)
 
-Two players. On first visit each picks a side on "who are you?" and types a name (no default names).
-
-A **reading** is one pair of cards:
-
-1. **choose... your fate...** Each player gets their own five cards. The hands never overlap, and no word is dealt again until the 400-word pool runs low, then it reshuffles.
-2. Both lock in, then **poof**: both cards flip at once.
-3. **pick a word.. any word..** Each player types a word that connects the pool, locks in, then poof. In round i the pool is the two cards. Every wrong round adds both guesses to the pool, so in round ii you connect the two newest words (your round i guesses, shown largest) while still fitting the cards, and round iii adds the round ii guesses on top.
-4. Either player marks it **right** or **wrong**.
-   - right: +1 point, a short "spookee, you guys said the same thing!" celebration plays for both players, and a new reading starts at round I with new cards.
-   - wrong in round I or II: same two cards, next round.
-   - wrong in round III (final): the reading fails automatically.
-
-"see the past" lists every reading: who drew which card, each round's words with right or wrong, and the final word as success or fail.
-
-### Playing across the world (lobbies)
-
-With Firebase configured, "who are you?" asks for a name, then **make a lobby** (you get a code like `oak-46` and a link to send) or **join** with a code. Each lobby is one pair of people: its points, history and rank stay with that code. A third person opening the code can only watch. A green dot means the other player has the page open.
-
-It is meant to be played asynchronously: lock in, close the page, come back whenever. Each pick is saved on the server, and the database rules let the other player read it only after both have locked that step, so neither side can peek and whoever locks second gets the reveal straight away. The tab title says "(your move)" when it's your turn, and "your lobbies" on the entry screen shows which lobbies are waiting on you.
-
-Players are anonymous per browser by default. "keep my seat on any device" links that player to a Google account, so a phone and a laptop are the same player.
-
-Without Firebase configured, the game runs as one-device pass-and-play ("hand to …" swaps sides), saved in the browser.
-
-### Leaderboard and ranks
-
-"leaderboard" lists every lobby: success rate, readings won and failed, total guesses, and a rank. The ladder copies Deadlock's shape (11 tiers with subranks I–VI, plus unranked) with crystal-ball names, lowest to highest: dabbler, leaf reader, candle keeper, palm reader, card reader, séance holder, medium, seer, wraith, star gazer, the crystal ball. Under 5 readings a pair is "in the fog". The rating is the success rate, with agreement in round i worth more than round iii, smoothed so a few lucky readings don't top the board; the crystal ball needs 20+ readings.
-
-### Firebase setup (one time)
-
-1. console.firebase.google.com: create a project (Analytics off is fine).
-2. Build > Authentication > Get started > Sign-in method: enable **Anonymous** and **Google**. Settings > Authorized domains: add `peterhua.fyi`.
-3. Build > Firestore Database > Create database, production mode, a US region.
+1. console.firebase.google.com: create a project.
+2. Authentication > Sign-in method: enable **Anonymous** and **Google**. Settings > Authorized domains: add `peterhua.fyi`.
+3. Firestore Database: create it in production mode.
 4. Firestore > Rules: paste `firestore.rules`, Publish.
-5. Project settings > Your apps > Web (`</>`): register an app, copy the `firebaseConfig` values into `firebase-config.js`.
+5. Project settings > Your apps > Web: copy the `firebaseConfig` values into `firebase-config.js`.
+
+Test lobbies can be removed in Firestore > Data (`rooms/<code>`, and `board/<code>` for the leaderboard). The website itself can't delete anything.
 
 ## Credit
 

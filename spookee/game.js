@@ -7,16 +7,43 @@
 "use strict";
 const root = document.getElementById("game");
 if (!root) return;
-root.innerHTML = `<div class="wrap">
-  <p class="mark">spookee</p>
+root.innerHTML = `<div class="term">
+  <header class="top"><span class="mark">spookee</span><span class="meta" aria-hidden="true">[txt2fate] · v2.6</span>
+    <button class="help-btn" id="help-btn" aria-haspopup="dialog">[?] what do i do?</button></header>
   <nav id="tabs" aria-label="spookee">
-    <a href="#who" data-tab="who">who are you?</a>
-    <a href="#ball" data-tab="ball">crystal ball</a>
-    <a href="#past" data-tab="past">see the past</a>
-    <a href="#ranks" data-tab="ranks">leaderboard</a>
+    <a href="#who" data-tab="who"><kbd>1</kbd>who are you?</a>
+    <a href="#ball" data-tab="ball"><kbd>2</kbd>crystal ball</a>
+    <a href="#past" data-tab="past"><kbd>3</kbd>see the past</a>
+    <a href="#ranks" data-tab="ranks"><kbd>4</kbd>leaderboard</a>
   </nav>
-  <div id="view" aria-live="polite"></div>
-</div>`;
+  <section class="pane">
+    <p class="pane-title" id="pane-title" aria-hidden="true"></p>
+    <div id="view" aria-live="polite"></div>
+  </section>
+  <footer class="status" id="status"></footer>
+</div>
+<dialog class="help" id="help" aria-labelledby="help-title">
+  <p class="help-title" id="help-title">man spookee</p>
+  <ol>
+    <li><span>you each pick a card. nobody sees the other's.</span></li>
+    <li><span><b>poof</b>, both cards show.</span></li>
+    <li><span>you each type one word that connects them.</span></li>
+    <li><span>same word? tap <b>right</b>. spookee.</span></li>
+    <li><span>different? tap <b>wrong</b>. your guesses join the pool, so the next word has to fit all of it. the lit words are the newest.</span></li>
+    <li><span>three tries per pair of cards.</span></li>
+  </ol>
+  <p class="help-foot">no rush. lock in, close it, come back later.</p>
+  <form method="dialog"><button class="btn">got it</button></form>
+</dialog>`;
+(() => {
+  const dlg = document.getElementById("help"), btn = document.getElementById("help-btn");
+  btn.onclick = () => { try { dlg.showModal(); } catch { dlg.setAttribute("open", ""); } };
+  dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+  dlg.addEventListener("close", () => btn.focus());
+})();
+const PANE = { who:"who.are.you", ball:"crystal.ball", past:"see.the.past", ranks:"leaderboard" };
+// a fake memory address per word, like a debugger listing
+const addr = w => { let h = 0x8048; for (const c of String(w)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return "0x" + (0x8048000 + (h % 0xfff)).toString(16); };
 
 const WORDS = (window.SPOOKEE_WORDS || []).slice();
 const ROMAN = ["", "I", "II", "III", "IV", "V", "VI"];
@@ -356,12 +383,47 @@ function render(){
   const actId = ae && ae.id, sel = ae && ae.selectionStart;
   view.innerHTML = t === "who" ? whoView() : t === "past" ? pastView() : t === "ranks" ? ranksView() : ballView();
   if (actId) { const el = document.getElementById(actId); if (el && el !== document.body) { el.focus(); try { el.setSelectionRange(sel, sel); } catch {} } }
+  document.getElementById("pane-title").textContent = PANE[t];
+  document.getElementById("status").innerHTML = statusLine();
   wire();
+  decodeAll();
   maybeCelebrate();
   setTitle();
 }
 
-const page = inner => `<div class="wrap" style="padding:0">${inner}</div>`;
+// the bottom status line, like a debugger's
+function statusLine(){
+  const seg = (k, v) => `<span><i>${k}</i> ${v}</span>`;
+  const parts = [];
+  parts.push(seg("in:", esc(lobbyCode || (mode === "local" ? "this device" : mode))));
+  if (game && game.reading) parts.push(seg("reading:", game.reading), seg("round:", (ROMAN[game.round] || "") + "/III"), seg("pts:", game.score || 0));
+  if (game && mode !== "local") parts.push(`<span>${dot("a")}${esc(nm("a"))} ${dot("b")}${esc(nm("b"))}</span>`);
+  const mv = (mode !== "local" && game && seat) ? moveFor(game, seat) : "";
+  if (mv) parts.push(`<span class="${mv === "your move" ? "go" : ""}">${esc(mv)}</span>`);
+  return parts.join("");
+}
+
+// reveals type themselves in, the way a terminal prints
+function decodeAll(){
+  if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  view.querySelectorAll(".card.flip, .word.flip strong").forEach(el => {
+    const t = el.textContent, glyphs = "#%&@*+=-:.", start = performance.now(), dur = 520;
+    const tick = now => {
+      const k = Math.min(1, (now - start) / dur), n = Math.floor(t.length * k);
+      el.textContent = t.slice(0, n) + Array.from(t.slice(n), c => c === " " ? " " : glyphs[Math.floor(Math.random() * glyphs.length)]).join("");
+      if (k < 1) requestAnimationFrame(tick); else el.textContent = t;
+    };
+    requestAnimationFrame(tick);
+  });
+}
+
+const page = inner => `<div class="wrap">${inner}</div>`;
+const ORB = `<pre class="orb" aria-hidden="true">    .-"""-.
+   /  .    \\
+  |  '   .  |
+   \\   '   /
+    '-...-'
+  ___|___|___</pre>`;
 const dot = s => mode === "local" ? "" : `<span class="dot ${isHere(s) ? "on" : ""}" title="${isHere(s) ? "here" : "away"}" aria-label="${isHere(s) ? "here" : "away"}"></span>`;
 
 function whoView(){
@@ -437,12 +499,9 @@ async function google(){
   }
 }
 function header(){
-  const right = `<span><b>${game.score || 0}</b> ${game.score === 1 ? "point" : "points"}</span>`;
-  const left = `<span>round <b>${ROMAN[game.round] || "III"}</b> of III${game.round === 3 ? " · final" : ""}</span>`;
-  const who = mode === "local"
-    ? `<span class="who">you are <b>${esc(nm(seat))}</b> · <button class="link" data-act="switch">switch</button></span>`
-    : `<span class="who">${dot("a")}<b>${esc(nm("a"))}</b> & ${dot("b")}<b>${esc(nm("b"))}</b>${lobbyCode ? ` · ${esc(lobbyCode)}` : ""}</span>`;
-  return `<div class="meta">${left}${who}${right}</div>`;
+  const final = game.round === 3 ? `<span class="final-tag">final round</span>` : "";
+  if (mode !== "local") return final ? `<div class="meta">${final}</div>` : "";
+  return `<div class="meta"><span>you are <b>${esc(nm(seat))}</b> · <button class="link" data-act="switch">switch</button></span>${final}</div>`;
 }
 const handoff = them => mode === "local" ? `<div class="row"><button class="btn ghost" data-act="switch">hand to ${esc(nm(them))}</button></div>` : "";
 const awayNote = them => mode === "local" ? "" : `<p class="note">come back anytime</p>`;
@@ -450,15 +509,15 @@ const awayNote = them => mode === "local" ? "" : `<p class="note">come back anyt
 function ballView(){
   const notes = (readOnly && mode !== "online" ? `<p class="note">view only</p>` : "")
               + (slow && !loaded ? `<p class="note">connecting…</p>` : "");
-  if (mode === "online" && !lobbyCode) return page(`<div class="orb" aria-hidden="true"></div><h1>crystal ball</h1>
+  if (mode === "online" && !lobbyCode) return page(`${ORB}<h1>crystal ball</h1>
     <div class="row"><a class="btn" href="#who" style="text-decoration:none">make or join a lobby</a></div>`);
-  if (mode !== "online" && !seat) return page(`<div class="orb" aria-hidden="true"></div><h1>crystal ball</h1>
+  if (mode !== "online" && !seat) return page(`${ORB}<h1>crystal ball</h1>
     <div class="row"><a class="btn" href="#who" style="text-decoration:none">choose who you are</a></div>`);
-  if (!loaded) return page(`<div class="orb" aria-hidden="true"></div><h1>gazing…</h1>${notes}`);
-  if (mode === "online" && game && !(game.seats && game.seats.b)) return page(`<div class="orb" aria-hidden="true"></div>
+  if (!loaded) return page(`${ORB}<h1>gazing…</h1>${notes}`);
+  if (mode === "online" && game && !(game.seats && game.seats.b)) return page(`${ORB}
     <h1>send them ${esc(lobbyCode)}</h1>
     <div class="row"><button class="btn ghost" data-act="copy">copy link</button></div>`);
-  if (!game || !game.reading) return page(`<div class="orb" aria-hidden="true"></div><h1>crystal ball</h1>${notes}
+  if (!game || !game.reading) return page(`${ORB}<h1>crystal ball</h1>${notes}
     <div class="row"><button class="btn" data-act="begin" ${readOnly ? "disabled" : ""}>begin</button></div>`);
   if (!seat) { // watcher
     return page(`${header()}<p class="note">watching</p>
@@ -490,9 +549,11 @@ function ballView(){
         </div>${handoff(them)}${awayNote(them)}`;
     } else {
       body = `<h1>choose... your fate...</h1>
-        <div class="deck" role="group" aria-label="your five cards">
-          ${((game.decks || {})[me] || []).map(w => `<button class="card" data-card="${esc(w)}" aria-pressed="${pick === w}">${esc(w)}</button>`).join("")}
-        </div>
+        <ol class="lines" aria-label="your five cards">
+          ${((game.decks || {})[me] || []).map((w, i) => `<li><button class="line" data-card="${esc(w)}" aria-pressed="${pick === w}">
+            <span class="ln">${String(i + 1).padStart(2, "0")}</span><span class="addr">${addr(w)}</span><span class="w">${esc(w)}</span></button></li>`).join("")}
+        </ol>
+        <p class="keys" aria-hidden="true"><kbd>↑</kbd><kbd>↓</kbd> choose <kbd>enter</kbd> lock in</p>
         <p class="note">${theirsIn ? esc(nm(them)) + " locked in" : esc(nm(them)) + " is choosing"}</p>
         <div class="row"><button class="btn" data-act="lock-card" ${pick && !readOnly ? "" : "disabled"}>lock in</button></div>`;
     }
@@ -504,8 +565,11 @@ function ballView(){
     const seen = new Set(), pool = [];
     seq.forEach((w, i) => { const k = w.toLowerCase(); if (seen.has(k)) { pool.find(x => x.k === k).i = i; return; } seen.add(k); pool.push({ w, k, i }); });
     const newest = new Set(seq.slice(-2).map(w => w.toLowerCase()));
-    const pairLine = `<ul class="pool" aria-label="the pool: connect all of these">
-      ${pool.map(x => `<li class="${newest.has(x.k) ? "new" : ""}">${esc(x.w)}</li>`).join("")}</ul>`;
+    const wallLine = off => pool.map((_, i) => pool[(i + off) % pool.length])
+      .map(x => newest.has(x.k) ? `<b>${esc(x.w)}</b>` : esc(x.w)).join(" ");
+    const pairLine = `<ul class="pool" aria-label="connect all of these">
+      ${pool.map(x => `<li class="${newest.has(x.k) ? "new" : ""}">${esc(x.w)}</li>`).join("")}</ul>
+      <div class="wall" aria-hidden="true">${[0, 1, 2, 3].map(o => `<p>${wallLine(o)} ${wallLine(o + 1)} ${wallLine(o + 2)}</p>`).join("")}</div>`;
     if (bothOut) {
       const key = "b" + game.reading + "-" + game.round, anim = lastReveal !== key ? "flip" : ""; lastReveal = key;
       body = `${pairLine}<h1>poof</h1>
@@ -524,7 +588,7 @@ function ballView(){
           <div class="word"><small>${esc(nm(them))}</small><strong style="color:var(--orchid)">✦</strong></div>
         </div>${handoff(them)}${awayNote(them)}`;
     } else {
-      body = `${pairLine}
+      body = `<h1>pick a word.. any word..</h1>${pairLine}
         <form class="field" id="bridge-form" autocomplete="off">
           <label for="bridge-input">${theirsIn ? esc(nm(them)) + " locked in" : esc(nm(them)) + " is thinking"}</label>
           <input id="bridge-input" value="${esc(draft)}" maxlength="24" spellcheck="false">
@@ -597,7 +661,7 @@ function wire(){
     side.querySelector(".sigil").textContent = has ? i.value.trim()[0] : "?";
     const btn = side.querySelector("[data-seat]"); btn.disabled = !has; if (seat !== s) btn.textContent = "i'm " + nm(s);
   });
-  view.querySelectorAll("[data-card]").forEach(b => b.onclick = () => { pick = b.dataset.card; render(); });
+  view.querySelectorAll("[data-card]").forEach(b => b.onclick = () => { pick = b.dataset.card; render(); const f = view.querySelector(`.line[aria-pressed="true"]`); if (f) f.focus(); });
   view.querySelectorAll("[data-verdict]").forEach(b => b.onclick = () => verdict(b.dataset.verdict));
   view.querySelectorAll("[data-rejoin]").forEach(b => b.onclick = () => joinLobby(b.dataset.rejoin));
   const act = {
@@ -637,21 +701,34 @@ function maybeCelebrate(){
   if (!w || celebrated.has(w.at) || ls.get("spookee:won") === String(w.at)) return;
   celebrated.add(w.at); ls.set("spookee:won", String(w.at));
   if (Date.now() - (w.at || 0) > 20000) return; // an old win, don't replay it on load
-  const sparks = Array.from({length:14}, (_, i) =>
-    `<i style="--a:${i * (360/14)}deg;--d:${110 + (i % 3) * 40}px;--t:${(i % 4) * 60}ms">✦</i>`).join("");
+  const word = String(w.word || "");
+  const rows = Array.from({length:34}, (_, r) => Array.from({length:14}, () => word).join(" ")
+    .split("").map(c => (c !== " " && Math.random() < r / 60) ? " " : c).join("")).join("\n");
   const el = document.createElement("div");
   el.id = "win";
   el.setAttribute("role", "status");
-  el.innerHTML = `<div class="win-card">
-      <div class="sparks" aria-hidden="true">${sparks}</div>
-      <p class="win-word">${esc(w.word)}</p>
+  el.innerHTML = `<pre class="win-wall" aria-hidden="true">${esc(rows)}</pre>
+    <div class="win-card">
+      <p class="win-word">${esc(word)}</p>
       <p class="win-line"><span>spookee,</span> <span>you guys said the same thing!</span></p>
     </div>`;
   el.onclick = closeWin;
   document.body.appendChild(el);
   winTimer = setTimeout(closeWin, 4200);
 }
-document.addEventListener("keydown", e => { if (e.key === "Escape") closeWin(); });
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") return closeWin();
+  const typing = /^(input|textarea|select)$/i.test((e.target && e.target.tagName) || "");
+  if (typing || e.metaKey || e.ctrlKey || e.altKey) return;
+  const tabs = { "1":"who", "2":"ball", "3":"past", "4":"ranks" };
+  if (tabs[e.key]) { location.hash = tabs[e.key]; return; }
+  const lines = [...view.querySelectorAll(".line[data-card]")];
+  if (!lines.length) return;
+  const words = lines.map(l => l.dataset.card), i = words.indexOf(pick);
+  if (e.key === "ArrowDown" || e.key === "j") { e.preventDefault(); pick = words[(i + 1) % words.length]; render(); view.querySelector(`.line[aria-pressed="true"]`).focus(); }
+  else if (e.key === "ArrowUp" || e.key === "k") { e.preventDefault(); pick = words[(i - 1 + words.length) % words.length]; render(); view.querySelector(`.line[aria-pressed="true"]`).focus(); }
+  else if (e.key === "Enter" && pick && !(e.target && e.target.closest && e.target.closest("button:not(.line)"))) { e.preventDefault(); lockCard(); }
+});
 
 window.addEventListener("hashchange", render);
 document.addEventListener("visibilitychange", () => { document.body.classList.toggle("paused", document.hidden); if (!document.hidden) beat(); });

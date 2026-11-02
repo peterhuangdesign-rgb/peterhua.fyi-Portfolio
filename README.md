@@ -32,6 +32,10 @@ After that, every push to `main` updates peterhua.fyi within a minute or two.
 - `/home` goes straight to the home page.
 - `/#research`, `/#design`, `/#profile` and `/#contact` open the sections.
 
+## spookee
+
+`spookee/` is a separate side game at peterhua.fyi/spookee/, linked only from the small spookee link at the end of Profile. It shares nothing with the portfolio. How it works, how to change it and its Firebase setup are in `spookee/README.md`.
+
 ## Rules
 
 Design rules, the current structure and the working agreement are in `CLAUDE.md`.

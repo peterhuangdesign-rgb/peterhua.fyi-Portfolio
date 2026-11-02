@@ -114,6 +114,7 @@ shared/core.js      all content (DATA, PROFILE, RESUME, CONTACT), themes, backgr
 shared/core.css     base tokens and shared components
 media/              signature.png, portrait.jpg, me-0N.jpg, resume PDF (real); photo-0N.jpg + track-0N.mp3 (placeholders)
 CNAME  .nojekyll    GitHub Pages custom domain; serve files as-is
+spookee/            side game at /spookee/, linked only by the small spookee link at the end of Profile; self-contained, see spookee/README.md
 design/concepts.html  seven low-fi motion concepts (reference only)
 design/archive/     retired directions and branches (may not render; their shared files were replaced)
 design/notes/       HANDOFF, first-visitor navigation test, design-grade report
