@@ -12,6 +12,10 @@ A small side game by Peter Huang. It lives at `peterhua.fyi/spookee/` and is lin
 6. **Keep it light:** no autoplaying sound (start audio from a click), pause when the tab is hidden, respect `prefers-reduced-motion`, keyboard playable, works at phone width.
 7. **Branch and review:** work on a branch (e.g. `feature/spookee-game`). Peter reviews before anything merges to `main`, which is the live site.
 
+## Updating
+
+When you change `style.css` or a `.js` file, bump the `?v=` number on its tag in `index.html`, so browsers holding the old file fetch the new one.
+
 ## Files
 
 ```

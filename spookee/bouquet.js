@@ -465,6 +465,8 @@
   const screen = document.createElement('canvas');
   screen.id = 'bloom';
   screen.setAttribute('aria-hidden', 'true');
+  // self-positioning, so a stale or missing stylesheet can never let it widen the page
+  screen.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-events:none;opacity:.42';
   document.body.prepend(screen);
   const sctx = screen.getContext('2d');
   const off = document.createElement('canvas');
