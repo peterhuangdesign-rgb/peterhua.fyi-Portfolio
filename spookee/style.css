@@ -1,9 +1,150 @@
-/* spookee: the game's own styles. Nothing here affects the portfolio. */
+/* spookee: the game's own styles. Nothing here affects the portfolio.
+   Layout: one centered column, tab bar on top, the crystal ball holds one state at a time. Single dark velvet look by design. */
+:root{
+  --ink:#09060d;        /* black ground */
+  --velvet:#1c0b26;     /* deep velvet surface */
+  --plum:#3a1650;       /* raised velvet */
+  --orchid:#cfa8ff;     /* accent: candlelit lilac */
+  --mist:#efe4ff;       /* text */
+  --dim:#a48fbf;        /* secondary text */
+  --right:#4fae78;
+  --wrong:#9c2236;
+  --display:"Gluten","Sniglet","Comic Sans MS","Trebuchet MS",sans-serif;
+  --body:"Sniglet","Trebuchet MS","Verdana",sans-serif;
+  color-scheme:dark;
+}
 *{box-sizing:border-box}
-html,body{margin:0;height:100%}
-body{background:#15181A;color:#FCFCFA;font:400 16px/1.5 ui-sans-serif,system-ui,sans-serif;display:flex;flex-direction:column}
-.back{display:inline-flex;align-items:center;min-height:44px;padding:0 max(16px,env(safe-area-inset-left,0px));color:#DADDD7;font-size:13px;text-decoration:none}
-.back:hover{color:#FCFCFA;text-decoration:underline;text-underline-offset:4px}
-.back:focus-visible{outline:2px solid #9FE0D2;outline-offset:3px}
-#game{flex:1;display:grid;place-items:center;padding:16px max(16px,env(safe-area-inset-right,0px)) 32px max(16px,env(safe-area-inset-left,0px))}
-.soon{margin:0;font-size:14px;letter-spacing:.2em;color:#DADDD7}
+html,body{min-height:100%}
+body{
+  background:
+    radial-gradient(120% 70% at 50% -10%, #2b0f3d 0%, transparent 60%),
+    radial-gradient(80% 60% at 100% 100%, #1a0824 0%, transparent 70%),
+    var(--ink);
+  background-attachment:fixed;
+  color:var(--mist);font-family:var(--body);font-size:16px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:0 48px;
+}
+.wrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+button,input{font:inherit;color:inherit}
+.back{display:inline-flex;align-items:center;min-height:44px;color:var(--dim);font-size:13px;text-decoration:none}
+.back:hover{color:var(--mist);text-decoration:underline;text-underline-offset:4px}
+#game{display:block}
+.paused *,.paused *::before,.paused *::after{animation-play-state:paused!important}
+:focus-visible{outline:2px solid var(--orchid);outline-offset:3px;border-radius:12px}
+
+/* Tabs */
+.mark{font-family:var(--display);font-weight:800;font-size:26px;text-align:center;color:var(--orchid);margin:0;letter-spacing:1px}
+nav{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:6px;background:var(--velvet);border-radius:28px;
+  box-shadow:inset 0 0 0 1px #ffffff10}
+nav a{display:grid;place-items:center;min-height:44px;text-align:center;line-height:1.15;text-decoration:none;color:var(--dim);
+  font-family:var(--display);font-weight:700;font-size:15px;padding:8px 10px;border-radius:22px}
+nav a[aria-current="page"]{background:var(--plum);color:var(--mist)}
+nav a:hover{color:var(--mist)}
+
+h1{font-family:var(--display);font-weight:800;font-size:clamp(34px,8vw,52px);line-height:1.05;
+  margin:0;text-align:center;text-wrap:balance;letter-spacing:.5px;
+  text-shadow:0 0 28px #cfa8ff55}
+.note{color:var(--dim);text-align:center;margin:0}
+.warn{color:#f1b9c4;text-align:center;margin:0}
+
+/* Buttons */
+.btn{appearance:none;border:0;cursor:pointer;border-radius:999px;padding:14px 28px;
+  font-family:var(--display);font-weight:700;font-size:18px;background:var(--orchid);color:var(--ink);
+  box-shadow:0 0 24px #cfa8ff40;transition:transform .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none}
+.btn.ghost{background:transparent;color:var(--mist);box-shadow:inset 0 0 0 1.5px #cfa8ff66}
+.btn.right{background:var(--right);color:#06130b;box-shadow:0 0 20px #4fae7840}
+.btn.wrong{background:var(--wrong);color:var(--mist);box-shadow:0 0 20px #9c223640}
+.row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.link{background:none;border:0;color:var(--orchid);cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:12px 8px;margin:-12px -8px}
+
+/* Who are you */
+.sides{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.side{background:var(--velvet);border-radius:24px;padding:22px 18px;display:flex;flex-direction:column;
+  gap:14px;align-items:center;box-shadow:inset 0 0 0 1px #ffffff0d}
+.side.mine{background:var(--plum);box-shadow:inset 0 0 0 2px var(--orchid),0 0 40px #cfa8ff30}
+.sigil{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;
+  font-family:var(--display);font-weight:800;font-size:30px;color:var(--ink);
+  background:radial-gradient(circle at 35% 30%,#fff 0%,var(--orchid) 45%,#6c3a9c 100%)}
+.side input{width:100%;min-width:0;text-align:center;background:var(--ink);border:0;border-radius:14px;
+  padding:12px;font-family:var(--display);font-weight:700;font-size:22px;box-shadow:inset 0 0 0 1px #ffffff1a}
+.side input:focus{outline:none;box-shadow:inset 0 0 0 2px var(--orchid)}
+.side .btn{width:100%;padding:12px 16px;font-size:16px}
+
+/* Ball header */
+.meta{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:4px 12px;color:var(--dim);
+  font-family:var(--display);font-weight:700;font-variant-numeric:tabular-nums}
+.meta b{color:var(--mist)}
+.meta>span{white-space:nowrap}
+.meta .who{order:3;flex-basis:100%;text-align:center}
+@media (min-width:560px){.meta .who{order:0;flex-basis:auto}}
+
+/* Cards */
+.deck{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.card{appearance:none;border:0;cursor:pointer;width:118px;aspect-ratio:2/3;max-width:100%;border-radius:16px;
+  background:linear-gradient(160deg,var(--plum),var(--velvet));color:var(--mist);
+  box-shadow:inset 0 0 0 1px #ffffff1a,0 8px 20px #0008;
+  display:grid;place-items:center;padding:8px;font-family:var(--display);font-weight:700;
+  font-size:19px;text-align:center;overflow-wrap:anywhere;transition:transform .2s;position:relative}
+.card::before,.card::after{content:"✦";position:absolute;font-size:11px;color:#cfa8ff66}
+.card::before{top:9px;left:11px}.card::after{bottom:9px;right:11px}
+.card:hover{transform:translateY(-4px)}
+.card[aria-pressed="true"]{transform:translateY(-10px);box-shadow:inset 0 0 0 2px var(--orchid),0 0 30px #cfa8ff66}
+.card.static{cursor:default}.card.static:hover{transform:none}
+.card.back{background:repeating-radial-gradient(circle at 50% 50%,#2a0f3a 0 6px,#1c0b26 6px 12px);color:var(--orchid);font-size:30px}
+.card.flip{animation:flip .7s cubic-bezier(.2,.7,.2,1) both}
+@keyframes flip{from{transform:rotateY(90deg);opacity:.2}to{transform:none;opacity:1}}
+.pair{display:flex;justify-content:center;gap:18px;flex-wrap:wrap}
+.slot{display:flex;flex-direction:column;align-items:center;gap:10px;font-family:var(--display);font-weight:700;color:var(--dim)}
+.slot .card{width:140px;font-size:22px}
+
+/* Bridge */
+.small-pair{display:flex;justify-content:center;align-items:center;gap:12px;font-family:var(--display);font-weight:700;font-size:22px}
+
+.small-pair i{color:var(--orchid);font-style:normal}
+.field{display:flex;flex-direction:column;gap:8px;align-items:center}
+.field label{font-family:var(--display);font-weight:700;color:var(--dim)}
+#bridge-input{width:min(100%,360px);text-align:center;background:var(--velvet);border:0;border-radius:18px;padding:16px;
+  font-family:var(--display);font-weight:700;font-size:26px;box-shadow:inset 0 0 0 1px #ffffff1f}
+#bridge-input:focus{outline:none;box-shadow:inset 0 0 0 2px var(--orchid),0 0 30px #cfa8ff40}
+.words{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.word{background:var(--velvet);border-radius:22px;padding:22px 12px;text-align:center;display:flex;flex-direction:column;gap:4px;min-width:0}
+.word small{color:var(--dim);font-family:var(--display);font-weight:700;font-size:14px}
+.word strong{font-family:var(--display);font-weight:800;font-size:clamp(24px,6vw,36px);overflow-wrap:anywhere;line-height:1.1}
+.word.flip{animation:flip .7s cubic-bezier(.2,.7,.2,1) both}
+
+/* Orb */
+.orb{width:120px;height:120px;margin:0 auto;border-radius:50%;
+  background:radial-gradient(circle at 34% 30%,#ffffffcc 0,#e3ccff 10%,#8e5bc4 42%,#2a0f3a 78%,#12061a 100%);
+  box-shadow:0 0 60px #cfa8ff55,inset -10px -14px 30px #0009;position:relative}
+.orb::after{content:"";position:absolute;inset:-30px;border-radius:50%;background:radial-gradient(circle,#cfa8ff40 0,transparent 70%);
+  animation:breathe 5s ease-in-out infinite;pointer-events:none}
+@keyframes breathe{50%{opacity:.25}}
+
+/* Lineage */
+.games{display:flex;flex-direction:column;gap:22px}
+.game h2{font-family:var(--display);font-weight:800;font-size:22px;margin:0 0 10px;color:var(--orchid)}
+.rounds{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.rounds li{display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:center;
+  background:var(--velvet);border-radius:16px;padding:12px 16px}
+.rn{font-family:var(--display);font-weight:800;color:var(--dim)}
+.chain{min-width:0;overflow-wrap:anywhere}
+.chain .from{color:var(--dim)}
+.chain .to{font-family:var(--display);font-weight:800;font-size:20px}
+.to.right{color:var(--right)}.to.wrong{color:#e0566e}
+.tag{font-family:var(--display);font-weight:700;font-size:14px;letter-spacing:.4px;text-transform:uppercase}
+.tag.right{color:var(--right)}
+.tag.wrong{color:#ef8a9b}
+.empty{text-align:center;color:var(--dim);display:flex;flex-direction:column;gap:16px;align-items:center}
+
+@media (max-width:440px){
+  .card{width:92px;font-size:16px}
+  .slot .card{width:120px;font-size:19px}
+  nav a{font-size:14px;padding:9px 10px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
