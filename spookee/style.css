@@ -9,8 +9,8 @@
   --dim:#a48fbf;        /* secondary text */
   --right:#4fae78;
   --wrong:#9c2236;
-  --display:"Gluten","Sniglet","Comic Sans MS","Trebuchet MS",sans-serif;
-  --body:"Sniglet","Trebuchet MS","Verdana",sans-serif;
+  --display:"Courier Prime","Courier New",Courier,monospace;
+  --body:"Courier Prime","Courier New",Courier,monospace;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -21,7 +21,7 @@ body{
     radial-gradient(80% 60% at 100% 100%, #1a0824 0%, transparent 70%),
     var(--ink);
   background-attachment:fixed;
-  color:var(--mist);font-family:var(--body);font-size:16px;line-height:1.5;
+  color:var(--mist);font-family:var(--body);font-size:16px;line-height:1.5;text-transform:lowercase;
   padding-left:max(16px,env(safe-area-inset-left,0px));
   padding-right:max(16px,env(safe-area-inset-right,0px));
   padding-block:0 48px;
@@ -38,7 +38,7 @@ button,input{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--orchid);outline-offset:3px;border-radius:12px}
 
 /* Tabs */
-.mark{font-family:var(--display);font-weight:800;font-size:26px;text-align:center;color:var(--orchid);margin:0;letter-spacing:1px}
+.mark{font-family:var(--display);font-weight:700;font-size:26px;text-align:center;color:var(--orchid);margin:0;letter-spacing:1px}
 nav{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:6px;background:var(--velvet);border-radius:28px;
   box-shadow:inset 0 0 0 1px #ffffff10}
 nav a{display:grid;place-items:center;min-height:44px;text-align:center;line-height:1.15;text-decoration:none;color:var(--dim);
@@ -46,7 +46,7 @@ nav a{display:grid;place-items:center;min-height:44px;text-align:center;line-hei
 nav a[aria-current="page"]{background:var(--plum);color:var(--mist)}
 nav a:hover{color:var(--mist)}
 
-h1{font-family:var(--display);font-weight:800;font-size:clamp(34px,8vw,52px);line-height:1.05;
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,8vw,52px);line-height:1.05;
   margin:0;text-align:center;text-wrap:balance;letter-spacing:.5px;
   text-shadow:0 0 28px #cfa8ff55}
 .note{color:var(--dim);text-align:center;margin:0}
@@ -70,12 +70,14 @@ h1{font-family:var(--display);font-weight:800;font-size:clamp(34px,8vw,52px);lin
   gap:14px;align-items:center;box-shadow:inset 0 0 0 1px #ffffff0d}
 .side.mine{background:var(--plum);box-shadow:inset 0 0 0 2px var(--orchid),0 0 40px #cfa8ff30}
 .sigil{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;
-  font-family:var(--display);font-weight:800;font-size:30px;color:var(--ink);
+  font-family:var(--display);font-weight:700;font-size:30px;color:var(--ink);
   background:radial-gradient(circle at 35% 30%,#fff 0%,var(--orchid) 45%,#6c3a9c 100%)}
 .side input{width:100%;min-width:0;text-align:center;background:var(--ink);border:0;border-radius:14px;
   padding:12px;font-family:var(--display);font-weight:700;font-size:22px;box-shadow:inset 0 0 0 1px #ffffff1a}
 .side input:focus{outline:none;box-shadow:inset 0 0 0 2px var(--orchid)}
 .side .btn{width:100%;padding:12px 16px;font-size:16px}
+.side input::placeholder{color:var(--dim);opacity:.7}
+input{text-transform:lowercase}
 
 /* Ball header */
 .meta{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:4px 12px;color:var(--dim);
@@ -116,7 +118,7 @@ h1{font-family:var(--display);font-weight:800;font-size:clamp(34px,8vw,52px);lin
 .words{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .word{background:var(--velvet);border-radius:22px;padding:22px 12px;text-align:center;display:flex;flex-direction:column;gap:4px;min-width:0}
 .word small{color:var(--dim);font-family:var(--display);font-weight:700;font-size:14px}
-.word strong{font-family:var(--display);font-weight:800;font-size:clamp(24px,6vw,36px);overflow-wrap:anywhere;line-height:1.1}
+.word strong{font-family:var(--display);font-weight:700;font-size:clamp(24px,6vw,36px);overflow-wrap:anywhere;line-height:1.1}
 .word.flip{animation:flip .7s cubic-bezier(.2,.7,.2,1) both}
 
 /* Orb */
@@ -129,16 +131,22 @@ h1{font-family:var(--display);font-weight:800;font-size:clamp(34px,8vw,52px);lin
 
 /* Lineage */
 .games{display:flex;flex-direction:column;gap:22px}
-.game h2{font-family:var(--display);font-weight:800;font-size:22px;margin:0 0 10px;color:var(--orchid)}
+.game h2{font-family:var(--display);font-weight:700;font-size:22px;margin:0 0 10px;color:var(--orchid)}
 .rounds{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
 .rounds li{display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:center;
   background:var(--velvet);border-radius:16px;padding:12px 16px}
-.rn{font-family:var(--display);font-weight:800;color:var(--dim)}
+.rn{font-family:var(--display);font-weight:700;color:var(--dim)}
+.chain b{font-family:var(--display);font-weight:700;color:var(--mist)}
+.rounds li.final{background:var(--plum)}
+.game h2 i{font-style:normal;color:var(--dim);font-size:16px}
+.tries{list-style:none;margin:0 auto;padding:0;display:flex;flex-direction:column;gap:4px;color:var(--dim);font-family:var(--display);font-weight:700;text-align:center}
+.tries li{display:flex;gap:10px;justify-content:center}
+.tries .rn{min-width:2.5em;text-align:right}
 .chain{min-width:0;overflow-wrap:anywhere}
 .chain .from{color:var(--dim)}
-.chain .to{font-family:var(--display);font-weight:800;font-size:20px}
+.chain .to{font-family:var(--display);font-weight:700;font-size:20px}
 .to.right{color:var(--right)}.to.wrong{color:#e0566e}
-.tag{font-family:var(--display);font-weight:700;font-size:14px;letter-spacing:.4px;text-transform:uppercase}
+.tag{font-family:var(--display);font-weight:700;font-size:14px;letter-spacing:.4px}
 .tag.right{color:var(--right)}
 .tag.wrong{color:#ef8a9b}
 .empty{text-align:center;color:var(--dim);display:flex;flex-direction:column;gap:16px;align-items:center}
