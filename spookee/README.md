@@ -49,7 +49,11 @@ A **reading** is one pair of cards:
 
 ### Playing across the world (lobbies)
 
-With Firebase configured, "who are you?" asks for a name, then **make a lobby** (you get a code like `oak-46` and a link to send) or **join** with a code. Each lobby is one pair of people: its points, history and rank stay with that code. A third person opening the code can only watch. Picks stay on the picker's device until both have locked in, so neither side can peek. A green dot means the other player has the page open.
+With Firebase configured, "who are you?" asks for a name, then **make a lobby** (you get a code like `oak-46` and a link to send) or **join** with a code. Each lobby is one pair of people: its points, history and rank stay with that code. A third person opening the code can only watch. A green dot means the other player has the page open.
+
+It is meant to be played asynchronously: lock in, close the page, come back whenever. Each pick is saved on the server, and the database rules let the other player read it only after both have locked that step, so neither side can peek and whoever locks second gets the reveal straight away. The tab title says "(your move)" when it's your turn, and "your lobbies" on the entry screen shows which lobbies are waiting on you.
+
+Players are anonymous per browser by default. "keep my seat on any device" links that player to a Google account, so a phone and a laptop are the same player.
 
 Without Firebase configured, the game runs as one-device pass-and-play ("hand to …" swaps sides), saved in the browser.
 
@@ -60,7 +64,7 @@ Without Firebase configured, the game runs as one-device pass-and-play ("hand to
 ### Firebase setup (one time)
 
 1. console.firebase.google.com: create a project (Analytics off is fine).
-2. Build > Authentication > Get started > Sign-in method: enable **Anonymous**. Settings > Authorized domains: add `peterhua.fyi`.
+2. Build > Authentication > Get started > Sign-in method: enable **Anonymous** and **Google**. Settings > Authorized domains: add `peterhua.fyi`.
 3. Build > Firestore Database > Create database, production mode, a US region.
 4. Firestore > Rules: paste `firestore.rules`, Publish.
 5. Project settings > Your apps > Web (`</>`): register an app, copy the `firebaseConfig` values into `firebase-config.js`.

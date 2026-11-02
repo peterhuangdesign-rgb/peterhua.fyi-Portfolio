@@ -7,6 +7,13 @@ service cloud.firestore {
     function room(code) { return get(/databases/$(database)/documents/rooms/$(code)).data; }
     function seatedIn(d) { return request.auth.uid == d.seats.get('a', '') || request.auth.uid == d.seats.get('b', ''); }
     function codeOk(code) { return code.matches('^[a-z]{2,20}-[0-9]{2}$'); }
+    // both players have locked the step this secret belongs to, and it is the current step
+    function revealable(d, sid) {
+      return d.locks[d.stage].get('a', false) == true && d.locks[d.stage].get('b', false) == true
+        && sid.split('_')[1] == string(d.reading)
+        && ((d.stage == 'cards' && sid.split('_')[2] == 'c')
+            || (d.stage == 'bridge' && sid.split('_')[2] == 'b' + string(d.round)));
+    }
 
     // a lobby: two seats, the game state, names, presence
     match /rooms/{code} {
@@ -24,6 +31,20 @@ service cloud.firestore {
             && request.resource.data.seats.a == resource.data.seats.a)
       );
       allow delete: if false;
+
+      // hidden picks, one per player per step: {seat}_{reading}_{c | b1 | b2 | b3}.
+      // The owner can always read theirs; the other player only once both have locked this step.
+      match /secrets/{sid} {
+        allow create, update: if signedIn() && sid.matches('^[ab]_[0-9]+_(c|b[123])$')
+          && request.auth.uid == room(code).seats.get(sid.split('_')[0], '-')
+          && request.resource.data.keys().hasOnly(['v']) && request.resource.data.v is string
+          && request.resource.data.v.size() <= 40;
+        allow read: if signedIn() && (
+          request.auth.uid == room(code).seats.get(sid.split('_')[0], '-')
+          || (seatedIn(room(code)) && revealable(room(code), sid))
+        );
+        allow delete: if false;
+      }
 
       // finished readings: written by the two players, readable by anyone with the code
       match /readings/{id} {

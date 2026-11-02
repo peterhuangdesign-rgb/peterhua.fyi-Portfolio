@@ -129,10 +129,36 @@ function names(){ return (game && game.names) ? {...localNames, ...game.names} :
 function nm(s){ return (names()[s] || "").trim() || FALLBACK[s]; }
 const isHere = s => mode === "local" || (game && game.presence && Date.now() - (game.presence[s] || 0) < 70000);
 
-/* ---------- picks stay on the picker's device until both have locked ---------- */
+/* ---------- hidden picks ----------
+   online: each pick is saved in rooms/{code}/secrets/{seat}_{reading}_{step}. The rules let the other
+   player read it only once both have locked this step, so whoever locks second reveals both, any time later.
+   claude.ai: picks stay on the picker's device and each side reveals its own. */
+function stepId(st){ return `${game.reading}_${st === "cards" ? "c" : "b" + game.round}`; }
 function secretKey(st){ return `spookee:secret:${lobbyCode || mode}:${seat}:${game.reading}:${st === "cards" ? 0 : game.round}:${st}`; }
+const myPicks = {}; // step -> my locked pick, fetched from the server when this device doesn't have it
 let revealing = "";
+async function revealOnline(){
+  if (!game || !game.reading || !seat || readOnly) return;
+  const st = game.stage, locks = (game.locks || {})[st] || {}, pub = game[st] || {};
+  if (pub.a && pub.b) return;
+  const step = stepId(st), key = lobbyCode + ":" + step;
+  if (!(locks.a && locks.b) || revealing === key) return;
+  revealing = key;
+  try {
+    const [va, vb] = await Promise.all(["a", "b"].map(s => pub[s] || online.getSecret(lobbyCode, s, step)));
+    if (va && vb) await store.update({ [st]:{ a:va, b:vb } });
+    else if (!(seat === "a" ? va : vb)) await store.update({ locks:{ [st]:{ [seat]:false } } }); // my pick never saved: choose again
+  } catch (e) { console.error(e); }
+  finally { if (revealing === key) revealing = ""; }
+}
+async function loadMyPick(st){
+  const step = stepId(st);
+  if (step in myPicks) return;
+  myPicks[step] = "";
+  try { myPicks[step] = (await online.getSecret(lobbyCode, seat, step)) || ""; render(); } catch {}
+}
 function revealMine(){
+  if (mode === "online") return revealOnline();
   if (mode === "local" || !game || !game.reading || !seat || readOnly) return;
   const st = game.stage, locks = (game.locks || {})[st] || {}, pub = game[st] || {};
   if (pub[seat]) return;
@@ -155,6 +181,8 @@ function lockCard(){
   if (!pick || !seat) return;
   if (mode === "local") return write(() => store.update({ cards:{ [seat]: pick } }));
   ls.set(secretKey("cards"), pick);
+  if (mode === "online") { const p = pick, step = stepId("cards"); myPicks[step] = p;
+    return write(async () => { await online.setSecret(lobbyCode, seat, step, p); await store.update({ locks:{ cards:{ [seat]: true } } }); }); }
   write(() => store.update({ locks:{ cards:{ [seat]: true } } }));
 }
 function lockWord(){
@@ -162,6 +190,8 @@ function lockWord(){
   if (!w || !seat) return;
   if (mode === "local") return write(() => store.update({ bridge:{ [seat]: w } }));
   ls.set(secretKey("bridge"), w);
+  if (mode === "online") { const step = stepId("bridge"); myPicks[step] = w;
+    return write(async () => { await online.setSecret(lobbyCode, seat, step, w); await store.update({ locks:{ bridge:{ [seat]: true } } }); }); }
   write(() => store.update({ locks:{ bridge:{ [seat]: true } } }));
 }
 function toBridge(){
@@ -210,6 +240,30 @@ function setName(s, v){
 function chooseSeat(s){
   if (!(names()[s] || "").trim()) { const i = document.getElementById("name-" + s); if (i) i.focus(); return; }
   seat = s; ls.set("seat", s); location.hash = "ball";
+}
+
+/* ---------- "your move": in the tab title and on each lobby in "your lobbies" ---------- */
+function moveFor(g, s){
+  if (!g || !s) return "";
+  if (!(g.seats ? g.seats.b : true)) return "waiting for someone to join";
+  if (!g.reading) return "your move";
+  const st = g.stage, L = (g.locks || {})[st] || {}, P = g[st] || {};
+  if (P.a && P.b) return "your move";
+  if (!(L[s] || P[s])) return "your move";
+  return "waiting for " + (((g.names || {})[other(s)] || "").trim() || FALLBACK[other(s)]);
+}
+function setTitle(){
+  const m = (mode !== "local" && game && seat) ? moveFor(game, seat) : "";
+  document.title = m === "your move" ? "(your move) spookee" : "spookee";
+}
+const lobbyLive = {}; // code -> room doc, for the list on the entry screen
+const lobbyWatch = {};
+function watchLobbies(){
+  if (mode !== "online") return;
+  myLobbies().forEach(l => {
+    if (lobbyWatch[l.code]) return;
+    lobbyWatch[l.code] = online.room(l.code).onRoom(d => { lobbyLive[l.code] = d; if (tab() === "who" && !lobbyCode) render(); }, () => {});
+  });
 }
 
 /* ---------- presence: a heartbeat while the tab is open ---------- */
@@ -301,6 +355,7 @@ function render(){
   if (actId) { const el = document.getElementById(actId); if (el && el !== document.body) { el.focus(); try { el.setSelectionRange(sel, sel); } catch {} } }
   wire();
   maybeCelebrate();
+  setTitle();
 }
 
 const page = inner => `<div class="wrap" style="padding:0">${inner}</div>`;
@@ -317,7 +372,7 @@ function whoView(){
     return page(`<h1>who are you?</h1><div class="sides">${side("a")}${side("b")}</div>`);
   }
   if (!lobbyCode) {
-    const mine = myLobbies();
+    const mine = myLobbies(); watchLobbies();
     return page(`<h1>who are you?</h1>
       <form class="entry" id="entry-form" autocomplete="off">
         <label class="lbl" for="entry-name">your name</label>
@@ -329,8 +384,14 @@ function whoView(){
         <button class="btn ghost" type="submit" ${entry.busy ? "disabled" : ""}>join</button>
         ${entry.err ? `<p class="warn" role="alert">${esc(entry.err)}</p>` : ""}
       </form>
+      ${accountLine()}
       ${mine.length ? `<section class="lobbies"><h2>your lobbies</h2><ul>
-        ${mine.map(l => `<li><button class="lob" data-rejoin="${esc(l.code)}"><b>${esc(l.code)}</b><span>${esc((l.names && l.names.a) || "?")} & ${esc((l.names && l.names.b) || "?")}</span><span>${l.score || 0} pts</span></button></li>`).join("")}
+        ${mine.map(l => {
+          const d = lobbyLive[l.code], seats = (d && d.seats) || {}, me = seats.a === uid ? "a" : seats.b === uid ? "b" : null;
+          const nmz = (d && d.names) || l.names || {}, mv = d && me ? moveFor(d, me) : "";
+          return `<li><button class="lob" data-rejoin="${esc(l.code)}"><b>${esc(l.code)}</b><span>${esc(nmz.a || "?")} & ${esc(nmz.b || "?")}</span>
+            <span class="${mv === "your move" ? "move" : ""}">${esc(mv || ((d ? d.score : l.score) || 0) + " pts")}</span></button></li>`;
+        }).join("")}
       </ul></section>` : ""}`);
   }
   if (!loaded) return page(`<h1>who are you?</h1><p class="note">opening ${esc(lobbyCode)}…</p>`);
@@ -352,10 +413,29 @@ function whoView(){
         <label class="lbl" for="my-name">your name</label>
         <input id="my-name" class="big-in" value="${esc(names()[seat])}" maxlength="16" spellcheck="false">`}
       <div class="row"><a class="btn" href="#ball" style="text-decoration:none">go to the crystal ball</a></div>
+      ${accountLine()}
       <button class="link" data-act="leave">leave this lobby</button>
     </section>`);
 }
 
+let signErr = "";
+function accountLine(){
+  if (mode !== "online") return "";
+  if (!online.anonymous()) return `<p class="note acct">signed in as ${esc(online.email() || "you")}. your seats follow you to any device.</p>`;
+  return `<div class="acct"><button class="btn ghost" data-act="google">keep my seat on any device</button>
+    ${signErr ? `<p class="warn" role="alert">${esc(signErr)}</p>` : `<p class="note">sign in with google so your phone and laptop are the same player.</p>`}</div>`;
+}
+async function google(){
+  signErr = "";
+  try { await online.signInGoogle(); location.reload(); }
+  catch (e) {
+    console.error(e);
+    signErr = e && e.code === "auth/operation-not-allowed" ? "google sign-in isn't turned on for this game yet."
+      : e && e.code === "auth/popup-blocked" ? "your browser blocked the sign-in window. allow pop-ups and try again."
+      : e && e.code === "auth/popup-closed-by-user" ? "" : "couldn't sign in. try again.";
+    render();
+  }
+}
 function header(){
   const right = `<span><b>${game.score || 0}</b> ${game.score === 1 ? "point" : "points"}</span>`;
   const left = `<span>round <b>${ROMAN[game.round] || "III"}</b> of III${game.round === 3 ? " · final" : ""}</span>`;
@@ -365,7 +445,7 @@ function header(){
   return `<div class="meta">${left}${who}${right}</div>`;
 }
 const handoff = them => mode === "local" ? `<div class="row"><button class="btn ghost" data-act="switch">hand to ${esc(nm(them))}</button></div>` : "";
-const awayNote = them => (!isHere(them) ? `<p class="note">${esc(nm(them))} is away. it'll carry on when they're back.</p>` : "");
+const awayNote = them => mode === "local" ? "" : `<p class="note">${isHere(them) ? esc(nm(them)) + " is here now." : esc(nm(them)) + " will see it when they open the lobby."} you can close this. it'll be here when you come back.</p>`;
 
 function ballView(){
   const notes = (readOnly && mode !== "online" ? `<p class="warn">you can watch, but your moves can't be saved. ask the owner for contributor access.</p>` : "")
@@ -389,7 +469,8 @@ function ballView(){
   const me = seat, them = other(seat);
   const st = game.stage, locks = (game.locks || {})[st] || {}, pub = game[st] || {};
   const mineIn = !!(pub[me] || locks[me]), theirsIn = !!(pub[them] || locks[them]);
-  const myWord = pub[me] || (mode === "local" ? "" : ls.get(secretKey(st))) || "";
+  let myWord = pub[me] || (mode === "local" ? "" : ls.get(secretKey(st))) || (mode === "online" ? myPicks[stepId(st)] : "") || "";
+  if (!myWord && mode === "online" && mineIn) loadMyPick(st);
   const bothOut = pub.a && pub.b;
   let body = "";
 
@@ -517,7 +598,7 @@ function wire(){
   view.querySelectorAll("[data-verdict]").forEach(b => b.onclick = () => verdict(b.dataset.verdict));
   view.querySelectorAll("[data-rejoin]").forEach(b => b.onclick = () => joinLobby(b.dataset.rejoin));
   const act = {
-    begin, "lock-card":lockCard, bridge:toBridge, make:makeLobby, leave:leaveRoom,
+    begin, "lock-card":lockCard, bridge:toBridge, make:makeLobby, leave:leaveRoom, google,
     switch:() => { seat = other(seat); ls.set("seat", seat); pick = null; draft = ""; render(); },
     copy:() => {
       const link = shareLink(lobbyCode), btns = view.querySelectorAll('[data-act="copy"]');
