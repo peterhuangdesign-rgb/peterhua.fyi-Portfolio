@@ -113,6 +113,7 @@ function verdict(v){
     const rec = { reading:g.reading, names:names(), cards:g.cards, attempts, result, at:Date.now() };
     const d = deal(g.used);
     const next = { ...g, reading:g.reading + 1, round:1, stage:"cards", decks:d.decks, used:d.used, cards:{}, bridge:{}, attempts:[], score:(g.score||0) + (result === "right" ? 1 : 0) };
+    if (result === "right") next.lastWin = { reading:g.reading, word:g.bridge.a, at:Date.now() };
     write(async () => { await store.saveRound("r" + g.reading, rec); await store.set(next); });
   } else {
     write(() => store.set({ ...g, round:g.round + 1, stage:"bridge", bridge:{}, attempts }));
@@ -285,6 +286,39 @@ function wire(){
   const form = document.getElementById("bridge-form");
   if (form) form.onsubmit = e => { e.preventDefault(); lockWord(); };
 }
+
+/* ---------- the win moment: both players see it ---------- */
+const celebrated = new Set();
+let winTimer = null;
+function closeWin(){
+  const el = document.getElementById("win");
+  if (!el) return;
+  clearTimeout(winTimer);
+  el.classList.add("out");
+  setTimeout(() => el.remove(), 350);
+}
+function maybeCelebrate(){
+  const w = game && game.lastWin;
+  if (!w || celebrated.has(w.reading) || ls.get("spookee:won") === String(w.at)) return;
+  celebrated.add(w.reading); ls.set("spookee:won", String(w.at));
+  if (Date.now() - (w.at || 0) > 20000) return; // an old win, don't replay it on load
+  const sparks = Array.from({length:14}, (_, i) =>
+    `<i style="--a:${i * (360/14)}deg;--d:${110 + (i % 3) * 40}px;--t:${(i % 4) * 60}ms">✦</i>`).join("");
+  const el = document.createElement("div");
+  el.id = "win";
+  el.setAttribute("role", "status");
+  el.innerHTML = `<div class="win-card">
+      <div class="sparks" aria-hidden="true">${sparks}</div>
+      <p class="win-word">${esc(w.word)}</p>
+      <p class="win-line"><span>spookee,</span> <span>you guys said the same thing!</span></p>
+    </div>`;
+  el.onclick = closeWin;
+  document.body.appendChild(el);
+  winTimer = setTimeout(closeWin, 4200);
+}
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeWin(); });
+const _render = render;
+render = function(){ _render(); maybeCelebrate(); };
 
 window.addEventListener("hashchange", render);
 document.addEventListener("visibilitychange", () => document.body.classList.toggle("paused", document.hidden));

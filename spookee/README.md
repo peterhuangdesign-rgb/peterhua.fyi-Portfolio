@@ -38,7 +38,7 @@ A **reading** is one pair of cards:
 2. Both lock in, then **poof**: both cards flip at once.
 3. **pick a word.. any word..** Each player types a word that bridges the two cards, locks in, then poof.
 4. Either player marks it **right** or **wrong**.
-   - right: +1 point, the reading ends, and a new one starts at round I with new cards.
+   - right: +1 point, a short "spookee, you guys said the same thing!" celebration plays for both players, and a new reading starts at round I with new cards.
    - wrong in round I or II: same two cards, next round.
    - wrong in round III (final): the reading fails automatically.
 
