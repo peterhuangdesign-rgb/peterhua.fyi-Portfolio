@@ -277,3 +277,116 @@ input{text-transform:lowercase}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
+
+/* =====================================================================
+   victorian layer: engraved plates instead of pills. square corners, fine
+   double rules in antique gilt, corner ornaments, belion radego for display.
+   (sits last so it overrides the shapes above; colours stay velvet.)
+   ===================================================================== */
+@font-face{
+  font-family:"Belion Radego";
+  src:url("fonts/belion-radego.woff2") format("woff2");
+  font-display:swap;
+  /* letters and punctuation only: the font's digits are blank placeholders, so numbers use the fallback */
+  unicode-range:U+0020-002F,U+003A-007E,U+00A0-00FF,U+2010-2027;
+}
+:root{
+  --gilt:#c9a86a;          /* antique gold, for rules and ornament */
+  --gilt-dim:#7d6740;
+  --display:"Belion Radego","Atkinson Hyperlegible",Georgia,serif;
+}
+:focus-visible{outline:1px solid var(--gilt);outline-offset:3px;border-radius:0}
+
+/* wordmark between two flourished rules */
+.mark{font-family:var(--display);font-weight:400;font-size:40px;letter-spacing:.02em;color:var(--gilt);
+  display:flex;align-items:center;gap:14px;text-shadow:0 0 18px #c9a86a40}
+.mark::before,.mark::after{content:"";width:46px;height:5px;border-block:1px solid var(--gilt-dim)}
+.help-btn{font-family:var(--display);font-size:16px;color:var(--gilt);text-decoration:none;border-bottom:1px solid var(--gilt-dim)}
+
+/* tabs: a ruled index, the current one marked with a fleuron */
+nav{background:transparent;border-radius:0;padding:0;gap:0;box-shadow:none;border-block:3px double var(--gilt-dim)}
+nav a{border-radius:0;font-family:var(--display);font-weight:400;font-size:17px;position:relative;color:var(--dim)}
+nav a + a{border-left:1px solid #c9a86a30}
+nav a[aria-current="page"]{background:transparent;color:var(--gilt)}
+nav a[aria-current="page"]::after{content:"❦";position:absolute;bottom:-.95em;left:50%;transform:translateX(-50%);font-size:13px;
+  color:var(--gilt);background:var(--ink);padding:0 6px;line-height:1}
+
+/* headings */
+h1{font-family:var(--display);font-weight:400;letter-spacing:.01em;text-shadow:0 0 22px #cfa8ff40}
+h2,.lobbies h2,.game h2{font-family:var(--display);font-weight:400}
+
+/* buttons: an engraved plate with an inner rule */
+.btn{border-radius:0;font-family:var(--display);font-weight:400;font-size:19px;letter-spacing:.02em;padding:12px 26px;
+  background:linear-gradient(#3a1650,#25103a);color:var(--mist);border:1px solid var(--gilt);
+  box-shadow:inset 0 0 0 3px #1c0b26,inset 0 0 0 4px var(--gilt-dim),0 0 18px #c9a86a1f}
+.btn:hover{transform:none;background:linear-gradient(#45205e,#2c1444);color:#fff}
+.btn:disabled{opacity:.4}
+.btn.ghost{background:transparent;box-shadow:inset 0 0 0 3px var(--ink),inset 0 0 0 4px #c9a86a55;border-color:var(--gilt-dim);color:var(--gilt)}
+.link{color:var(--gilt);text-decoration-color:var(--gilt-dim)}
+
+/* panels: square plates with a gilt double rule and corner ornaments */
+.side,.word,.players li,.lob,.share input,.board td,.ladder li,.rounds li,.help{border-radius:0}
+.side,.word,.help,.lobby{position:relative;background:#1c0b26cc;box-shadow:inset 0 0 0 1px var(--gilt-dim),inset 0 0 0 4px #1c0b26,inset 0 0 0 5px #c9a86a40}
+.lobby{padding:22px 18px}
+.side::before,.word::before,.lobby::before,.help::before{content:"✥";position:absolute;top:6px;left:8px;color:var(--gilt-dim);font-size:11px}
+.side::after,.word::after,.lobby::after,.help::after{content:"✥";position:absolute;bottom:6px;right:8px;color:var(--gilt-dim);font-size:11px}
+.side.mine{background:#2a0f3acc;box-shadow:inset 0 0 0 1px var(--gilt),inset 0 0 0 4px #2a0f3a,inset 0 0 0 5px var(--gilt-dim)}
+.sigil{border-radius:0;transform:rotate(45deg);width:46px;height:46px;background:linear-gradient(135deg,#e9d6a8,var(--gilt) 55%,#6e5631)}
+.sigil{font-size:0}
+.word small,.lbl,.players small,.note,.summary{font-family:var(--body)}
+.word strong{font-family:var(--display);font-weight:400}
+
+/* cards: tarot cards with an inner frame */
+.card{border-radius:2px;font-family:var(--display);font-weight:400;font-size:21px;
+  background:linear-gradient(160deg,#341449,#1c0b26);box-shadow:inset 0 0 0 1px var(--gilt-dim),0 8px 20px #0008}
+.card::before,.card::after{content:"✥";color:var(--gilt-dim);font-size:10px}
+.card > *{position:relative}
+.card[aria-pressed="true"]{box-shadow:inset 0 0 0 1px var(--gilt),0 0 26px #c9a86a55;background:linear-gradient(160deg,#45205e,#25103a)}
+.card.back{background:repeating-linear-gradient(45deg,#2a0f3a 0 6px,#1c0b26 6px 12px);color:var(--gilt)}
+.slot .card{font-size:24px}
+
+/* inputs: a ruled line on a card, not a pill */
+.big-in,#bridge-input,.side input{border-radius:0;background:transparent;box-shadow:none;border-bottom:1px solid var(--gilt-dim);
+  font-family:var(--display);font-weight:400;font-size:24px}
+.big-in:focus,#bridge-input:focus,.side input:focus{box-shadow:none;border-bottom-color:var(--gilt)}
+.share{border:1px solid var(--gilt-dim)}
+.share input{background:transparent;box-shadow:none}
+.share .btn{box-shadow:none;border-width:0 0 0 1px;padding:10px 16px;font-size:16px}
+.or{font-family:var(--display);color:var(--gilt-dim)}
+.or::before{content:"— ❦ "}.or::after{content:" ❦ —"}
+
+/* lists and tables: ruled, like a ledger */
+.players li,.lob{background:transparent;border-bottom:1px solid #c9a86a30}
+.players li.me{box-shadow:none;border-left:2px solid var(--gilt);padding-left:12px}
+.dot{border-radius:0;transform:rotate(45deg);width:7px;height:7px}
+.lob:hover{background:#c9a86a14}
+.board{border-spacing:0}
+.board td{background:transparent;border-bottom:1px solid #c9a86a30}
+.board tr.mine td{background:#2a0f3a}
+.board th{font-family:var(--display);font-weight:400;font-size:15px}
+.rounds li{background:transparent;border-bottom:1px solid #c9a86a30}
+.rounds li.final{background:#2a0f3a}
+.ladder li{background:transparent;border-bottom:1px solid #c9a86a30}
+.ladder summary{font-family:var(--display);font-weight:400;font-size:18px;color:var(--gilt)}
+
+/* the pool, the check and the win in the display face */
+.pool li,.check,.win-word,.win-line,.small-pair{font-family:var(--display);font-weight:400}
+.pool li.new{color:var(--mist)}
+.check.right{color:var(--right)}
+.win-word{font-size:clamp(44px,13vw,78px)}
+.win-line span:first-child{color:var(--gilt)}
+.help-title{font-family:var(--display);font-weight:400;font-size:28px;color:var(--gilt)}
+.help li::before{color:var(--gilt);font-family:var(--body)}
+.help b{color:var(--gilt);font-weight:700}
+
+/* the orb before a game: an engraved roundel, the one circle left */
+.orb{box-shadow:0 0 60px #cfa8ff40,inset -10px -14px 30px #0009,0 0 0 6px var(--ink),0 0 0 7px var(--gilt-dim)}
+/* victorian layer: fixes */
+.topline{flex-direction:column;gap:2px}
+.help-btn{position:static;margin:0;padding:6px 4px;min-height:32px}
+.meta,.meta b{font-family:var(--body)}
+.word{gap:8px}
+.word small{line-height:1.2}
+.word strong{display:block;line-height:1.25}
+.pair .slot{font-family:var(--body)}
+.help-btn{border-bottom:0;text-decoration:underline;text-decoration-color:var(--gilt-dim);text-underline-offset:4px}

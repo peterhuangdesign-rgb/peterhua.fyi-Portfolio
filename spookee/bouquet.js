@@ -491,8 +491,26 @@
       g.stroke();
     }
     // the bouquet, scaled down so its stems start at the bottom of the inside of the ball
+    // the flowers breathe in and out of the mist: a slow cycle of clearing and clouding over
+    const cloud = 0.5 + 0.5 * Math.sin(T * 0.32 - 1.2);
+    g.save();
+    g.globalAlpha = 1 - 0.55 * cloud * smooth(6, 10, T);
     g.translate(x, y + r * 0.86); g.scale(0.7, 0.7); g.translate(-500, -1090);
     drawBouquet(g, S, pal);
+    g.restore();
+    // drifting fog banks over the flowers, thicker when the ball clouds over
+    for (let i = 0; i < 6; i++) {
+      const fx = x + Math.sin(T * 0.16 + i * 1.7) * r * 0.5, fy = y + Math.cos(T * 0.12 + i * 2.3) * r * 0.45;
+      const fr = r * (0.38 + 0.12 * Math.sin(T * 0.4 + i));
+      const a = (0.1 + 0.26 * cloud) * fade;
+      const fog = g.createRadialGradient(fx, fy, 0, fx, fy, fr);
+      fog.addColorStop(0, 'rgba(205,185,245,' + a + ')'); fog.addColorStop(1, 'rgba(205,185,245,0)');
+      g.fillStyle = fog; g.fillRect(x - r, y - r, r * 2, r * 2);
+    }
+    // a darker edge inside the glass, so the middle seems to glow
+    const edge = g.createRadialGradient(x, y, r * 0.55, x, y, r);
+    edge.addColorStop(0, 'rgba(0,0,0,0)'); edge.addColorStop(1, 'rgba(0,0,0,' + (0.55 * fade) + ')');
+    g.fillStyle = edge; g.fillRect(x - r, y - r, r * 2, r * 2);
     g.restore();
     // the glass: rim and a curved highlight
     g.lineWidth = 9; g.strokeStyle = 'rgba(215,195,255,' + (0.75 * fade) + ')';

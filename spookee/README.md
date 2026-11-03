@@ -53,12 +53,13 @@ If `firebase-config.js` still holds the placeholder, the game runs as one-device
 
 Dark velvet: black and deep purple with a lilac accent.
 
-- **Type:** Atkinson Hyperlegible, designed for legibility (distinct letter shapes, open counters), all lowercase.
+- **Type:** Belion Radego (Denustudios, freeware for non-commercial use, self-hosted in `fonts/`) for the wordmark, headings, tabs, buttons, cards and words. Atkinson Hyperlegible for small text and all numbers, since Belion Radego's digits are blank placeholders. All lowercase.
+- **Victorian finish:** square engraved plates instead of pills, antique-gilt double rules, ✥ corner ornaments, a ❦ under the current tab, tarot-style cards, ruled ledger lists.
 - **Cards:** five cards to choose from. Both flip at once on "poof".
 - **The pool:** a line of words, with the newest two set largest.
 - **Souls:** small ghost icons, one per win, in the game header, history and leaderboard.
 - **Win screen:** a burst of ✦ around the shared word, and "+1 soul" rising.
-- **Background:** ASCII lilies by chernobayv, now growing inside a crystal ball on a stand and recoloured into the velvet palette.
+- **Background:** ASCII lilies by chernobayv, now growing inside a crystal ball on a stand and recoloured into the velvet palette. The ball slowly clouds over and clears: fog banks drift inside it, the flowers fade in and out with the mist, and the edge of the glass is darker so the middle glows.
 
 ### How the ASCII background is made (bouquet.js)
 
@@ -91,6 +92,7 @@ So anything drawable with canvas shapes becomes ASCII for free. `drawScene` draw
 spookee/
   index.html          page shell: back link, #game mount, loads the scripts below
   style.css           the game's styles only
+  fonts/              belion-radego.woff2 (display face)
   bouquet.js          ASCII lilies background, adapted from chernobayv/asciiFlowers (used with permission)
   words.js            the 400-word card pool
   firebase-config.js  Firebase web config (project spookee-bcf91; public by design)
