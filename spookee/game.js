@@ -10,8 +10,8 @@ if (!root) return;
 root.innerHTML = `<div class="wrap">
   <div class="topline"><p class="mark">spookee</p><button class="help-btn" id="help-btn" aria-haspopup="dialog">what do i do?</button></div>
   <nav id="tabs" aria-label="spookee">
-    <a href="#who" data-tab="who">who are you?</a>
-    <a href="#ball" data-tab="ball">crystal ball</a>
+    <a href="#who" data-tab="who">see yourself</a>
+    <a href="#ball" data-tab="ball">play game</a>
     <a href="#past" data-tab="past">see the past</a>
     <a href="#ranks" data-tab="ranks">see the others..</a>
   </nav>
@@ -87,7 +87,7 @@ function rankOf(st){
 const rankLabel = r => r.tier ? `${r.name} ${ROMAN[r.sub]}` : r.name;
 
 /* ---------- coins: what you win ---------- */
-const COIN = `<svg class="coin" viewBox="0 0 24 24" aria-hidden="true"><defs><radialGradient id="cg" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#fbeec4"/><stop offset=".45" stop-color="#d8b46a"/><stop offset="1" stop-color="#7a5a26"/></radialGradient></defs><circle cx="12" cy="12" r="11" fill="url(#cg)"/><circle cx="12" cy="12" r="8.6" fill="none" stroke="#5a4119" stroke-width=".8" stroke-dasharray="1.2 1.1"/><path d="M13.6 6.6a5.6 5.6 0 1 0 0 10.8 4.4 4.4 0 1 1 0-10.8z" fill="#5a4119"/><path d="M16.4 9.2l.5 1.2 1.3.1-1 .8.3 1.3-1.1-.7-1.1.7.3-1.3-1-.8 1.3-.1z" fill="#5a4119"/></svg>`;
+const COIN = `<svg class="coin" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 3.6a8.5 8.5 0 1 0 4.9 12.9A7 7 0 0 1 15.5 3.6z"/><path d="M17.6 6.2l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z" fill="currentColor" stroke-width="1"/></svg>`;
 function souls(n){
   n = n || 0;
   const label = `${n} ${n === 1 ? "coin" : "coins"}`;
@@ -486,15 +486,14 @@ function whoView(){
   if (mode !== "online") {
     const side = s => `
       <section class="side ${seat === s ? "mine" : ""}">
-        <div class="sigil" aria-hidden="true">${esc((names()[s] || "").trim()[0] || "?")}</div>
         <input id="name-${s}" data-name="${s}" value="${esc(names()[s])}" maxlength="16" autocomplete="off" placeholder="your name" aria-label="name for ${FALLBACK[s]}">
         <button class="btn ${seat === s ? "" : "ghost"}" data-seat="${s}" ${(names()[s] || "").trim() ? "" : "disabled"}>${seat === s ? "this is me" : "i'm " + esc(nm(s))}</button>
       </section>`;
-    return page(`<h1>who are you?</h1><div class="sides">${side("a")}${side("b")}</div>`);
+    return page(`<h1>see yourself</h1><div class="sides">${side("a")}${side("b")}</div>`);
   }
   if (!lobbyCode) {
     const mine = myLobbies(); watchLobbies();
-    return page(`<h1>who are you?</h1>
+    return page(`<h1>see yourself</h1>
       <form class="entry" id="entry-form" autocomplete="off">
         <label class="lbl" for="entry-name">your name</label>
         <input id="entry-name" class="big-in" value="${esc(entry.name)}" maxlength="16" spellcheck="false">
@@ -515,13 +514,13 @@ function whoView(){
         }).join("")}
       </ul></section>` : ""}`);
   }
-  if (!loaded) return page(`<h1>who are you?</h1><p class="note">opening ${esc(lobbyCode)}…</p>`);
+  if (!loaded) return page(`<h1>see yourself</h1><p class="note">opening ${esc(lobbyCode)}…</p>`);
   const full = !seat;
   const row = s => {
     const has = game && game.seats && game.seats[s];
     return `<li class="${seat === s ? "me" : ""}">${dot(s)}<span>${has ? esc(nm(s)) : "…"}</span>${seat === s ? `<small>you</small>` : ""}</li>`;
   };
-  return page(`<h1>who are you?</h1>
+  return page(`<h1>see yourself</h1>
     <section class="lobby">
       <p class="lbl">lobby</p>
       <p class="code">${esc(lobbyCode)}</p>
@@ -531,7 +530,7 @@ function whoView(){
       </div>
       <ul class="players">${row("a")}${row("b")}</ul>
       ${full ? `<p class="note">full. watching.</p>` : ""}
-      <div class="row"><a class="btn" href="#ball" style="text-decoration:none">go to the crystal ball</a></div>
+      <div class="row"><a class="btn" href="#ball" style="text-decoration:none">play game</a></div>
       ${accountLine()}
       <button class="link" data-act="leave">leave this lobby</button>
     </section>`);
@@ -577,9 +576,9 @@ function checkLine(){
 function ballView(){
   const notes = (readOnly && mode !== "online" ? `<p class="note">view only</p>` : "")
               + (slow && !loaded ? `<p class="note">connecting…</p>` : "");
-  if (mode === "online" && !lobbyCode) return page(`<div class="orb" aria-hidden="true"></div><h1>crystal ball</h1>
+  if (mode === "online" && !lobbyCode) return page(`<div class="orb" aria-hidden="true"></div><h1>play game</h1>
     <div class="row"><a class="btn" href="#who" style="text-decoration:none">make or join a lobby</a></div>`);
-  if (mode !== "online" && !seat) return page(`<div class="orb" aria-hidden="true"></div><h1>crystal ball</h1>
+  if (mode !== "online" && !seat) return page(`<div class="orb" aria-hidden="true"></div><h1>play game</h1>
     <div class="row"><a class="btn" href="#who" style="text-decoration:none">choose who you are</a></div>`);
   if (!loaded) return page(`<div class="orb" aria-hidden="true"></div><h1>gazing…</h1>${notes}`);
   if (!game || !game.reading) return page(`<div class="orb" aria-hidden="true"></div><h1>gazing…</h1>${notes}`);
@@ -662,7 +661,7 @@ function pastView(){
   const summary = (game && list.length) ? `<p class="summary">${lobbyCode ? esc(lobbyCode) + " · " : ""}${esc(nm("a"))} & ${esc(nm("b"))} · ${souls(st.successes)} · ${esc(rankLabel(rk))}</p>` : "";
   if (!list.length) return page(`<h1>see the past</h1>
     <div class="empty"><p class="note" style="margin:0">nothing yet</p>
-    <a class="btn ghost" href="#ball" style="text-decoration:none">go to the crystal ball</a></div>`);
+    <a class="btn ghost" href="#ball" style="text-decoration:none">play game</a></div>`);
   return page(`<h1>see the past</h1>${summary}<div class="games">
     ${list.map(r => {
       const last = r.attempts[r.attempts.length - 1];
@@ -697,13 +696,13 @@ function ranksView(){
     <div class="empty"><p class="note" style="margin:0">nothing yet</p></div>${ladder}`);
   return page(`<h1>see the others..</h1>
     <div class="board-wrap"><table class="board">
-      <thead><tr><th scope="col">#</th><th scope="col">pair</th><th scope="col">rank</th><th scope="col" class="num">success</th><th scope="col" class="num">coins</th><th scope="col" class="num">failed</th><th scope="col" class="num">guesses</th></tr></thead>
+      <thead><tr><th scope="col">#</th><th scope="col">pair</th><th scope="col">rank</th><th scope="col" class="num">success</th><th scope="col" class="num"><span class="coins" aria-label="coins">${COIN}</span></th><th scope="col" class="num">failed</th><th scope="col" class="num">guesses</th></tr></thead>
       <tbody>${rows.map((r, i) => `<tr class="${r.mine ? "mine" : ""}">
         <td class="num pos">${i + 1}</td>
         <td class="pair-cell">${esc(((r.names || {}).a || "?"))} & ${esc(((r.names || {}).b || "?"))}${r.mine ? ` <small>you</small>` : ""}</td>
         <td class="rank t${r.rk.tier}">${esc(rankLabel(r.rk))}</td>
         <td class="num" data-label="success"><b>${Math.round(r.rate * 100)}%</b></td>
-        <td class="num" data-label="coins">${souls(r.successes)}</td>
+        <td class="num" data-icon="coins">${souls(r.successes)}</td>
         <td class="num" data-label="failed">${r.fails}</td>
         <td class="num" data-label="guesses">${r.guesses}</td></tr>`).join("")}</tbody>
     </table></div>${ladder}`);
@@ -714,7 +713,6 @@ function wire(){
   view.querySelectorAll("[data-name]").forEach(i => i.oninput = () => {
     setName(i.dataset.name, i.value);
     const s = i.dataset.name, side = i.closest(".side"), has = !!i.value.trim();
-    side.querySelector(".sigil").textContent = has ? i.value.trim()[0] : "?";
     const btn = side.querySelector("[data-seat]"); btn.disabled = !has; if (seat !== s) btn.textContent = "i'm " + nm(s);
   });
   view.querySelectorAll("[data-card]").forEach(b => b.onclick = () => { pick = b.dataset.card; render(); });

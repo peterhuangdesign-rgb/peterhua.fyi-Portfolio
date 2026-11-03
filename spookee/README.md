@@ -22,8 +22,8 @@ The **what do i do?** link next to the spookee wordmark opens a short how-to for
 
 ### Tabs
 
-- **who are you?** Type a name, then make a lobby (you get a code like `oak-46` and a link to send) or join one. Each lobby is one pair, and its coins and history stay with the code. A third person opening the code can only watch. "play on any device" signs your player in with Google: the same player, and the same list of lobbies, on every device you sign in on (kept in `users/<id>` in Firestore).
-- **crystal ball** The game.
+- **see yourself** Type a name, then make a lobby (you get a code like `oak-46` and a link to send) or join one. Each lobby is one pair, and its coins and history stay with the code. A third person opening the code can only watch. "play on any device" signs your player in with Google: the same player, and the same list of lobbies, on every device you sign in on (kept in `users/<id>` in Firestore).
+- **play game** The game.
 - **see the past** Every reading in this lobby: who drew which card, each round's words with "same", "close enough" or "not quite", and the final word as success or fail.
 - **see the others..** The leaderboard: every lobby's success rate, coins, fails, guesses and rank. On phones each pair is a stacked row so nothing is cut off.
 
@@ -55,10 +55,10 @@ Dark velvet: black and deep purple with a lilac accent.
 
 - **Type:** Belion Radego (Denustudios, freeware for non-commercial use, self-hosted in `fonts/`) only for the big lines: the wordmark, page headings, the lobby code, the help title and the win word. Everything else is Atkinson Hyperlegible, a sans designed to be easy to read (Belion Radego's digits are blank placeholders anyway). All lowercase. In `style.css`, `--deco` is the display face and `--read` the reading face.
 - **Colour roles:** mist for text, dim for secondary text, antique gilt for anything you can press or that marks the current thing, green for a match or someone being here, red for a miss. Lilac only as glow.
-- **Victorian finish:** square engraved plates instead of pills, antique-gilt double rules, ✥ corner ornaments, a ❦ under the current tab, tarot-style cards, ruled ledger lists.
+- **Victorian finish:** square engraved plates instead of pills; tabs are separate plates, the current one filled in gilt, antique-gilt double rules, ✥ corner ornaments, a ❦ under the current tab, tarot-style cards, ruled ledger lists.
 - **Cards:** five cards to choose from. Both flip at once on "poof".
 - **The pool:** a line of words, with the newest two set largest.
-- **Coins:** a small gold coin with a crescent moon and star, with the count beside it, one per win. Shown in the game header, history, "your lobbies" and the leaderboard.
+- **Coins:** a small gold line icon (a crescent moon and star) with the count beside it, one per win; never the word "coins". Shown in the game header, history, "your lobbies" and the leaderboard.
 - **Win screen:** a burst of ✦ around the shared word, and "+1 coin" rising.
 - **Background:** ASCII lilies by chernobayv, now growing inside a crystal ball on a stand and recoloured into the velvet palette. The ball slowly clouds over and clears: fog banks drift inside it, the flowers fade in and out with the mist, and the edge of the glass is darker so the middle glows.
 

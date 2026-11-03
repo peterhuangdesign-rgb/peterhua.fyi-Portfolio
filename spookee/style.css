@@ -509,3 +509,41 @@ h2,.game h2,.lobbies h2{color:var(--mist)}
 .rounds li{align-items:center}
 .lbl{text-align:left;width:100%}
 .board td:first-child,.board td:last-child{border-radius:0}
+
+/* icon coin: a gold line moon and star */
+.coin{width:18px;height:18px;color:var(--gilt);filter:drop-shadow(0 0 3px #c9a86a55)}
+.coins.none .coin{filter:none}
+.win-soul .coin{width:32px;height:32px}
+.board th .coins{justify-content:flex-end}
+@media (max-width:560px){
+  .board td[data-icon="coins"]{grid-row:2;grid-column:3;display:inline-flex;justify-content:flex-end;padding:0;border:0}
+}
+
+/* see yourself (one device): no diamond, just the name */
+.side{gap:12px;justify-content:center}
+
+/* tabs: each one a plate you can press; the current one filled in gilt */
+nav{border-block:0;gap:8px;padding:0}
+nav a{border:1px solid #c9a86a55;border-radius:0;background:#1c0b26b3;color:var(--mist);min-height:48px;padding:8px 6px;
+  cursor:pointer;transition:background .15s,border-color .15s,color .15s}
+nav a + a{border-left:1px solid #c9a86a55}
+nav a:hover{border-color:var(--gilt);background:#2a0f3a;color:#fff}
+nav a:active{transform:translateY(1px)}
+nav a[aria-current="page"]{background:var(--gilt);border-color:var(--gilt);color:var(--ink)}
+nav a[aria-current="page"]::after{color:var(--gilt);background:transparent;bottom:-1.15em}
+
+/* what do i do?: one spacing rhythm, 8 · 16 · 24 */
+.help{padding:28px 24px 24px}
+.help-title{margin:0 0 24px;line-height:1.1}
+.help ol{gap:16px}
+.help li{grid-template-columns:2em 1fr;align-items:baseline;line-height:1.5}
+.help li::before{font-size:17px}
+.help form{margin-top:28px}
+.help .btn{min-width:140px}
+/* tabs: the filled plate is the marker, no ornament needed */
+nav a[aria-current="page"]::after{content:none}
+nav{margin-bottom:4px}
+/* see yourself (one device): sizes that fit two side by side on a phone */
+.side input{font-size:18px}
+.side input::placeholder{font-size:16px}
+.side .btn{font-size:15px;padding:10px 12px;line-height:1.25}
