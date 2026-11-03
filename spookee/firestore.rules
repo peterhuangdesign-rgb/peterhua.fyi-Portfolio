@@ -59,6 +59,16 @@ service cloud.firestore {
       allow read, write: if signedIn() && request.auth.uid == uid;
     }
 
+    // the ecology of lexicon: one entry per finished reading, readable by everyone, written once by that lobby's players
+    match /lexicon/{id} {
+      allow read: if true;
+      allow create: if signedIn() && id.matches('^[a-z]{2,20}-[0-9]{2}_r[0-9]+$')
+        && seatedIn(room(id.split('_')[0]))
+        && request.resource.data.keys().hasOnly(['cards', 'attempts', 'at'])
+        && request.resource.data.attempts is list && request.resource.data.attempts.size() <= 3;
+      allow update, delete: if false;
+    }
+
     // leaderboard: one row per lobby, written only by that lobby's players
     match /board/{code} {
       allow read: if true;

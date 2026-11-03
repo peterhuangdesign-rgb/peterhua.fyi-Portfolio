@@ -607,9 +607,29 @@
   let t0 = performance.now();
   let last = 0;
 
+  // spookee: withering. A miss runs the bloom backwards to closed buds, a failed reading back to bare stems,
+  // holds there a moment, then lets it grow again from that point.
+  let wither = null;
+  window.spookeeBloom = {
+    wither(kind) {
+      if (reduce) return;
+      const now = performance.now(), cur = Math.min((now - t0) / 1000, 15);
+      const hard = kind === 'fail';
+      wither = { start: now, from: cur, floor: hard ? 0.6 : 3.6, down: hard ? 2.6 : 1.6, hold: hard ? 2.2 : 0.9 };
+      screen.style.transition = 'filter .8s ease, opacity .8s ease';
+      screen.style.filter = hard ? 'grayscale(.85) brightness(.7) sepia(.35)' : 'grayscale(.5) brightness(.85)';
+    },
+  };
   let raf = 0;
   function frame(now) {
     raf = requestAnimationFrame(frame);
+    if (wither) {
+      const e = (now - wither.start) / 1000;
+      if (e < wither.down) T = wither.from - (wither.from - wither.floor) * (e / wither.down);
+      else if (e < wither.down + wither.hold) T = wither.floor;
+      else { t0 = now - wither.floor * 1000; wither = null; screen.style.filter = ''; T = (now - t0) / 1000; }
+      if (wither) { last = now; render(S, PALETTES[palette]); return; }
+    }
     T = (now - t0) / 1000;
     const fps = T > 17 ? 10 : FPS; // full bloom done: just sway, cheaper
     if (now - last < 1000 / fps) return;

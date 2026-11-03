@@ -10,10 +10,11 @@ if (!root) return;
 root.innerHTML = `<div class="wrap">
   <div class="topline"><p class="mark">spookee</p><button class="help-btn" id="help-btn" aria-haspopup="dialog">what do i do?</button></div>
   <nav id="tabs" aria-label="spookee">
-    <a href="#who" data-tab="who">see yourself</a>
-    <a href="#ball" data-tab="ball">play game</a>
-    <a href="#past" data-tab="past">see the past</a>
-    <a href="#ranks" data-tab="ranks">see the others..</a>
+    <a href="#who" data-tab="who"><span>see yourself</span></a>
+    <a href="#ball" data-tab="ball"><span>see the orb</span></a>
+    <a href="#past" data-tab="past"><span>see the past</span></a>
+    <a href="#ranks" data-tab="ranks"><span>see the others</span></a>
+    <a href="#lex" data-tab="lex"><span>see the ecology of lexicon</span></a>
   </nav>
   <div id="view" aria-live="polite"></div>
 </div>
@@ -24,7 +25,7 @@ root.innerHTML = `<div class="wrap">
     <li><span><b>poof</b>, both cards show.</span></li>
     <li><span>you each type one word that connects them.</span></li>
     <li><span>the same word, or close enough? <b class="r">spookee</b>. you win a coin.</span></li>
-    <li><span>not the same? both words join the pool, so the next word has to fit all of it. the biggest words are the newest.</span></li>
+    <li><span>not the same? your two words become a new row. the next word has to fit every row, the bottom one most.</span></li>
     <li><span>three tries per pair of cards.</span></li>
   </ol>
   <form method="dialog"><button class="btn">got it</button></form>
@@ -78,11 +79,23 @@ function statsOf(readings){
   }
   return { readings:n, successes:s, fails:f, guesses, rate: n ? s / n : 0, avg: s ? solvedRounds / s : 0, score:(w + 1) / (n + 2) };
 }
+// readings needed before a tier opens. Up to seer it climbs gently; past seer each tier needs far more.
+const TIER_MIN = [5, 6, 8, 10, 13, 16, 20, 26, 80, 180, 400];
 function rankOf(st){
-  if (st.readings < MIN_READINGS) return { name:UNRANKED, tier:0, sub:0 };
-  if (st.score >= 0.9 && st.readings >= 20) return { name:TIERS[10], tier:11, sub:Math.min(6, 1 + Math.floor((st.score - 0.9) / 0.0167)) };
-  const step = Math.max(0, Math.min(59, Math.floor(st.score / 0.9 * 60)));
-  return { name:TIERS[Math.floor(step / 6)], tier:Math.floor(step / 6) + 1, sub:step % 6 + 1 };
+  const n = st.readings || 0;
+  if (n < MIN_READINGS) return { name:UNRANKED, tier:0, sub:0, need:MIN_READINGS - n };
+  // what the score alone would earn
+  let tier, sub;
+  if (st.score >= 0.9) { tier = 11; sub = Math.min(6, 1 + Math.floor((st.score - 0.9) / 0.0167)); }
+  else { const step = Math.max(0, Math.min(59, Math.floor(st.score / 0.9 * 60))); tier = Math.floor(step / 6) + 1; sub = step % 6 + 1; }
+  // what the number of readings allows
+  let cap = 1; while (cap < 11 && n >= TIER_MIN[cap]) cap++;
+  if (tier > cap) {
+    tier = cap;
+    sub = cap < 11 ? Math.min(6, 1 + Math.floor(6 * (n - TIER_MIN[cap - 1]) / (TIER_MIN[cap] - TIER_MIN[cap - 1]))) : sub;
+    return { name:TIERS[tier - 1], tier, sub, need: cap < 11 ? TIER_MIN[cap] - n : 0 };
+  }
+  return { name:TIERS[tier - 1], tier, sub, need:0 };
 }
 const rankLabel = r => r.tier ? `${r.name} ${ROMAN[r.sub]}` : r.name;
 
@@ -149,6 +162,7 @@ function autoJudge(){
   const t0 = Date.now(), r = game.reading, rd = game.round;
   judge(pub.a, pub.b).then(res => {
     verdicts[key] = res; render();
+    if (res.v === "wrong" && window.spookeeBloom) window.spookeeBloom.wither("miss");
     // let both words sit on screen a moment before moving on
     setTimeout(() => { if (game && game.reading === r && game.round === rd && game.stage === "bridge") verdict(res.v, res.how); }, Math.max(900, 2400 - (Date.now() - t0)));
   });
@@ -311,6 +325,7 @@ function verdict(v, how){
         const next = { ...cur, reading:r + 1, round:1, stage:"cards", decks:d.decks, used:d.used, cards:{}, bridge:{},
           locks:{cards:{}, bridge:{}}, attempts:[], score:(cur.score || 0) + (result === "right" ? 1 : 0) };
         if (result === "right") next.lastWin = { reading:r, word: norm(cur.bridge.a) === norm(cur.bridge.b) ? cur.bridge.a : cur.bridge.a + " ≈ " + cur.bridge.b, at:Date.now() };
+        else next.lastFail = { reading:r, a:cur.bridge.a, b:cur.bridge.b, at:Date.now() };
         return next;
       }
       return { ...cur, round:rd + 1, stage:"bridge", bridge:{}, locks:{ ...(cur.locks || {}), bridge:{} }, attempts };
@@ -348,6 +363,39 @@ function moveFor(g, s){
   if (!(L[s] || P[s])) return "your move";
   return "waiting for " + (((g.names || {})[other(s)] || "").trim() || FALLBACK[other(s)]);
 }
+function lobbyRows(){
+  return myLobbies().map(l => {
+    const d = l.code === lobbyCode && game ? game : lobbyLive[l.code];
+    const seats = (d && d.seats) || {}, me = seats.a === uid ? "a" : seats.b === uid ? "b" : null;
+    return { ...l, d, me, mv: d && me ? moveFor(d, me) : "", names:(d && d.names) || l.names || {}, score:(d ? d.score : l.score) || 0 };
+  });
+}
+function updateBadge(){
+  const a = document.querySelector('#tabs a[data-tab="who"]');
+  if (!a) return;
+  const n = mode === "online" ? lobbyRows().filter(r => r.mv === "your move").length : 0;
+  let b = a.querySelector(".badge");
+  if (!n) { if (b) b.remove(); return; }
+  if (!b) { b = document.createElement("b"); b.className = "badge"; a.appendChild(b); }
+  b.textContent = n; b.setAttribute("aria-label", n + (n === 1 ? " lobby needs you" : " lobbies need you"));
+}
+function lobbiesPanel(){
+  if (mode !== "online") return "";
+  watchLobbies();
+  const rows = lobbyRows();
+  if (!rows.length) return "";
+  const yours = rows.filter(r => r.mv === "your move"), rest = rows.filter(r => r.mv !== "your move");
+  const item = r => `<li><button class="lob${r.code === lobbyCode ? " here" : ""}${r.mv === "your move" ? " needs" : ""}" data-rejoin="${esc(r.code)}">
+      <b>${esc(r.code)}</b>
+      <span class="who-line">${esc(r.names.a || "?")} & ${esc(r.names.b || "…")}</span>
+      <span class="state">${r.mv === "your move" ? "your move" : esc(r.mv || "…")}${r.code === lobbyCode ? " · open" : ""}</span>
+      ${souls(r.score)}</button></li>`;
+  return `<section class="lobbies">
+    <div class="lobbies-head"><h2>your lobbies</h2>${lobbyCode ? `<button class="btn ghost" data-act="leave">new lobby</button>` : ""}</div>
+    ${yours.length ? `<p class="group">waiting on you</p><ul>${yours.map(item).join("")}</ul>` : ""}
+    ${rest.length ? `<p class="group">${yours.length ? "the rest" : "ongoing"}</p><ul>${rest.map(item).join("")}</ul>` : ""}
+  </section>`;
+}
 function setTitle(){
   const m = (mode !== "local" && game && seat) ? moveFor(game, seat) : "";
   document.title = m === "your move" ? "(your move) spookee" : "spookee";
@@ -358,7 +406,7 @@ function watchLobbies(){
   if (mode !== "online") return;
   myLobbies().forEach(l => {
     if (lobbyWatch[l.code]) return;
-    lobbyWatch[l.code] = online.room(l.code).onRoom(d => { lobbyLive[l.code] = d; if (tab() === "who" && !lobbyCode) render(); }, () => {});
+    lobbyWatch[l.code] = online.room(l.code).onRoom(d => { lobbyLive[l.code] = d; if (tab() === "who") render(); else updateBadge(); }, () => {});
   });
 }
 
@@ -416,7 +464,7 @@ function enterRoom(code){
     if (game && game.stage === "cards" && pick && !((game.decks || {})[seat] || []).includes(pick)) pick = null;
     rememberLobby(); revealMine(); render();
   }, e => { console.error(e); loaded = true; render(); }));
-  unsub.push(room.onReadings(rs => { lineage = rs; render(); }, e => console.error(e)));
+  unsub.push(room.onReadings(rs => { lineage = rs; shareToLexicon(); render(); }, e => console.error(e)));
   render();
 }
 function leaveRoom(){
@@ -460,7 +508,7 @@ async function joinLobby(codeIn){
 const view = document.getElementById("view");
 function tab(){
   const t = location.hash.slice(1);
-  if (["who","ball","past","ranks"].includes(t)) return t;
+  if (["who","ball","past","ranks","lex"].includes(t)) return t;
   return (mode === "online" ? (lobbyCode ? "ball" : "who") : (seat ? "ball" : "who"));
 }
 
@@ -470,12 +518,15 @@ function render(){
   if (t === "who" && mode !== "online" && ae && ae.dataset && ae.dataset.name && view.querySelector(".sides")) return; // don't clobber a name mid-typing
   document.querySelectorAll("#tabs a").forEach(a => { if (a.dataset.tab === t) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
   const actId = ae && ae.id, sel = ae && ae.selectionStart;
-  view.innerHTML = t === "who" ? whoView() : t === "past" ? pastView() : t === "ranks" ? ranksView() : ballView();
+  view.innerHTML = t === "who" ? whoView() : t === "past" ? pastView() : t === "ranks" ? ranksView() : t === "lex" ? lexView() : ballView();
+  if (t === "lex") mountLex();
+  updateBadge();
   if (actId) { const el = document.getElementById(actId); if (el && el !== document.body) { el.focus(); try { el.setSelectionRange(sel, sel); } catch {} } }
   wire();
   autoJudge();
   autoBegin();
   maybeCelebrate();
+  maybeMourn();
   setTitle();
 }
 
@@ -492,7 +543,6 @@ function whoView(){
     return page(`<h1>see yourself</h1><div class="sides">${side("a")}${side("b")}</div>`);
   }
   if (!lobbyCode) {
-    const mine = myLobbies(); watchLobbies();
     return page(`<h1>see yourself</h1>
       <form class="entry" id="entry-form" autocomplete="off">
         <label class="lbl" for="entry-name">your name</label>
@@ -505,14 +555,7 @@ function whoView(){
         ${entry.err ? `<p class="warn" role="alert">${esc(entry.err)}</p>` : ""}
       </form>
       ${accountLine()}
-      ${mine.length ? `<section class="lobbies"><h2>your lobbies</h2><ul>
-        ${mine.map(l => {
-          const d = lobbyLive[l.code], seats = (d && d.seats) || {}, me = seats.a === uid ? "a" : seats.b === uid ? "b" : null;
-          const nmz = (d && d.names) || l.names || {}, mv = d && me ? moveFor(d, me) : "";
-          return `<li><button class="lob" data-rejoin="${esc(l.code)}"><b>${esc(l.code)}</b><span>${esc(nmz.a || "?")} & ${esc(nmz.b || "?")}</span>
-            <span class="${mv === "your move" ? "move" : ""}">${mv ? esc(mv) : souls((d ? d.score : l.score) || 0)}</span></button></li>`;
-        }).join("")}
-      </ul></section>` : ""}`);
+      ${lobbiesPanel()}`);
   }
   if (!loaded) return page(`<h1>see yourself</h1><p class="note">opening ${esc(lobbyCode)}…</p>`);
   const full = !seat;
@@ -530,10 +573,10 @@ function whoView(){
       </div>
       <ul class="players">${row("a")}${row("b")}</ul>
       ${full ? `<p class="note">full. watching.</p>` : ""}
-      <div class="row"><a class="btn" href="#ball" style="text-decoration:none">play game</a></div>
+      <div class="row"><a class="btn" href="#ball" style="text-decoration:none">see the orb</a></div>
       ${accountLine()}
-      <button class="link" data-act="leave">leave this lobby</button>
-    </section>`);
+    </section>
+    ${lobbiesPanel()}`);
 }
 
 let signErr = "";
@@ -576,9 +619,9 @@ function checkLine(){
 function ballView(){
   const notes = (readOnly && mode !== "online" ? `<p class="note">view only</p>` : "")
               + (slow && !loaded ? `<p class="note">connecting…</p>` : "");
-  if (mode === "online" && !lobbyCode) return page(`<div class="orb" aria-hidden="true"></div><h1>play game</h1>
+  if (mode === "online" && !lobbyCode) return page(`<div class="orb" aria-hidden="true"></div><h1>see the orb</h1>
     <div class="row"><a class="btn" href="#who" style="text-decoration:none">make or join a lobby</a></div>`);
-  if (mode !== "online" && !seat) return page(`<div class="orb" aria-hidden="true"></div><h1>play game</h1>
+  if (mode !== "online" && !seat) return page(`<div class="orb" aria-hidden="true"></div><h1>see the orb</h1>
     <div class="row"><a class="btn" href="#who" style="text-decoration:none">choose who you are</a></div>`);
   if (!loaded) return page(`<div class="orb" aria-hidden="true"></div><h1>gazing…</h1>${notes}`);
   if (!game || !game.reading) return page(`<div class="orb" aria-hidden="true"></div><h1>gazing…</h1>${notes}`);
@@ -622,12 +665,11 @@ function ballView(){
     const cards = game.cards || {};
     // the pool: both cards plus every word guessed so far this reading. The newest two are what you're
     // connecting this round; everything before them is context the new word has to fit too.
-    const seq = [cards.a, cards.b, ...(game.attempts || []).flatMap(t => [t.a, t.b])].filter(Boolean);
-    const seen = new Set(), pool = [];
-    seq.forEach((w, i) => { const k = w.toLowerCase(); if (seen.has(k)) { pool.find(x => x.k === k).i = i; return; } seen.add(k); pool.push({ w, k, i }); });
-    const newest = new Set(seq.slice(-2).map(w => w.toLowerCase()));
-    const pairLine = `<ul class="pool" aria-label="the pool: connect all of these">
-      ${pool.map(x => `<li class="${newest.has(x.k) ? "new" : ""}">${esc(x.w)}</li>`).join("")}</ul>`;
+    const rows = [{ label:"cards", a:cards.a, b:cards.b }].concat((game.attempts || []).map(t => ({ label:ROMAN[t.round].toLowerCase(), a:t.a, b:t.b })));
+    const pairLine = `<div class="rows" role="table" aria-label="the words so far, one row per try">
+      <div class="prow head" role="row"><span role="columnheader"></span><span role="columnheader">${esc(nm("a"))}</span><span role="columnheader">${esc(nm("b"))}</span></div>
+      ${rows.map((r, i) => `<div class="prow${i === rows.length - 1 ? " new" : ""}" role="row"><span class="rl" role="rowheader">${esc(r.label)}</span><span role="cell">${esc(r.a)}</span><span role="cell">${esc(r.b)}</span></div>`).join("")}
+    </div>`;
     if (bothOut) {
       const key = "b" + game.reading + "-" + game.round, anim = lastReveal !== key ? "flip" : ""; lastReveal = key;
       body = `${pairLine}<h1>poof</h1>
@@ -661,20 +703,20 @@ function pastView(){
   const summary = (game && list.length) ? `<p class="summary">${lobbyCode ? esc(lobbyCode) + " · " : ""}${esc(nm("a"))} & ${esc(nm("b"))} · ${souls(st.successes)} · ${esc(rankLabel(rk))}</p>` : "";
   if (!list.length) return page(`<h1>see the past</h1>
     <div class="empty"><p class="note" style="margin:0">nothing yet</p>
-    <a class="btn ghost" href="#ball" style="text-decoration:none">play game</a></div>`);
+    <a class="btn ghost" href="#ball" style="text-decoration:none">see the orb</a></div>`);
   return page(`<h1>see the past</h1>${summary}<div class="games">
     ${list.map(r => {
       const last = r.attempts[r.attempts.length - 1];
       const final = last.a.toLowerCase() === last.b.toLowerCase() ? esc(last.a) : esc(last.a) + " / " + esc(last.b);
       return `<section class="game">
-        <h2>${esc(nmOf(r,"a"))}: ${esc(r.cards.a)} <i aria-hidden="true">✦</i> ${esc(nmOf(r,"b"))}: ${esc(r.cards.b)}</h2>
-        <ul class="rounds">
-          ${r.attempts.map(t => `<li><span class="rn">${ROMAN[t.round]}</span>
-            <span class="chain">${esc(nmOf(r,"a"))}: <b>${esc(t.a)}</b> · ${esc(nmOf(r,"b"))}: <b>${esc(t.b)}</b></span>
-            <span class="tag ${t.verdict}">${t.verdict === "right" ? (t.how === "close" ? "close enough" : "same") : "not quite"}</span></li>`).join("")}
-          <li class="final"><span class="rn">✦</span><span class="chain"><span class="to ${r.result}">${final}</span></span>
-            <span class="tag ${r.result}">${r.result === "right" ? "success" : "fail"}</span></li>
-        </ul></section>`;
+        <div class="rows past" role="table" aria-label="reading ${r.reading}">
+          <div class="prow head" role="row"><span role="columnheader"></span><span role="columnheader">${esc(nmOf(r,"a"))}</span><span role="columnheader">${esc(nmOf(r,"b"))}</span><span role="columnheader"></span></div>
+          <div class="prow" role="row"><span class="rl" role="rowheader">cards</span><span role="cell">${esc(r.cards.a)}</span><span role="cell">${esc(r.cards.b)}</span><span role="cell"></span></div>
+          ${r.attempts.map(t => `<div class="prow" role="row"><span class="rl" role="rowheader">${ROMAN[t.round].toLowerCase()}</span><span role="cell">${esc(t.a)}</span><span role="cell">${esc(t.b)}</span>
+            <span class="tag ${t.verdict}" role="cell">${t.verdict === "right" ? (t.how === "close" ? "close enough" : "same") : "not quite"}</span></div>`).join("")}
+          <div class="prow final ${r.result}" role="row"><span class="rl" role="rowheader">✦</span><span class="to ${r.result}" role="cell">${final}</span>
+            <span class="tag ${r.result}" role="cell">${r.result === "right" ? "success" : "fail"}</span></div>
+        </div></section>`;
     }).join("")}
   </div>`);
 }
@@ -689,12 +731,20 @@ function ranksView(){
     rows = lineage.length ? [{ id:"here", names:names(), ...s, mine:true, rk:rankOf(s) }] : [];
   }
   rows.sort((x, y) => (y.rk.tier * 10 + y.rk.sub) - (x.rk.tier * 10 + x.rk.sub) || y.score - x.score || y.readings - x.readings);
-  const ladder = `<details class="ladder"><summary>the ranks</summary><ol>
-      ${TIERS.slice().reverse().map(t => `<li>${t} <span>I–VI</span></li>`).join("")}
-      <li>${UNRANKED} <span>&lt; ${MIN_READINGS} readings</span></li></ol></details>`;
-  if (!rows.length) return page(`<h1>see the others..</h1>
-    <div class="empty"><p class="note" style="margin:0">nothing yet</p></div>${ladder}`);
-  return page(`<h1>see the others..</h1>
+  const mine = rows.find(r => r.mine), here = {};
+  rows.forEach(r => { here[r.rk.tier] = (here[r.rk.tier] || 0) + 1; });
+  const tiers = TIERS.map((t, i) => ({ name:t, tier:i + 1, min:TIER_MIN[i] })).reverse().concat([{ name:UNRANKED, tier:0, min:0 }]);
+  const spectrum = `<ol class="spectrum" aria-label="the ranks, highest first">
+    ${tiers.map(t => `<li class="t${t.tier}${mine && mine.rk.tier === t.tier ? " you" : ""}${t.tier === 8 ? " gate" : ""}">
+      <span class="sn">${esc(t.name)}</span>
+      <span class="sm">${t.tier ? t.min + "+" : ""}${here[t.tier] ? `<b>${here[t.tier]}</b>` : ""}</span>
+      ${mine && mine.rk.tier === t.tier ? `<span class="you-mark">you${mine.rk.tier ? " · " + ROMAN[mine.rk.sub].toLowerCase() : ""}</span>` : ""}
+    </li>`).join("")}
+  </ol>`;
+  const nextLine = mine && mine.rk.need ? `<p class="note">${mine.rk.need} more ${mine.rk.need === 1 ? "reading" : "readings"} to climb</p>` : "";
+  if (!rows.length) return page(`<h1>see the others</h1><div class="ranks-layout">${spectrum}<div class="empty"><p class="note" style="margin:0">nothing yet</p></div></div>`);
+  return page(`<h1>see the others</h1>
+    <div class="ranks-layout">${spectrum}<div class="ranks-main">${nextLine}
     <div class="board-wrap"><table class="board">
       <thead><tr><th scope="col">#</th><th scope="col">pair</th><th scope="col">rank</th><th scope="col" class="num">success</th><th scope="col" class="num"><span class="coins" aria-label="coins">${COIN}</span></th><th scope="col" class="num">failed</th><th scope="col" class="num">guesses</th></tr></thead>
       <tbody>${rows.map((r, i) => `<tr class="${r.mine ? "mine" : ""}">
@@ -705,7 +755,36 @@ function ranksView(){
         <td class="num" data-icon="coins">${souls(r.successes)}</td>
         <td class="num" data-label="failed">${r.fails}</td>
         <td class="num" data-label="guesses">${r.guesses}</td></tr>`).join("")}</tbody>
-    </table></div>${ladder}`);
+    </table></div></div></div>`);
+}
+
+/* ---------- see the ecology of lexicon: every word, and what it was said beside ---------- */
+let lexGlobal = [];
+let lexSig = "";
+function lexReadings(){
+  const out = new Map();
+  lexGlobal.forEach(r => out.set(r.id, r));
+  lineage.forEach(r => out.set((lobbyCode || mode) + "_" + r.id, r));
+  return [...out.values()];
+}
+function lexView(){ return page(`<h1>see the ecology of lexicon</h1><div id="lex-slot"></div>`); }
+function mountLex(){
+  const slot = document.getElementById("lex-slot");
+  if (!slot || !window.SpookeeLexicon) return;
+  const rs = lexReadings(), sig = rs.length + ":" + rs.reduce((m, r) => Math.max(m, r.at || 0), 0);
+  window.SpookeeLexicon.mount(slot);
+  if (sig !== lexSig) { lexSig = sig; window.SpookeeLexicon.setData(rs); }
+}
+// every finished reading is added to the shared lexicon (online), once
+function shareToLexicon(){
+  if (mode !== "online" || !lobbyCode || !seat) return;
+  lineage.forEach(r => {
+    const id = lobbyCode + "_" + r.id, key = "spookee:lex:" + id;
+    if (!r.attempts || !r.cards || ls.get(key)) return;
+    ls.set(key, "1");
+    online.addLexicon(id, { cards:{ a:r.cards.a || "", b:r.cards.b || "" },
+      attempts:r.attempts.map(t => ({ a:t.a || "", b:t.b || "", verdict:t.verdict || "" })), at:r.at || Date.now() }).catch(() => {});
+  });
 }
 
 function wire(){
@@ -769,6 +848,25 @@ function maybeCelebrate(){
   document.body.appendChild(el);
   winTimer = setTimeout(closeWin, 4200);
 }
+const mourned = new Set();
+function maybeMourn(){
+  const f = game && game.lastFail;
+  if (!f || mourned.has(f.at) || ls.get("spookee:lost") === String(f.at)) return;
+  mourned.add(f.at); ls.set("spookee:lost", String(f.at));
+  if (Date.now() - (f.at || 0) > 20000) return;
+  if (window.spookeeBloom) window.spookeeBloom.wither("fail");
+  const el = document.createElement("div");
+  el.id = "win"; el.className = "fail";
+  el.setAttribute("role", "status");
+  el.innerHTML = `<div class="win-card">
+      <p class="fail-words"><span>${esc(f.a)}</span><i aria-hidden="true">✦</i><span>${esc(f.b)}</span></p>
+      <p class="win-word">the vision fades</p>
+      <p class="win-line">no spookee this time</p>
+    </div>`;
+  el.onclick = closeWin;
+  document.body.appendChild(el);
+  winTimer = setTimeout(closeWin, 4200);
+}
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeWin(); });
 
 window.addEventListener("hashchange", render);
@@ -786,6 +884,8 @@ const slowTimer = setTimeout(() => { slow = true; if (!loaded) { loaded = true; 
     if (online) {
       mode = "online"; uid = online.uid; seat = null; clearTimeout(slowTimer); loaded = true;
       online.onBoard(rows => { board = rows; if (tab() === "ranks") render(); }, e => console.error(e));
+      online.onLexicon(rows => { lexGlobal = rows; if (tab() === "lex") mountLex(); }, e => console.error(e));
+      watchLobbies();
       pullLobbies();
       const fromUrl = cleanCode(new URLSearchParams(location.search).get("lobby"));
       const last = fromUrl || ls.get("spookee:lobby");

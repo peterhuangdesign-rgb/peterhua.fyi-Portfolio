@@ -547,3 +547,134 @@ nav{margin-bottom:4px}
 .side input{font-size:18px}
 .side input::placeholder{font-size:16px}
 .side .btn{font-size:15px;padding:10px 12px;line-height:1.25}
+
+/* =====================================================================
+   five tabs: three over two on a phone, one row on wider screens
+   ===================================================================== */
+nav{grid-template-columns:repeat(6,1fr)}
+nav a{grid-column:span 2;position:relative}
+nav a:nth-child(n+4){grid-column:span 3}
+@media (min-width:700px){ nav{grid-template-columns:repeat(5,1fr)} nav a,nav a:nth-child(n+4){grid-column:span 1} }
+nav a .badge{position:absolute;top:-8px;right:-6px;min-width:20px;height:20px;padding:0 5px;display:grid;place-items:center;
+  background:var(--right);color:var(--ink);font:700 12px/1 var(--read);box-shadow:0 0 0 2px var(--ink)}
+
+/* =====================================================================
+   the rows: one row per try, the newest at the bottom and brightest
+   ===================================================================== */
+.rows{display:grid;gap:0;width:100%;max-width:520px;margin:0 auto;border-top:1px solid #c9a86a30}
+.prow{display:grid;grid-template-columns:3.4em 1fr 1fr;align-items:center;gap:12px;padding:9px 8px;border-bottom:1px solid #c9a86a30;
+  font-family:var(--read);font-weight:700;font-size:17px;color:var(--dim)}
+.prow > span:nth-child(n+2){min-width:0;overflow-wrap:anywhere;text-align:center}
+.prow .rl{font-size:13px;color:var(--gilt-dim);letter-spacing:.04em}
+.prow.head{padding-block:6px;border-bottom-color:#c9a86a55}
+.prow.head span{font-size:13px;color:var(--dim)}
+.prow.new{color:var(--mist);font-size:22px;background:#2a0f3a99}
+.prow.new .rl{color:var(--gilt)}
+.rows.past .prow{grid-template-columns:3.4em 1fr 1fr 6.5em;font-size:16px;color:var(--mist)}
+.rows.past .prow .tag{text-align:right}
+.rows.past .prow.final{background:#2a0f3a}
+.rows.past .prow.final .to{grid-column:2 / span 2;text-align:center}
+
+/* =====================================================================
+   fail: the vision fades
+   ===================================================================== */
+#win.fail{background:radial-gradient(circle at 50% 45%,#1d1020 0,#0b070d 72%)}
+#win.fail .win-word{color:var(--dim);font-size:clamp(36px,10vw,60px);animation:fadeword 3.6s ease-out both}
+#win.fail .win-line{color:var(--dim);font-weight:400}
+.fail-words{margin:0;display:flex;gap:12px;align-items:center;justify-content:center;font:700 22px/1.2 var(--read);color:#ef8a9b}
+.fail-words span{animation:drift 3.6s ease-in both}
+.fail-words span:last-child{animation-name:drift2}
+.fail-words i{font-style:normal;color:var(--gilt-dim)}
+@keyframes fadeword{0%{opacity:0;filter:blur(6px)}30%{opacity:1;filter:none}100%{opacity:.55;filter:blur(1px)}}
+@keyframes drift{0%{opacity:1;transform:none}100%{opacity:.15;transform:translate(-18px,10px);filter:blur(2px)}}
+@keyframes drift2{0%{opacity:1;transform:none}100%{opacity:.15;transform:translate(18px,10px);filter:blur(2px)}}
+
+/* =====================================================================
+   your lobbies: what needs you first
+   ===================================================================== */
+.lobbies{display:flex;flex-direction:column;gap:8px}
+.lobbies-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.lobbies-head h2{margin:0;font-size:18px}
+.lobbies-head .btn{padding:8px 16px;font-size:15px}
+.lobbies .group{margin:8px 0 0;font:700 13px var(--read);color:var(--dim);letter-spacing:.04em}
+.lobbies ul{max-width:none;gap:8px}
+.lob{display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"code state coins" "who who coins";gap:2px 12px;
+  border:1px solid #c9a86a40;background:#1c0b26b3;padding:12px 14px;min-height:56px}
+.lob b{grid-area:code;font-size:17px}
+.lob .who-line{grid-area:who;color:var(--dim);font-size:14px}
+.lob .state{grid-area:state;justify-self:start;font-size:13px;font-weight:700;color:var(--dim);padding:2px 8px;border:1px solid #c9a86a30}
+.lob .coins{grid-area:coins}
+.lob:hover{border-color:var(--gilt);background:#2a0f3a}
+.lob.needs{border-color:var(--right);box-shadow:inset 3px 0 0 var(--right)}
+.lob.needs .state{color:var(--ink);background:var(--right);border-color:var(--right)}
+.lob.here{border-color:var(--gilt)}
+.lob.here .state{color:var(--ink);background:var(--gilt);border-color:var(--gilt)}
+
+/* =====================================================================
+   see the others: the ranks as a vertical spectrum on the left
+   ===================================================================== */
+.ranks-layout{display:grid;grid-template-columns:minmax(118px,200px) 1fr;gap:20px;align-items:start}
+.ranks-main{min-width:0;display:flex;flex-direction:column;gap:12px}
+.spectrum{list-style:none;margin:0;padding:0 0 0 14px;position:relative;display:flex;flex-direction:column}
+.spectrum::before{content:"";position:absolute;left:0;top:4px;bottom:4px;width:4px;
+  background:linear-gradient(to bottom,#fbeec4,var(--gilt) 22%,#cfa8ff 55%,#5d4a70 90%,#2a1838)}
+.spectrum li{position:relative;display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:0 6px;padding:6px 0;
+  border-bottom:1px solid #c9a86a1f;font-family:var(--read)}
+.spectrum .sn{font-size:14px;font-weight:700;color:var(--mist)}
+.spectrum .sm{font-size:12px;color:var(--dim);display:inline-flex;gap:6px;align-items:baseline}
+.spectrum .sm b{color:var(--ink);background:var(--dim);padding:0 5px;font-size:11px}
+.spectrum li.t0 .sn,.spectrum li.t1 .sn,.spectrum li.t2 .sn,.spectrum li.t3 .sn{color:var(--dim)}
+.spectrum li.t9 .sn,.spectrum li.t10 .sn{color:#e3ccff}
+.spectrum li.t11 .sn{color:var(--gilt)}
+.spectrum li.gate{border-top:1px dashed var(--gilt-dim)}
+.spectrum li.you{background:#2a0f3a;margin-left:-14px;padding-left:14px}
+.spectrum li.you::before{content:"";position:absolute;left:-4px;top:50%;width:12px;height:12px;transform:translateY(-50%) rotate(45deg);background:var(--gilt)}
+.spectrum .you-mark{flex-basis:100%;font-size:12px;font-weight:700;color:var(--gilt)}
+@media (max-width:560px){
+  .ranks-layout{grid-template-columns:108px 1fr;gap:12px}
+  .spectrum .sn{font-size:12px}
+  .spectrum .sm{font-size:11px}
+  .board tr{grid-template-columns:auto 1fr;padding:10px 8px}
+  .board td.pos{grid-row:1 / span 4}
+  .board td.pair-cell{grid-column:2}
+  .board td.rank{grid-column:2;grid-row:2;text-align:left;font-size:13px}
+  .board td[data-label="success"]{grid-row:3;grid-column:2}
+  .board td[data-icon="coins"]{grid-row:3;grid-column:2;justify-content:flex-end}
+  .board td[data-label="failed"]{grid-row:4;grid-column:2}
+  .board td[data-label="guesses"]{grid-row:4;grid-column:2;justify-content:flex-end}
+}
+
+/* =====================================================================
+   see the ecology of lexicon
+   ===================================================================== */
+.lex{display:flex;flex-direction:column;gap:12px;width:100%}
+.lex-tools{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+#lex-q{flex:1;min-width:0;background:transparent;border:0;border-bottom:1px solid var(--gilt-dim);border-radius:0;padding:8px 2px;
+  font:700 18px var(--read);color:var(--mist)}
+#lex-q:focus{outline:none;border-bottom-color:var(--gilt)}
+#lex-q::placeholder{color:var(--dim);font-weight:400}
+.lex-count{font:400 14px var(--read);color:var(--dim)}
+.lex-stage{position:relative;width:100%;border:1px solid #c9a86a40;background:#0d0713cc;box-shadow:inset 0 0 60px #2a0f3a}
+.lex-stage canvas{display:block;width:100%;touch-action:none;cursor:grab}
+.lex-empty{position:absolute;inset:0;display:grid;place-items:center;margin:0;color:var(--dim);font:400 15px var(--read)}
+.lex-zoom{position:absolute;right:8px;bottom:8px;display:flex;gap:4px}
+.lex-zoom button{min-width:40px;height:40px;background:#1c0b26e6;border:1px solid #c9a86a55;color:var(--gilt);font:700 16px var(--read);cursor:pointer}
+.lex-zoom button:hover{border-color:var(--gilt)}
+.lex-focus{min-height:44px}
+.lex-word{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.lex-word h3{margin:0;font:400 30px/1.1 var(--deco);color:var(--mist)}
+.lex-links{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.lex-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;min-height:36px;background:#1c0b26;border:1px solid #c9a86a55;
+  color:var(--mist);font:700 15px var(--read);cursor:pointer}
+.lex-chip:hover{border-color:var(--gilt)}
+.lex-chip.same{border-color:#7dd6a0aa}
+.lex-chip small{color:var(--dim);font-weight:400}
+.lex-key{margin:0;display:flex;gap:14px;flex-wrap:wrap;align-items:center;font:400 13px var(--read);color:var(--dim)}
+.lex-key i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.k-dealt{background:#c9a86a}.k-said{background:#cfa8ff}.k-agreed{box-shadow:inset 0 0 0 2px #7dd6a0}
+.lex-empty[hidden]{display:none}
+.prow.head span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;overflow-wrap:normal}
+.lob.here .state{color:var(--ink)}
+.lob.needs.here .state{background:var(--right);border-color:var(--right)}
+.prow > span:nth-child(n+2){overflow-wrap:break-word;hyphens:auto}
+@media (max-width:480px){ .rows.past .prow{font-size:15px;grid-template-columns:2.8em 1fr 1fr 5.6em;gap:8px} .prow{gap:8px} }

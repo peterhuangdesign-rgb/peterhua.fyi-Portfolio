@@ -13,8 +13,8 @@ Two players share a **lobby**. Cards are dealt the moment a lobby exists, so who
    - **the same:** identical once case, accents, "a/an/the" and punctuation are ignored; the same root word ("night" / "nights", "run" / "running"); or a one-letter typo (two letters for words of 8+).
    - **close enough:** words that mean about the same, looked up with the free Datamuse word API ("ocean" / "sea"). If Datamuse can't be reached, only the spelling checks count.
    - **match:** both players win a **coin** (the points) and see "spookee, you guys said the same thing!". A new reading starts with new cards.
-   - **no match in round i or ii:** both guesses join the **pool**, and the next word has to connect all of it. The two newest words are shown largest; older words stay as context.
-   - **no match in round iii (final):** the reading fails.
+   - **no match in round i or ii:** the two guesses become a new **row** under the cards, and the next word has to fit every row, the bottom (newest) one most. The lilies in the background wither back to buds for a moment.
+   - **no match in round iii (final):** the reading fails: "the vision fades" plays for both players and the lilies wither back to bare stems, then grow again.
 
 **It is played asynchronously.** Lock in, close the page, come back any time. Each pick is saved on the server, and the rules let the other player read it only after both have locked that step. So neither side can peek, and whoever locks second sees the reveal straight away. The tab title shows "(your move)" when it's your turn, and "your lobbies" shows which lobbies are waiting on you.
 
@@ -22,10 +22,10 @@ The **what do i do?** link next to the spookee wordmark opens a short how-to for
 
 ### Tabs
 
-- **see yourself** Type a name, then make a lobby (you get a code like `oak-46` and a link to send) or join one. Each lobby is one pair, and its coins and history stay with the code. A third person opening the code can only watch. "play on any device" signs your player in with Google: the same player, and the same list of lobbies, on every device you sign in on (kept in `users/<id>` in Firestore).
-- **play game** The game.
-- **see the past** Every reading in this lobby: who drew which card, each round's words with "same", "close enough" or "not quite", and the final word as success or fail.
-- **see the others..** The leaderboard: every lobby's success rate, coins, fails, guesses and rank. On phones each pair is a stacked row so nothing is cut off.
+- **see yourself** Your lobbies are listed here, the ones waiting on you first (green "your move"), then the rest, with a "new lobby" button. A green number on this tab counts lobbies that need you. Type a name, then make a lobby (you get a code like `oak-46` and a link to send) or join one. Each lobby is one pair, and its coins and history stay with the code. A third person opening the code can only watch. "play on any device" signs your player in with Google: the same player, and the same list of lobbies, on every device you sign in on (kept in `users/<id>` in Firestore).
+- **see the orb** The game. The words so far are stacked one row per try: cards, then i, ii, iii, under each player's name.
+- **see the past** Every reading in this lobby, in the same rows: who drew which card, each round's words with "same", "close enough" or "not quite", and the final word as success or fail.
+- **see the others** A vertical spectrum of every rank on the left (highest at the top, with how many readings each needs and how many pairs sit there), and the leaderboard: every lobby's success rate, coins, fails, guesses and rank. On phones each pair is a stacked row so nothing is cut off.
 
 ### Ranks
 
@@ -43,7 +43,30 @@ Ranks follow Deadlock's ladder shape: 11 tiers with subranks I–VI, plus unrank
 10. star gazer
 11. the crystal ball
 
-Under 5 readings a pair is "in the fog". The rating is the success rate, with agreement in round i worth more than in round iii, smoothed so a few lucky readings don't top the board. The crystal ball needs 20+ readings.
+Under 5 readings a pair is "in the fog". The rating is the success rate, with agreement in round i worth more than in round iii, smoothed so a few lucky readings don't top the board.
+
+Each tier also needs a number of readings before it opens, so a high score alone can't carry a new pair up. It climbs gently to seer, then steeply:
+
+| tier | readings |
+|---|---|
+| dabbler | 5 |
+| leaf reader | 6 |
+| candle keeper | 8 |
+| palm reader | 10 |
+| card reader | 13 |
+| séance holder | 16 |
+| medium | 20 |
+| seer | 26 |
+| wraith | 80 |
+| star gazer | 180 |
+| the crystal ball | 400 |
+
+A pair held back by readings sits in the highest open tier, its subrank showing progress to the next, and "see the others" says how many readings are left to climb.
+
+- **see the ecology of lexicon** A living map of every word ever dealt or said, across every lobby (stored once per finished reading in `lexicon/` in Firestore), in the spirit of Obsidian's graph view:
+  - **Colours:** gold dots are dealt cards, lilac dots are typed words, and a green ring marks a word two players agreed on.
+  - **Threads:** each typed word is joined to the words it was bridging (the row above it), and two agreed words are joined to each other. Dealt pairs are joined by a dotted line.
+  - **Moving around:** drag to move, scroll or pinch to zoom, "fit" to see everything. Tap a word, or type it in "find a word", to see everything it touches.
 
 ### Without Firebase
 
@@ -96,6 +119,7 @@ spookee/
   fonts/              belion-radego.woff2 (display face)
   bouquet.js          ASCII lilies background, adapted from chernobayv/asciiFlowers (used with permission)
   words.js            the 400-word card pool
+  lexicon.js          the ecology of lexicon (force-directed word map)
   firebase-config.js  Firebase web config (project spookee-bcf91; public by design)
   online.js           lobbies, hidden picks and the leaderboard on Firebase (loads only when configured)
   game.js             the game: state, rules, screens, keyboard, help dialog

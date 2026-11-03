@@ -76,6 +76,10 @@ window.SpookeeOnline = (async () => {
     // your lobbies, kept on your account so every device you sign in on shows the same games
     saveLobbies: list => setDoc(doc(db, "users", uid), { lobbies: list, updated: Date.now() }, { merge: true }),
     loadLobbies: async () => { try { const s = await getDoc(doc(db, "users", uid)); return (s.exists() && s.data().lobbies) || []; } catch { return []; } },
+    // the shared lexicon: one entry per finished reading, written once by one of its players
+    addLexicon: (id, data) => setDoc(doc(db, "lexicon", id), data),
+    onLexicon: (cb, err) => onSnapshot(query(collection(db, "lexicon"), orderBy("at", "desc"), limit(1500)),
+      qs => cb(qs.docs.map(d => ({ id: d.id, ...d.data() }))), err),
     anonymous: () => !auth.currentUser || auth.currentUser.isAnonymous,
     email: () => (auth.currentUser && auth.currentUser.email) || "",
     // link this browser's anonymous player to google (keeps the same player);
