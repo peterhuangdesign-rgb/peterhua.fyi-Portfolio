@@ -162,45 +162,53 @@ async function judge(a, b){
   if (ra.has(sb) || rb.has(sa)) return { v:"right", how:"close" };
   return { v:"wrong", how:"different" };
 }
-// ordered association lists from Datamuse (meaning-alike + statistically linked), and phrases a word appears in
-const assocs = {}, phr = {};
+// Datamuse lookups for "brilliant", cached for the session
+const dmCache = {};
 async function dm(params){
   try {
     const ctl = new AbortController(); setTimeout(() => ctl.abort(), 3500);
     return await fetch("https://api.datamuse.com/words?" + params, { signal:ctl.signal }).then(r => r.json());
   } catch { return []; }
 }
-function assoc(w){
-  return assocs[w] || (assocs[w] = (async () => {
-    const [ml, trg] = await Promise.all([dm(`ml=${encodeURIComponent(w)}&max=300`), dm(`rel_trg=${encodeURIComponent(w)}&max=150`)]);
-    const out = [];
-    for (const x of ml.concat(trg)) { if (!/\s/.test(x.word)) { const k = stem(norm(x.word)); if (!out.includes(k)) out.push(k); } }
-    return out;
-  })());
-}
-function phrasesOf(w){
-  return phr[w] || (phr[w] = (async () => (await dm(`ml=${encodeURIComponent(w)}&max=300`)).map(x => norm(x.word)).filter(p => /\s/.test(p)))());
-}
-// A word is brilliant when it reaches both words above it, but by a road nobody takes:
-//  - it's linked to both (in each one's association list, or through a saying it belongs to),
-//  - it is NOT an obvious answer for either (not in the top 15 for either side),
-//  - and at least one link is a saying/phrase, or it sits deep in both lists.
+const cached = (k, f) => dmCache[k] || (dmCache[k] = f());
+const mlRaw = w => cached("m" + w, () => dm(`ml=${encodeURIComponent(w)}&max=500`));
+// single words linked to w: meaning-alike first, then statistically linked
+const assoc = w => cached("a" + w, async () => {
+  const [ml, trg] = await Promise.all([mlRaw(w), dm(`rel_trg=${encodeURIComponent(w)}&max=150`)]);
+  const out = [];
+  for (const x of ml.concat(trg)) if (!/\s/.test(x.word)) { const k = stem(norm(x.word)); if (!out.includes(k)) out.push(k); }
+  return out;
+});
+const trgSet = w => cached("t" + w, async () => new Set((await dm(`rel_trg=${encodeURIComponent(w)}&max=150`)).map(x => stem(norm(x.word)))));
+const synSet = w => cached("s" + w, async () => new Set((await dm(`rel_syn=${encodeURIComponent(w)}&max=100`)).map(x => stem(norm(x.word)))));
+// dictionary phrases and sayings (multi-word entries) Datamuse knows around w
+const phrasesOf = w => cached("p" + w, async () => (await mlRaw(w)).map(x => norm(x.word)).filter(p => /\s/.test(p)));
+// the phrases around one side: its own and those of its 30 closest words
+const NEAR = 30;
+const sidePhrases = x => cached("sp" + x, async () => {
+  const near = (await assoc(x)).slice(0, NEAR);
+  const lists = await Promise.all([x, ...near].map(phrasesOf));
+  return { near:new Set([stem(x), ...near]), list:[...new Set(lists.flat())] };
+});
+// slangy or generic neighbours that make for false links ("club good")
+const GENERIC = new Set("good bad cool fun sweet nice great big small little boy girl man kid riot force rage surprise ramp swell cutie kingpin goody hot old new high low best fine grand top real".split(" "));
+const toks = p => p.split(" ").map(stem);
+// A word is brilliant when it lives inside a real saying or name on BOTH sides, and is not an obvious answer:
+//   storm + water -> bottle  ("lightning in a bottle" / "water bottle")
+//   storm + water -> glass   ("storm in a glass of water" / "water glass")
+// Rejected as obvious: anything in either side's top 30 associations, synonyms, or words that usually appear
+// alongside either one (rain, wind, ocean, forest, toadstool...).
 async function brilliance(w, A, B){
-  const W = norm(w), a = norm(A), b = norm(B);
-  if (W.length < 3 || !a || !b) return null;
-  const sw = stem(W), sa = stem(a), sb = stem(b);
-  if (sw === sa || sw === sb) return null;
-  const [la, lb, ps] = await Promise.all([assoc(a), assoc(b), phrasesOf(W)]);
+  const W = norm(w), a = norm(A), b = norm(B), sw = stem(W);
+  if (W.length < 3 || !a || !b || sw === stem(a) || sw === stem(b)) return null;
+  const [la, lb, ta, tb, ya, yb, spA, spB, own] = await Promise.all([assoc(a), assoc(b), trgSet(a), trgSet(b), synSet(a), synSet(b), sidePhrases(a), sidePhrases(b), phrasesOf(W)]);
   if (!la.length || !lb.length) return null;
   const ra = la.indexOf(sw), rb = lb.indexOf(sw);
-  const near = (list, s0) => t => t !== sw && (t === s0 || list.slice(0, 60).includes(t));
-  const pa = ps.find(p => p.split(" ").map(stem).some(near(la, sa))) || "";
-  const pb = ps.find(p => p.split(" ").map(stem).some(near(lb, sb))) || "";
-  const linkA = ra >= 0 || !!pa, linkB = rb >= 0 || !!pb;
-  if (!linkA || !linkB) return null;
-  if ((ra >= 0 && ra < 15) || (rb >= 0 && rb < 15)) return null;
-  if (!(pa || pb) && !(ra > 40 && rb > 40)) return null;
-  return { phrase: pa || pb || "" };
+  if ((ra >= 0 && ra < 30) || (rb >= 0 && rb < 30) || ya.has(sw) || yb.has(sw) || ta.has(sw) || tb.has(sw)) return null;
+  const find = sp => sp.list.concat(own).find(p => { const t = toks(p); return t.includes(sw) && t.some(x => x !== sw && !GENERIC.has(x) && sp.near.has(x)); }) || "";
+  const pa = find(spA), pb = find(spB);
+  if (!pa || !pb || pa === pb) return null;
+  return { phrase: pa + " · " + pb };
 }
 const verdicts = {};      // reading-round -> {v, how} once checked
 let judging = "";
@@ -1017,5 +1025,5 @@ const slowTimer = setTimeout(() => { slow = true; if (!loaded) { loaded = true; 
 })();
 
 // exposed for tests only
-window.__spookee = { statsOf, rankOf, TIERS, brilliance, assocs, phr };
+window.__spookee = { statsOf, rankOf, TIERS, brilliance };
 })();

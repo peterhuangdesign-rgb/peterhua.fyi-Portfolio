@@ -37,10 +37,12 @@ Rarely, a typed word reaches both words above it by a road nobody takes, like **
 
 How it's decided (`brilliance()` in `game.js`, using Datamuse):
 
-1. The word must be linked to both words above it: it appears in each one's association list (meaning-alike plus statistically linked words), or it belongs to a phrase that contains that word or one of its top 60 associations.
-2. It must not be an obvious answer: not in the top 15 associations of either word.
-3. At least one link must be a saying or phrase, or the word must sit deep (past the top 40) in both lists.
+1. The word must sit inside a real dictionary phrase or saying on **both** sides: one containing the first word (or one of its 30 closest words), and a different one containing the second. For example, "lightning in a bottle" (lightning is close to storm) and "water bottle".
+2. It must not be an obvious answer: not in the top 30 associations of either word, not a synonym of either, and not a word that usually appears alongside either one.
+3. Generic or slangy neighbour words ("good", "cool", "force"...) don't count as links.
 4. Kept rare: at most one brilliant word in any five readings of a lobby.
+
+Tested on real Datamuse data: storm + water flags **bottle** and **glass** ("storm in a glass of water"), and rejects rain, wind, cloud and ocean. For mushroom + owl, none of 48 likely words passed.
 
 If Datamuse can't be reached, nothing is ever brilliant.
 
