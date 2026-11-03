@@ -7,7 +7,7 @@ A small two-player word game by Peter Huang. It lives at `peterhua.fyi/spookee/`
 Two players share a **lobby**. Cards are dealt the moment a lobby exists, so whoever makes it can pick straight away, before anyone has joined. A **reading** is one pair of cards:
 
 1. **choose... your fate...** Each player gets their own five cards from a 400-word pool. The two hands never overlap, and no word comes back until the pool runs low.
-2. Both lock in, then **poof**: both cards show.
+2. Both lock in, then both cards show at once.
 3. **pick a word.. any word..** Each player types one word that connects them, locks in, then both words show.
 4. The game checks the two words itself (there are no right/wrong buttons):
    - **the same:** identical once case, accents, "a/an/the" and punctuation are ignored; the same root word ("night" / "nights", "run" / "running"); or a one-letter typo (two letters for words of 8+).
@@ -99,7 +99,7 @@ Dark velvet: black and deep purple with a lilac accent.
 - **Type:** Belion Radego (Denustudios, freeware for non-commercial use, self-hosted in `fonts/`) only for the big lines: the wordmark, page headings, the lobby code, the help title and the win word. Everything else is Atkinson Hyperlegible, a sans designed to be easy to read (Belion Radego's digits are blank placeholders anyway). All lowercase. In `style.css`, `--deco` is the display face and `--read` the reading face.
 - **Colour roles:** mist for text, dim for secondary text, antique gilt for anything you can press or that marks the current thing, green for a match or someone being here, red for a miss. Lilac only as glow.
 - **Victorian finish:** square engraved plates instead of pills; tabs are separate plates, the current one filled in gilt, antique-gilt double rules, ✥ corner ornaments, a ❦ under the current tab, tarot-style cards, ruled ledger lists.
-- **Cards:** five cards to choose from. Both flip at once on "poof".
+- **Cards:** five cards to choose from. Both flip at once when both have locked in.
 - **The pool:** a line of words, with the newest two set largest.
 - **Win screen:** a burst of ✦ around the shared word.
 - **Background:** ASCII lilies by chernobayv, now growing inside a crystal ball on a stand and recoloured into the velvet palette. The ball slowly clouds over and clears: fog banks drift inside it, the flowers fade in and out with the mist, and the edge of the glass is darker so the middle glows.
