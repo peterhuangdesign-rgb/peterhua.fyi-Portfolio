@@ -1,5 +1,5 @@
 /* spookee background: ASCII lilies by chernobayv (github.com/chernobayv/asciiFlowers),
-   used with her permission. Adapted for spookee: recoloured into the velvet palette,
+   used with her permission. Adapted for spookee: the bouquet now grows inside a crystal ball; recoloured into the velvet palette,
    drawn behind the game on a transparent canvas, no click/key controls, slows to a
    sway after the bloom, stops when the tab is hidden, one still frame under reduced motion. */
 // ASCII lilies: the scene is painted with vector shapes onto a tiny offscreen
@@ -450,7 +450,7 @@
     }
   }
 
-  function drawScene(g, S, pal) {
+  function drawBouquet(g, S, pal) {
     drawRuscus(g, S);
     drawGyp(g, S, false);
     for (const st of S.stems) strokeCurve(g, st.pts, 0, stemProgress(st), 9, '#5a9a30');
@@ -459,6 +459,47 @@
     const sorted = S.buds.slice().sort((a, b) => budState(a).open - budState(b).open || (a.openAt - b.openAt || 0));
     for (const b of sorted) drawBud(g, b, pal);
     drawGyp(g, S, true);
+  }
+
+  // spookee: a crystal ball on a stand, with the lilies sprouting from the empty space inside it.
+  // Same pipeline as the flowers: plain canvas shapes here, turned into glyphs by render() below.
+  const BALL = { x: 500, y: 455, r: 395 };
+  function drawScene(g, S, pal) {
+    const { x, y, r } = BALL;
+    const fade = smooth(0, 1.2, T); // the ball clouds in first, then the stems rise inside it
+    // stand: a ring under the ball and a flared base
+    g.fillStyle = 'rgba(120,80,160,' + (0.85 * fade) + ')';
+    g.beginPath();
+    g.moveTo(x - 190, y + r * 0.86); g.lineTo(x + 190, y + r * 0.86);
+    g.lineTo(x + 300, 1080); g.lineTo(x - 300, 1080); g.closePath(); g.fill();
+    g.fillStyle = 'rgba(200,170,240,' + (0.7 * fade) + ')';
+    g.beginPath(); g.ellipse(x, y + r * 0.88, 215, 34, 0, 0, Math.PI * 2); g.fill();
+    g.fillStyle = 'rgba(70,40,100,' + (0.9 * fade) + ')';
+    g.fillRect(x - 300, 1060, 600, 22);
+    // inside the glass: a faint swirl of mist
+    g.save();
+    g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.clip();
+    const mist = g.createRadialGradient(x - r * 0.35, y - r * 0.4, 10, x, y, r);
+    mist.addColorStop(0, 'rgba(170,140,220,' + (0.42 * fade) + ')');
+    mist.addColorStop(0.6, 'rgba(70,40,110,' + (0.22 * fade) + ')');
+    mist.addColorStop(1, 'rgba(30,15,50,' + (0.35 * fade) + ')');
+    g.fillStyle = mist; g.fillRect(x - r, y - r, r * 2, r * 2);
+    for (let i = 0; i < 3; i++) { // slow drifting wisps
+      g.strokeStyle = 'rgba(210,190,255,' + (0.18 * fade) + ')'; g.lineWidth = 16;
+      g.beginPath();
+      g.ellipse(x + Math.sin(T * 0.3 + i) * 40, y - 40 + i * 70, r * (0.55 - i * 0.1), r * 0.16, Math.sin(T * 0.2 + i * 2) * 0.4, 0, Math.PI * 2);
+      g.stroke();
+    }
+    // the bouquet, scaled down so its stems start at the bottom of the inside of the ball
+    g.translate(x, y + r * 0.86); g.scale(0.7, 0.7); g.translate(-500, -1090);
+    drawBouquet(g, S, pal);
+    g.restore();
+    // the glass: rim and a curved highlight
+    g.lineWidth = 9; g.strokeStyle = 'rgba(215,195,255,' + (0.75 * fade) + ')';
+    g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.stroke();
+    g.lineWidth = 22; g.lineCap = 'round'; g.strokeStyle = 'rgba(255,255,255,' + (0.85 * fade) + ')';
+    g.beginPath(); g.arc(x, y, r * 0.84, rad(200), rad(245)); g.stroke();
+    g.lineWidth = 12; g.beginPath(); g.arc(x, y, r * 0.84, rad(252), rad(262)); g.stroke();
   }
 
   // ---------- ascii renderer ----------

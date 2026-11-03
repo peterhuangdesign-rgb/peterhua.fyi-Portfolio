@@ -54,6 +54,11 @@ service cloud.firestore {
       }
     }
 
+    // each player's own list of lobbies, so a google account shows the same games on every device
+    match /users/{uid} {
+      allow read, write: if signedIn() && request.auth.uid == uid;
+    }
+
     // leaderboard: one row per lobby, written only by that lobby's players
     match /board/{code} {
       allow read: if true;

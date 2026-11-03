@@ -13,7 +13,7 @@ root.innerHTML = `<div class="wrap">
     <a href="#who" data-tab="who">who are you?</a>
     <a href="#ball" data-tab="ball">crystal ball</a>
     <a href="#past" data-tab="past">see the past</a>
-    <a href="#ranks" data-tab="ranks">leaderboard</a>
+    <a href="#ranks" data-tab="ranks">see the others..</a>
   </nav>
   <div id="view" aria-live="polite"></div>
 </div>
@@ -23,11 +23,10 @@ root.innerHTML = `<div class="wrap">
     <li><span>you each pick a card. nobody sees the other's.</span></li>
     <li><span><b>poof</b>, both cards show.</span></li>
     <li><span>you each type one word that connects them.</span></li>
-    <li><span>same word? tap <b class="r">right</b>. spookee.</span></li>
-    <li><span>different? tap <b class="w">wrong</b>. your guesses join the pool, so the next word has to fit all of it. the biggest words are the newest.</span></li>
+    <li><span>the same word, or close enough? <b class="r">spookee</b>. you catch a soul.</span></li>
+    <li><span>not the same? both words join the pool, so the next word has to fit all of it. the biggest words are the newest.</span></li>
     <li><span>three tries per pair of cards.</span></li>
   </ol>
-  <p class="help-foot">no rush. lock in, close it, come back later.</p>
   <form method="dialog"><button class="btn">got it</button></form>
 </dialog>`;
 (() => {
@@ -86,6 +85,75 @@ function rankOf(st){
   return { name:TIERS[Math.floor(step / 6)], tier:Math.floor(step / 6) + 1, sub:step % 6 + 1 };
 }
 const rankLabel = r => r.tier ? `${r.name} ${ROMAN[r.sub]}` : r.name;
+
+/* ---------- souls: what you catch for a win ---------- */
+const SOUL = `<svg class="soul" viewBox="0 0 24 28" aria-hidden="true"><path d="M12 2c5 0 9 4 9 9v8.4c0 1.2-1.3 1.9-2.3 1.2l-1.2-.9-1.8 1.7a1.2 1.2 0 0 1-1.6 0L12 19.6l-2.1 1.8a1.2 1.2 0 0 1-1.6 0l-1.8-1.7-1.2.9C4.3 21.3 3 20.6 3 19.4V11c0-5 4-9 9-9z" fill="currentColor"/><circle cx="9" cy="11.5" r="1.7" fill="#09060d"/><circle cx="15" cy="11.5" r="1.7" fill="#09060d"/></svg>`;
+function souls(n){
+  n = n || 0;
+  const label = `${n} ${n === 1 ? "soul" : "souls"}`;
+  if (!n) return `<span class="souls none" aria-label="${label}">${SOUL}<b>0</b></span>`;
+  return `<span class="souls" aria-label="${label}">${n <= 6 ? SOUL.repeat(n) : SOUL + `<b>×${n}</b>`}</span>`;
+}
+
+/* ---------- the checker: same word, a near spelling, or a word that means the same ---------- */
+function norm(w){
+  return String(w || "").toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9 ]/g, "").replace(/^(the|a|an) /, "").replace(/\s+/g, " ").trim();
+}
+function stem(w){
+  if (w.length > 5 && w.endsWith("ing")) return w.slice(0, -3);
+  if (w.length > 4 && w.endsWith("ies")) return w.slice(0, -3) + "y";
+  if (w.length > 4 && w.endsWith("ed")) return w.slice(0, -2);
+  if (w.length > 4 && /(sh|ch|x|ss)es$/.test(w)) return w.slice(0, -2);
+  if (w.length > 3 && w.endsWith("s") && !w.endsWith("ss")) return w.slice(0, -1);
+  return w;
+}
+function lev(a, b){
+  const m = a.length, n = b.length, row = Array.from({length:n + 1}, (_, j) => j);
+  for (let i = 1; i <= m; i++) { let prev = row[0]; row[0] = i;
+    for (let j = 1; j <= n; j++) { const t = row[j]; row[j] = Math.min(row[j] + 1, row[j - 1] + 1, prev + (a[i - 1] === b[j - 1] ? 0 : 1)); prev = t; } }
+  return row[n];
+}
+// words that mean about the same, from Datamuse (free, no key). If it can't be reached, only spelling counts.
+const related = {};
+function relatedTo(w){
+  if (related[w]) return related[w];
+  related[w] = (async () => {
+    try {
+      const ctl = new AbortController(); setTimeout(() => ctl.abort(), 3500);
+      const q = encodeURIComponent(w);
+      const lists = await Promise.all([`ml=${q}&max=150`, `rel_syn=${q}&max=100`].map(p =>
+        fetch("https://api.datamuse.com/words?" + p, { signal:ctl.signal }).then(r => r.json()).catch(() => [])));
+      return new Set(lists.flat().map(x => stem(norm(x.word))));
+    } catch { return new Set(); }
+  })();
+  return related[w];
+}
+async function judge(a, b){
+  const A = norm(a), B = norm(b);
+  if (!A || !B) return { v:"wrong", how:"different" };
+  const sa = stem(A), sb = stem(B), short = Math.min(A.length, B.length), dist = lev(A, B);
+  if (A === B || sa === sb || (short >= 4 && dist <= 1) || (short >= 8 && dist <= 2)) return { v:"right", how:"same" };
+  const [ra, rb] = await Promise.all([relatedTo(A), relatedTo(B)]);
+  if (ra.has(sb) || rb.has(sa)) return { v:"right", how:"close" };
+  return { v:"wrong", how:"different" };
+}
+const verdicts = {};      // reading-round -> {v, how} once checked
+let judging = "";
+function autoJudge(){
+  if (!game || game.stage !== "bridge" || !seat || readOnly) return;
+  const pub = game.bridge || {};
+  if (!(pub.a && pub.b)) return;
+  const key = game.reading + "-" + game.round;
+  if (judging === key) return;
+  judging = key;
+  const t0 = Date.now(), r = game.reading, rd = game.round;
+  judge(pub.a, pub.b).then(res => {
+    verdicts[key] = res; render();
+    // let both words sit on screen a moment before moving on
+    setTimeout(() => { if (game && game.reading === r && game.round === rd && game.stage === "bridge") verdict(res.v, res.how); }, Math.max(900, 2400 - (Date.now() - t0)));
+  });
+}
 
 /* ---------- state ---------- */
 let mode = "local";            // local | claude | online
@@ -199,6 +267,13 @@ function freshGame(cur){
     cards:{}, bridge:{}, locks:{cards:{}, bridge:{}}, attempts:[], score:0 };
 }
 function begin(){ pick = null; draft = ""; write(() => store.transact(cur => (cur && cur.reading) ? null : freshGame(cur))); }
+// no "begin" button: whoever is seated first deals the cards
+let beginning = false;
+function autoBegin(){
+  if (beginning || !loaded || !seat || readOnly || (game && game.reading)) return;
+  if (mode === "online" && !game) return;
+  beginning = true; begin(); setTimeout(() => { beginning = false; }, 3000);
+}
 function lockCard(){
   if (!pick || !seat) return;
   if (mode === "local") return write(() => store.update({ cards:{ [seat]: pick } }));
@@ -222,21 +297,21 @@ function toBridge(){
 }
 // A reading is one pair of chosen cards, with up to three rounds to agree on a word:
 // right ends it (+1, new cards, round i), wrong tries again, wrong in round iii fails it.
-function verdict(v){
+function verdict(v, how){
   const g = game, r = g.reading, rd = g.round;
   pick = null; draft = "";
   let rec = null;
   write(async () => {
     const ok = await store.transact(cur => {
       if (!cur || cur.reading !== r || cur.round !== rd || cur.stage !== "bridge" || !cur.bridge || !cur.bridge.a || !cur.bridge.b) return null;
-      const attempts = (cur.attempts || []).concat([{ round:rd, a:cur.bridge.a, b:cur.bridge.b, verdict:v }]);
+      const attempts = (cur.attempts || []).concat([{ round:rd, a:cur.bridge.a, b:cur.bridge.b, verdict:v, how:how || "" }]);
       if (v === "right" || rd >= 3) {
         const result = v === "right" ? "right" : "wrong";
         rec = { reading:r, names:{...cur.names}, cards:{...cur.cards}, attempts, result, at:Date.now() };
         const d = deal(cur.used);
         const next = { ...cur, reading:r + 1, round:1, stage:"cards", decks:d.decks, used:d.used, cards:{}, bridge:{},
           locks:{cards:{}, bridge:{}}, attempts:[], score:(cur.score || 0) + (result === "right" ? 1 : 0) };
-        if (result === "right") next.lastWin = { reading:r, word:cur.bridge.a, at:Date.now() };
+        if (result === "right") next.lastWin = { reading:r, word: norm(cur.bridge.a) === norm(cur.bridge.b) ? cur.bridge.a : cur.bridge.a + " ≈ " + cur.bridge.b, at:Date.now() };
         return next;
       }
       return { ...cur, round:rd + 1, stage:"bridge", bridge:{}, locks:{ ...(cur.locks || {}), bridge:{} }, attempts };
@@ -299,9 +374,31 @@ setInterval(() => { beat(); if (mode !== "local") render(); }, 30000);
 function myLobbies(){ try { return JSON.parse(ls.get("spookee:lobbies") || "[]"); } catch { return []; } }
 function rememberLobby(){
   if (!lobbyCode || !game) return;
-  const list = myLobbies().filter(l => l.code !== lobbyCode);
-  list.unshift({ code:lobbyCode, names:game.names || {}, score:game.score || 0, at:Date.now() });
-  ls.set("spookee:lobbies", JSON.stringify(list.slice(0, 8)));
+  const before = myLobbies();
+  const list = before.filter(l => l.code !== lobbyCode);
+  list.unshift({ code:lobbyCode, names:game.names || {}, score:game.score || 0, at:(before.find(l => l.code === lobbyCode) || {}).at || Date.now() });
+  ls.set("spookee:lobbies", JSON.stringify(list.slice(0, 12)));
+  syncLobbies(list.slice(0, 12));
+}
+// signed in with google: the lobby list is kept on the account, so every device shows the same games
+let syncTimer = null;
+function syncLobbies(list){
+  if (mode !== "online" || online.anonymous()) return;
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(() => online.saveLobbies(list.map(l => ({ code:l.code, at:l.at || 0 }))).catch(() => {}), 1500);
+}
+async function pullLobbies(){
+  if (mode !== "online" || online.anonymous()) return;
+  try {
+    const remote = await online.loadLobbies();
+    if (!remote.length) return;
+    const local = myLobbies(), have = new Set(local.map(l => l.code));
+    const merged = local.concat(remote.filter(r => !have.has(r.code)).map(r => ({ code:r.code, names:{}, score:0, at:r.at || 0 })))
+      .sort((x, y) => (y.at || 0) - (x.at || 0)).slice(0, 12);
+    ls.set("spookee:lobbies", JSON.stringify(merged));
+    if (!lobbyCode && !ls.get("spookee:lobby") && merged[0]) enterRoom(merged[0].code);
+    else render();
+  } catch {}
 }
 function forgetLobby(code){ ls.set("spookee:lobbies", JSON.stringify(myLobbies().filter(l => l.code !== code))); }
 const shareLink = code => location.origin + location.pathname + "?lobby=" + encodeURIComponent(code);
@@ -338,8 +435,9 @@ async function makeLobby(){
   try {
     for (let i = 0; i < 6; i++) {
       const code = WORDS[Math.floor(Math.random() * WORDS.length)].replace(/[^a-z]/g, "") + "-" + String(Math.floor(Math.random() * 90) + 10);
-      const made = await online.createRoom(code, { seats:{ a:uid }, names:{ a:name, b:"" }, presence:{ a:Date.now() }, created:Date.now() });
-      if (made) { entry.busy = false; location.hash = "who"; enterRoom(code); return; }
+      const base = { seats:{ a:uid }, names:{ a:name, b:"" }, presence:{ a:Date.now() }, created:Date.now() };
+      const made = await online.createRoom(code, freshGame(base));
+      if (made) { entry.busy = false; location.hash = "ball"; enterRoom(code); return; }
     }
     entry.err = "try again";
   } catch (e) { console.error(e); entry.err = "offline?"; }
@@ -376,6 +474,8 @@ function render(){
   view.innerHTML = t === "who" ? whoView() : t === "past" ? pastView() : t === "ranks" ? ranksView() : ballView();
   if (actId) { const el = document.getElementById(actId); if (el && el !== document.body) { el.focus(); try { el.setSelectionRange(sel, sel); } catch {} } }
   wire();
+  autoJudge();
+  autoBegin();
   maybeCelebrate();
   setTitle();
 }
@@ -412,7 +512,7 @@ function whoView(){
           const d = lobbyLive[l.code], seats = (d && d.seats) || {}, me = seats.a === uid ? "a" : seats.b === uid ? "b" : null;
           const nmz = (d && d.names) || l.names || {}, mv = d && me ? moveFor(d, me) : "";
           return `<li><button class="lob" data-rejoin="${esc(l.code)}"><b>${esc(l.code)}</b><span>${esc(nmz.a || "?")} & ${esc(nmz.b || "?")}</span>
-            <span class="${mv === "your move" ? "move" : ""}">${esc(mv || ((d ? d.score : l.score) || 0) + " pts")}</span></button></li>`;
+            <span class="${mv === "your move" ? "move" : ""}">${mv ? esc(mv) : souls((d ? d.score : l.score) || 0)}</span></button></li>`;
         }).join("")}
       </ul></section>` : ""}`);
   }
@@ -441,7 +541,7 @@ function whoView(){
 let signErr = "";
 function accountLine(){
   if (mode !== "online") return "";
-  if (!online.anonymous()) return `<p class="note acct">${esc(online.email() || "signed in")}</p>`;
+  if (!online.anonymous()) return `<p class="note acct">${esc(online.email() || "signed in")} · your games follow you</p>`;
   return `<div class="acct"><button class="link" data-act="google">play on any device</button>
     ${signErr ? `<p class="warn" role="alert">${esc(signErr)}</p>` : ""}</div>`;
 }
@@ -456,16 +556,25 @@ async function google(){
   }
 }
 function header(){
-  const right = `<span><b>${game.score || 0}</b> ${game.score === 1 ? "point" : "points"}</span>`;
+  const right = souls(game.score);
   const left = `<span>round <b>${ROMAN[game.round] || "III"}</b> of III${game.round === 3 ? " · final" : ""}</span>`;
   const who = mode === "local"
     ? `<span class="who">you are <b>${esc(nm(seat))}</b> · <button class="link" data-act="switch">switch</button></span>`
-    : `<span class="who">${dot("a")}<b>${esc(nm("a"))}</b> & ${dot("b")}<b>${esc(nm("b"))}</b>${lobbyCode ? ` · ${esc(lobbyCode)}` : ""}</span>`;
+    : `<span class="who">${dot("a")}<b>${esc(nm("a"))}</b> & ${alone() ? "<b>…</b>" : dot("b") + "<b>" + esc(nm("b")) + "</b>"}${lobbyCode ? ` · ${esc(lobbyCode)}` : ""}</span>`;
   return `<div class="meta">${left}${who}${right}</div>`;
 }
 const handoff = them => mode === "local" ? `<div class="row"><button class="btn ghost" data-act="switch">hand to ${esc(nm(them))}</button></div>` : "";
-const awayNote = them => mode === "local" ? "" : `<p class="note">come back anytime</p>`;
+const alone = () => mode === "online" && game && !(game.seats && game.seats.b);
+const awayNote = them => mode === "local" ? "" : alone()
+  ? `<div class="invite"><p class="note">send them <b>${esc(lobbyCode)}</b></p><button class="btn ghost" data-act="copy">copy link</button></div>`
+  : `<p class="note">come back anytime</p>`;
 
+function checkLine(){
+  const res = verdicts[game.reading + "-" + game.round];
+  if (!res) return `<p class="check">reading the words…</p>`;
+  if (res.v === "right") return `<p class="check right">${res.how === "close" ? "close enough" : "the same"} ✦</p>`;
+  return `<p class="check wrong">not quite${game.round >= 3 ? "" : ". again"}</p>`;
+}
 function ballView(){
   const notes = (readOnly && mode !== "online" ? `<p class="note">view only</p>` : "")
               + (slow && !loaded ? `<p class="note">connecting…</p>` : "");
@@ -474,11 +583,7 @@ function ballView(){
   if (mode !== "online" && !seat) return page(`<div class="orb" aria-hidden="true"></div><h1>crystal ball</h1>
     <div class="row"><a class="btn" href="#who" style="text-decoration:none">choose who you are</a></div>`);
   if (!loaded) return page(`<div class="orb" aria-hidden="true"></div><h1>gazing…</h1>${notes}`);
-  if (mode === "online" && game && !(game.seats && game.seats.b)) return page(`<div class="orb" aria-hidden="true"></div>
-    <h1>send them ${esc(lobbyCode)}</h1>
-    <div class="row"><button class="btn ghost" data-act="copy">copy link</button></div>`);
-  if (!game || !game.reading) return page(`<div class="orb" aria-hidden="true"></div><h1>crystal ball</h1>${notes}
-    <div class="row"><button class="btn" data-act="begin" ${readOnly ? "disabled" : ""}>begin</button></div>`);
+  if (!game || !game.reading) return page(`<div class="orb" aria-hidden="true"></div><h1>gazing…</h1>${notes}`);
   if (!seat) { // watcher
     return page(`${header()}<p class="note">watching</p>
       <div class="small-pair"><span>${esc((game.cards || {}).a || "✦")}</span><i aria-hidden="true">✦</i><span>${esc((game.cards || {}).b || "✦")}</span></div>`);
@@ -502,17 +607,17 @@ function ballView(){
         </div>
         <div class="row"><button class="btn" data-act="bridge">pick a word.. any word..</button></div>`;
     } else if (mineIn) {
-      body = `<h1>${theirsIn ? "poof is coming…" : "waiting for " + esc(nm(them))}</h1>
+      body = `<h1>${theirsIn ? "poof is coming…" : alone() ? "waiting for someone to join" : "waiting for " + esc(nm(them))}</h1>
         <div class="pair">
           <div class="slot"><div class="card static">${esc(myWord)}</div>${esc(nm(me))}</div>
-          <div class="slot"><div class="card static back" aria-label="${esc(nm(them))}'s card, hidden">✦</div>${esc(nm(them))}${theirsIn ? " · locked" : " · choosing"}</div>
+          <div class="slot"><div class="card static back" aria-label="${esc(nm(them))}'s card, hidden">✦</div>${alone() ? "…" : esc(nm(them)) + (theirsIn ? " · locked" : " · choosing")}</div>
         </div>${handoff(them)}${awayNote(them)}`;
     } else {
       body = `<h1>choose... your fate...</h1>
         <div class="deck" role="group" aria-label="your five cards">
           ${((game.decks || {})[me] || []).map(w => `<button class="card" data-card="${esc(w)}" aria-pressed="${pick === w}">${esc(w)}</button>`).join("")}
         </div>
-        <p class="note">${theirsIn ? esc(nm(them)) + " locked in" : esc(nm(them)) + " is choosing"}</p>
+        <p class="note">${alone() ? "pick now. they'll pick when they join." : theirsIn ? esc(nm(them)) + " locked in" : esc(nm(them)) + " is choosing"}</p>
         <div class="row"><button class="btn" data-act="lock-card" ${pick && !readOnly ? "" : "disabled"}>lock in</button></div>`;
     }
   } else {
@@ -532,10 +637,7 @@ function ballView(){
           <div class="word ${anim}"><small>${esc(nm("a"))}</small><strong>${esc(pub.a)}</strong></div>
           <div class="word ${anim}" style="animation-delay:.15s"><small>${esc(nm("b"))}</small><strong>${esc(pub.b)}</strong></div>
         </div>
-        <div class="row">
-          <button class="btn right" data-verdict="right" ${readOnly ? "disabled" : ""}>right</button>
-          <button class="btn wrong" data-verdict="wrong" ${readOnly ? "disabled" : ""}>wrong</button>
-        </div>`;
+        ${checkLine()}`;
     } else if (mineIn) {
       body = `${pairLine}<h1>${theirsIn ? "poof is coming…" : "waiting for " + esc(nm(them))}</h1>
         <div class="words">
@@ -558,7 +660,7 @@ function pastView(){
   const list = lineage.filter(r => r.attempts).sort((a,b) => b.reading - a.reading);
   const nmOf = (r, s) => ((r.names && r.names[s]) || "").trim() || FALLBACK[s];
   const st = statsOf(list), rk = rankOf(st);
-  const summary = (game && list.length) ? `<p class="summary">${lobbyCode ? esc(lobbyCode) + " · " : ""}${esc(nm("a"))} & ${esc(nm("b"))} · ${st.successes} of ${st.readings} · ${esc(rankLabel(rk))}</p>` : "";
+  const summary = (game && list.length) ? `<p class="summary">${lobbyCode ? esc(lobbyCode) + " · " : ""}${esc(nm("a"))} & ${esc(nm("b"))} · ${souls(st.successes)} · ${esc(rankLabel(rk))}</p>` : "";
   if (!list.length) return page(`<h1>see the past</h1>
     <div class="empty"><p class="note" style="margin:0">nothing yet</p>
     <a class="btn ghost" href="#ball" style="text-decoration:none">go to the crystal ball</a></div>`);
@@ -571,7 +673,7 @@ function pastView(){
         <ul class="rounds">
           ${r.attempts.map(t => `<li><span class="rn">${ROMAN[t.round]}</span>
             <span class="chain">${esc(nmOf(r,"a"))}: <b>${esc(t.a)}</b> · ${esc(nmOf(r,"b"))}: <b>${esc(t.b)}</b></span>
-            <span class="tag ${t.verdict}">${t.verdict}</span></li>`).join("")}
+            <span class="tag ${t.verdict}">${t.verdict === "right" ? (t.how === "close" ? "close enough" : "same") : "not quite"}</span></li>`).join("")}
           <li class="final"><span class="rn">✦</span><span class="chain"><span class="to ${r.result}">${final}</span></span>
             <span class="tag ${r.result}">${r.result === "right" ? "success" : "fail"}</span></li>
         </ul></section>`;
@@ -592,17 +694,17 @@ function ranksView(){
   const ladder = `<details class="ladder"><summary>the ranks</summary><ol>
       ${TIERS.slice().reverse().map(t => `<li>${t} <span>I–VI</span></li>`).join("")}
       <li>${UNRANKED} <span>&lt; ${MIN_READINGS} readings</span></li></ol></details>`;
-  if (!rows.length) return page(`<h1>leaderboard</h1>
+  if (!rows.length) return page(`<h1>see the others..</h1>
     <div class="empty"><p class="note" style="margin:0">nothing yet</p></div>${ladder}`);
-  return page(`<h1>leaderboard</h1>
+  return page(`<h1>see the others..</h1>
     <div class="board-wrap"><table class="board">
-      <thead><tr><th scope="col">#</th><th scope="col">pair</th><th scope="col">rank</th><th scope="col" class="num">success</th><th scope="col" class="num">won</th><th scope="col" class="num">failed</th><th scope="col" class="num">guesses</th></tr></thead>
+      <thead><tr><th scope="col">#</th><th scope="col">pair</th><th scope="col">rank</th><th scope="col" class="num">success</th><th scope="col" class="num">souls</th><th scope="col" class="num">failed</th><th scope="col" class="num">guesses</th></tr></thead>
       <tbody>${rows.map((r, i) => `<tr class="${r.mine ? "mine" : ""}">
         <td class="num">${i + 1}</td>
         <td class="pair-cell">${esc(((r.names || {}).a || "?"))} & ${esc(((r.names || {}).b || "?"))}${r.mine ? ` <small>you</small>` : ""}</td>
         <td class="rank t${r.rk.tier}">${esc(rankLabel(r.rk))}</td>
         <td class="num"><b>${Math.round(r.rate * 100)}%</b></td>
-        <td class="num">${r.successes}</td>
+        <td class="num">${souls(r.successes)}</td>
         <td class="num">${r.fails}</td>
         <td class="num">${r.guesses}</td></tr>`).join("")}</tbody>
     </table></div>${ladder}`);
@@ -617,7 +719,6 @@ function wire(){
     const btn = side.querySelector("[data-seat]"); btn.disabled = !has; if (seat !== s) btn.textContent = "i'm " + nm(s);
   });
   view.querySelectorAll("[data-card]").forEach(b => b.onclick = () => { pick = b.dataset.card; render(); });
-  view.querySelectorAll("[data-verdict]").forEach(b => b.onclick = () => verdict(b.dataset.verdict));
   view.querySelectorAll("[data-rejoin]").forEach(b => b.onclick = () => joinLobby(b.dataset.rejoin));
   const act = {
     begin, "lock-card":lockCard, bridge:toBridge, make:makeLobby, leave:leaveRoom, google,
@@ -665,6 +766,7 @@ function maybeCelebrate(){
       <div class="sparks" aria-hidden="true">${sparks}</div>
       <p class="win-word">${esc(w.word)}</p>
       <p class="win-line"><span>spookee,</span> <span>you guys said the same thing!</span></p>
+      <p class="win-soul">${SOUL}<span>+1 soul</span></p>
     </div>`;
   el.onclick = closeWin;
   document.body.appendChild(el);
@@ -687,6 +789,7 @@ const slowTimer = setTimeout(() => { slow = true; if (!loaded) { loaded = true; 
     if (online) {
       mode = "online"; uid = online.uid; seat = null; clearTimeout(slowTimer); loaded = true;
       online.onBoard(rows => { board = rows; if (tab() === "ranks") render(); }, e => console.error(e));
+      pullLobbies();
       const fromUrl = cleanCode(new URLSearchParams(location.search).get("lobby"));
       const last = fromUrl || ls.get("spookee:lobby");
       if (fromUrl && entry.name) { await joinLobby(fromUrl); }

@@ -4,15 +4,17 @@ A small two-player word game by Peter Huang. It lives at `peterhua.fyi/spookee/`
 
 ## How the game works
 
-Two players share a **lobby**. A **reading** is one pair of cards:
+Two players share a **lobby**. Cards are dealt the moment a lobby exists, so whoever makes it can pick straight away, before anyone has joined. A **reading** is one pair of cards:
 
 1. **choose... your fate...** Each player gets their own five cards from a 400-word pool. The two hands never overlap, and no word comes back until the pool runs low.
 2. Both lock in, then **poof**: both cards show.
 3. **pick a word.. any word..** Each player types one word that connects them, locks in, then poof.
-4. Either player taps **right** or **wrong**.
-   - **right:** +1 point and the "spookee, you guys said the same thing!" screen, for both players. A new reading starts with new cards.
-   - **wrong in round i or ii:** both guesses join the **pool**, and the next word has to connect all of it. The two newest words are shown largest; older words stay as context.
-   - **wrong in round iii (final):** the reading fails.
+4. The game checks the two words itself (there are no right/wrong buttons):
+   - **the same:** identical once case, accents, "a/an/the" and punctuation are ignored; the same root word ("night" / "nights", "run" / "running"); or a one-letter typo (two letters for words of 8+).
+   - **close enough:** words that mean about the same, looked up with the free Datamuse word API ("ocean" / "sea"). If Datamuse can't be reached, only the spelling checks count.
+   - **match:** both players catch a **soul** (the points) and see "spookee, you guys said the same thing!". A new reading starts with new cards.
+   - **no match in round i or ii:** both guesses join the **pool**, and the next word has to connect all of it. The two newest words are shown largest; older words stay as context.
+   - **no match in round iii (final):** the reading fails.
 
 **It is played asynchronously.** Lock in, close the page, come back any time. Each pick is saved on the server, and the rules let the other player read it only after both have locked that step. So neither side can peek, and whoever locks second sees the reveal straight away. The tab title shows "(your move)" when it's your turn, and "your lobbies" shows which lobbies are waiting on you.
 
@@ -20,10 +22,10 @@ The **what do i do?** link next to the spookee wordmark opens a short how-to for
 
 ### Tabs
 
-- **who are you?** Type a name, then make a lobby (you get a code like `oak-46` and a link to send) or join one. Each lobby is one pair, and its points and history stay with the code. A third person opening the code can only watch. "play on any device" links your player to Google so a phone and a laptop are the same player.
+- **who are you?** Type a name, then make a lobby (you get a code like `oak-46` and a link to send) or join one. Each lobby is one pair, and its souls and history stay with the code. A third person opening the code can only watch. "play on any device" signs your player in with Google: the same player, and the same list of lobbies, on every device you sign in on (kept in `users/<id>` in Firestore).
 - **crystal ball** The game.
-- **see the past** Every reading in this lobby: who drew which card, each round's words with right or wrong, and the final word as success or fail.
-- **leaderboard** Every lobby's success rate, wins, fails, guesses and rank.
+- **see the past** Every reading in this lobby: who drew which card, each round's words with "same", "close enough" or "not quite", and the final word as success or fail.
+- **see the others..** The leaderboard: every lobby's success rate, souls, fails, guesses and rank.
 
 ### Ranks
 
@@ -51,13 +53,23 @@ If `firebase-config.js` still holds the placeholder, the game runs as one-device
 
 Dark velvet: black and deep purple with a lilac accent.
 
-- **Type:** Courier Prime, a clean typewriter serif that sits well beside the ASCII art, all lowercase.
+- **Type:** Atkinson Hyperlegible, designed for legibility (distinct letter shapes, open counters), all lowercase.
 - **Cards:** five cards to choose from. Both flip at once on "poof".
 - **The pool:** a line of words, with the newest two set largest.
-- **Win screen:** a burst of ✦ around the shared word.
-- **Background:** ASCII lilies by chernobayv, recoloured into the velvet palette.
+- **Souls:** small ghost icons, one per win, in the game header, history and leaderboard.
+- **Win screen:** a burst of ✦ around the shared word, and "+1 soul" rising.
+- **Background:** ASCII lilies by chernobayv, now growing inside a crystal ball on a stand and recoloured into the velvet palette.
 
-**Colour:** green marks right and dark red marks wrong.
+### How the ASCII background is made (bouquet.js)
+
+1. Each frame, the scene is drawn with ordinary canvas shapes (curves, ellipses, gradients) onto a tiny offscreen canvas, one pixel per character cell.
+2. Each pixel's brightness picks a glyph from the ramp ` .:-=+*cxoaX#%&@`, dark to dense, and the glyph is drawn in a colour from the pixel.
+3. A faint blurred copy of the tiny image sits underneath for glow, and a few glyphs flicker so it feels alive.
+4. The animation is just time (`T`) driving the shapes: stems grow, buds swell and open, everything sways.
+
+So anything drawable with canvas shapes becomes ASCII for free. `drawScene` draws the crystal ball (stand, mist, rim, highlight), clips to the sphere, and draws the bouquet scaled down inside it.
+
+**Colour:** green marks a match and dark red marks a miss.
 
 **Motion:** it stops when the tab is hidden and respects reduced motion.
 

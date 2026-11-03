@@ -6,11 +6,11 @@
   --plum:#3a1650;       /* raised velvet */
   --orchid:#cfa8ff;     /* accent: candlelit lilac */
   --mist:#efe4ff;       /* text */
-  --dim:#a48fbf;        /* secondary text */
+  --dim:#b9a6d2;        /* secondary text */
   --right:#4fae78;
   --wrong:#9c2236;
-  --display:"Courier Prime","Courier New",Courier,monospace;
-  --body:"Courier Prime","Courier New",Courier,monospace;
+  --display:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -21,7 +21,7 @@ body{
     radial-gradient(80% 60% at 100% 100%, #1a0824 0%, transparent 70%),
     var(--ink);
   background-attachment:fixed;
-  color:var(--mist);font-family:var(--body);font-size:16px;line-height:1.5;text-transform:lowercase;
+  color:var(--mist);font-family:var(--body);font-size:17px;line-height:1.55;text-transform:lowercase;
   padding-left:max(16px,env(safe-area-inset-left,0px));
   padding-right:max(16px,env(safe-area-inset-right,0px));
   padding-block:0 48px;
@@ -173,6 +173,23 @@ input{text-transform:lowercase}
 .help b.r{color:var(--right)}.help b.w{color:#ef8a9b}
 .help-foot{margin:18px 0;color:var(--dim);text-align:center}
 .help form{display:flex;justify-content:center}
+
+/* souls: the points */
+.soul{width:17px;height:20px;color:var(--orchid);filter:drop-shadow(0 0 5px #cfa8ff88);vertical-align:-4px}
+.souls{display:inline-flex;align-items:center;gap:3px;white-space:nowrap}
+.souls b{font-weight:700;color:var(--mist);margin-left:2px}
+.souls.none .soul{opacity:.35;filter:none}
+.souls:not(.none) .soul{animation:bob 3s ease-in-out infinite}
+.souls .soul:nth-child(2n){animation-delay:-1.5s}
+@keyframes bob{50%{transform:translateY(-3px)}}
+/* the automatic check under the two words */
+.check{margin:0;text-align:center;font-family:var(--display);font-weight:700;font-size:20px;color:var(--dim)}
+.check.right{color:var(--right)}.check.wrong{color:#ef8a9b}
+.invite{display:flex;flex-direction:column;align-items:center;gap:8px}
+.invite .btn{padding:10px 18px;font-size:15px}
+.win-soul{margin:6px 0 0;display:flex;align-items:center;gap:8px;font-family:var(--display);font-weight:700;color:var(--orchid);animation:rise .6s ease-out .9s both}
+.win-soul .soul{width:30px;height:36px;animation:float 2.4s ease-in-out 1s infinite}
+@keyframes float{50%{transform:translateY(-8px)}}
 
 /* the pool of words to connect */
 .pool{list-style:none;margin:0 auto;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:8px 14px;max-width:560px;

@@ -73,6 +73,9 @@ window.SpookeeOnline = (async () => {
       try { const s = await getDoc(doc(db, "rooms", code, "secrets", `${seat}_${step}`)); return s.exists() ? s.data().v : null; }
       catch (e) { if (e.code === "permission-denied") return null; throw e; }
     },
+    // your lobbies, kept on your account so every device you sign in on shows the same games
+    saveLobbies: list => setDoc(doc(db, "users", uid), { lobbies: list, updated: Date.now() }, { merge: true }),
+    loadLobbies: async () => { try { const s = await getDoc(doc(db, "users", uid)); return (s.exists() && s.data().lobbies) || []; } catch { return []; } },
     anonymous: () => !auth.currentUser || auth.currentUser.isAnonymous,
     email: () => (auth.currentUser && auth.currentUser.email) || "",
     // link this browser's anonymous player to google (keeps the same player);
