@@ -23,7 +23,7 @@ root.innerHTML = `<div class="wrap">
     <li><span>you each pick a card. nobody sees the other's.</span></li>
     <li><span><b>poof</b>, both cards show.</span></li>
     <li><span>you each type one word that connects them.</span></li>
-    <li><span>the same word, or close enough? <b class="r">spookee</b>. you catch a soul.</span></li>
+    <li><span>the same word, or close enough? <b class="r">spookee</b>. you win a coin.</span></li>
     <li><span>not the same? both words join the pool, so the next word has to fit all of it. the biggest words are the newest.</span></li>
     <li><span>three tries per pair of cards.</span></li>
   </ol>
@@ -86,13 +86,12 @@ function rankOf(st){
 }
 const rankLabel = r => r.tier ? `${r.name} ${ROMAN[r.sub]}` : r.name;
 
-/* ---------- souls: what you catch for a win ---------- */
-const SOUL = `<svg class="soul" viewBox="0 0 24 28" aria-hidden="true"><path d="M12 2c5 0 9 4 9 9v8.4c0 1.2-1.3 1.9-2.3 1.2l-1.2-.9-1.8 1.7a1.2 1.2 0 0 1-1.6 0L12 19.6l-2.1 1.8a1.2 1.2 0 0 1-1.6 0l-1.8-1.7-1.2.9C4.3 21.3 3 20.6 3 19.4V11c0-5 4-9 9-9z" fill="currentColor"/><circle cx="9" cy="11.5" r="1.7" fill="#09060d"/><circle cx="15" cy="11.5" r="1.7" fill="#09060d"/></svg>`;
+/* ---------- coins: what you win ---------- */
+const COIN = `<svg class="coin" viewBox="0 0 24 24" aria-hidden="true"><defs><radialGradient id="cg" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#fbeec4"/><stop offset=".45" stop-color="#d8b46a"/><stop offset="1" stop-color="#7a5a26"/></radialGradient></defs><circle cx="12" cy="12" r="11" fill="url(#cg)"/><circle cx="12" cy="12" r="8.6" fill="none" stroke="#5a4119" stroke-width=".8" stroke-dasharray="1.2 1.1"/><path d="M13.6 6.6a5.6 5.6 0 1 0 0 10.8 4.4 4.4 0 1 1 0-10.8z" fill="#5a4119"/><path d="M16.4 9.2l.5 1.2 1.3.1-1 .8.3 1.3-1.1-.7-1.1.7.3-1.3-1-.8 1.3-.1z" fill="#5a4119"/></svg>`;
 function souls(n){
   n = n || 0;
-  const label = `${n} ${n === 1 ? "soul" : "souls"}`;
-  if (!n) return `<span class="souls none" aria-label="${label}">${SOUL}<b>0</b></span>`;
-  return `<span class="souls" aria-label="${label}">${n <= 6 ? SOUL.repeat(n) : SOUL + `<b>×${n}</b>`}</span>`;
+  const label = `${n} ${n === 1 ? "coin" : "coins"}`;
+  return `<span class="coins${n ? "" : " none"}" aria-label="${label}">${COIN}<b>${n}</b></span>`;
 }
 
 /* ---------- the checker: same word, a near spelling, or a word that means the same ---------- */
@@ -541,7 +540,7 @@ function whoView(){
 let signErr = "";
 function accountLine(){
   if (mode !== "online") return "";
-  if (!online.anonymous()) return `<p class="note acct">${esc(online.email() || "signed in")} · your games follow you</p>`;
+  if (!online.anonymous()) return `<p class="note acct">${esc(online.email() || "signed in")}</p>`;
   return `<div class="acct"><button class="link" data-act="google">play on any device</button>
     ${signErr ? `<p class="warn" role="alert">${esc(signErr)}</p>` : ""}</div>`;
 }
@@ -698,15 +697,15 @@ function ranksView(){
     <div class="empty"><p class="note" style="margin:0">nothing yet</p></div>${ladder}`);
   return page(`<h1>see the others..</h1>
     <div class="board-wrap"><table class="board">
-      <thead><tr><th scope="col">#</th><th scope="col">pair</th><th scope="col">rank</th><th scope="col" class="num">success</th><th scope="col" class="num">souls</th><th scope="col" class="num">failed</th><th scope="col" class="num">guesses</th></tr></thead>
+      <thead><tr><th scope="col">#</th><th scope="col">pair</th><th scope="col">rank</th><th scope="col" class="num">success</th><th scope="col" class="num">coins</th><th scope="col" class="num">failed</th><th scope="col" class="num">guesses</th></tr></thead>
       <tbody>${rows.map((r, i) => `<tr class="${r.mine ? "mine" : ""}">
-        <td class="num">${i + 1}</td>
+        <td class="num pos">${i + 1}</td>
         <td class="pair-cell">${esc(((r.names || {}).a || "?"))} & ${esc(((r.names || {}).b || "?"))}${r.mine ? ` <small>you</small>` : ""}</td>
         <td class="rank t${r.rk.tier}">${esc(rankLabel(r.rk))}</td>
-        <td class="num"><b>${Math.round(r.rate * 100)}%</b></td>
-        <td class="num">${souls(r.successes)}</td>
-        <td class="num">${r.fails}</td>
-        <td class="num">${r.guesses}</td></tr>`).join("")}</tbody>
+        <td class="num" data-label="success"><b>${Math.round(r.rate * 100)}%</b></td>
+        <td class="num" data-label="coins">${souls(r.successes)}</td>
+        <td class="num" data-label="failed">${r.fails}</td>
+        <td class="num" data-label="guesses">${r.guesses}</td></tr>`).join("")}</tbody>
     </table></div>${ladder}`);
 }
 
@@ -766,7 +765,7 @@ function maybeCelebrate(){
       <div class="sparks" aria-hidden="true">${sparks}</div>
       <p class="win-word">${esc(w.word)}</p>
       <p class="win-line"><span>spookee,</span> <span>you guys said the same thing!</span></p>
-      <p class="win-soul">${SOUL}<span>+1 soul</span></p>
+      <p class="win-soul">${COIN}<span>+1 coin</span></p>
     </div>`;
   el.onclick = closeWin;
   document.body.appendChild(el);

@@ -12,7 +12,7 @@ Two players share a **lobby**. Cards are dealt the moment a lobby exists, so who
 4. The game checks the two words itself (there are no right/wrong buttons):
    - **the same:** identical once case, accents, "a/an/the" and punctuation are ignored; the same root word ("night" / "nights", "run" / "running"); or a one-letter typo (two letters for words of 8+).
    - **close enough:** words that mean about the same, looked up with the free Datamuse word API ("ocean" / "sea"). If Datamuse can't be reached, only the spelling checks count.
-   - **match:** both players catch a **soul** (the points) and see "spookee, you guys said the same thing!". A new reading starts with new cards.
+   - **match:** both players win a **coin** (the points) and see "spookee, you guys said the same thing!". A new reading starts with new cards.
    - **no match in round i or ii:** both guesses join the **pool**, and the next word has to connect all of it. The two newest words are shown largest; older words stay as context.
    - **no match in round iii (final):** the reading fails.
 
@@ -22,10 +22,10 @@ The **what do i do?** link next to the spookee wordmark opens a short how-to for
 
 ### Tabs
 
-- **who are you?** Type a name, then make a lobby (you get a code like `oak-46` and a link to send) or join one. Each lobby is one pair, and its souls and history stay with the code. A third person opening the code can only watch. "play on any device" signs your player in with Google: the same player, and the same list of lobbies, on every device you sign in on (kept in `users/<id>` in Firestore).
+- **who are you?** Type a name, then make a lobby (you get a code like `oak-46` and a link to send) or join one. Each lobby is one pair, and its coins and history stay with the code. A third person opening the code can only watch. "play on any device" signs your player in with Google: the same player, and the same list of lobbies, on every device you sign in on (kept in `users/<id>` in Firestore).
 - **crystal ball** The game.
 - **see the past** Every reading in this lobby: who drew which card, each round's words with "same", "close enough" or "not quite", and the final word as success or fail.
-- **see the others..** The leaderboard: every lobby's success rate, souls, fails, guesses and rank.
+- **see the others..** The leaderboard: every lobby's success rate, coins, fails, guesses and rank. On phones each pair is a stacked row so nothing is cut off.
 
 ### Ranks
 
@@ -53,12 +53,13 @@ If `firebase-config.js` still holds the placeholder, the game runs as one-device
 
 Dark velvet: black and deep purple with a lilac accent.
 
-- **Type:** Belion Radego (Denustudios, freeware for non-commercial use, self-hosted in `fonts/`) for the wordmark, headings, tabs, buttons, cards and words. Atkinson Hyperlegible for small text and all numbers, since Belion Radego's digits are blank placeholders. All lowercase.
+- **Type:** Belion Radego (Denustudios, freeware for non-commercial use, self-hosted in `fonts/`) only for the big lines: the wordmark, page headings, the lobby code, the help title and the win word. Everything else is Atkinson Hyperlegible, a sans designed to be easy to read (Belion Radego's digits are blank placeholders anyway). All lowercase. In `style.css`, `--deco` is the display face and `--read` the reading face.
+- **Colour roles:** mist for text, dim for secondary text, antique gilt for anything you can press or that marks the current thing, green for a match or someone being here, red for a miss. Lilac only as glow.
 - **Victorian finish:** square engraved plates instead of pills, antique-gilt double rules, ✥ corner ornaments, a ❦ under the current tab, tarot-style cards, ruled ledger lists.
 - **Cards:** five cards to choose from. Both flip at once on "poof".
 - **The pool:** a line of words, with the newest two set largest.
-- **Souls:** small ghost icons, one per win, in the game header, history and leaderboard.
-- **Win screen:** a burst of ✦ around the shared word, and "+1 soul" rising.
+- **Coins:** a small gold coin with a crescent moon and star, with the count beside it, one per win. Shown in the game header, history, "your lobbies" and the leaderboard.
+- **Win screen:** a burst of ✦ around the shared word, and "+1 coin" rising.
 - **Background:** ASCII lilies by chernobayv, now growing inside a crystal ball on a stand and recoloured into the velvet palette. The ball slowly clouds over and clears: fog banks drift inside it, the flowers fade in and out with the mist, and the edge of the glass is darker so the middle glows.
 
 ### How the ASCII background is made (bouquet.js)

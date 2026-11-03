@@ -390,3 +390,122 @@ h2,.lobbies h2,.game h2{font-family:var(--display);font-weight:400}
 .word strong{display:block;line-height:1.25}
 .pair .slot{font-family:var(--body)}
 .help-btn{border-bottom:0;text-decoration:underline;text-decoration-color:var(--gilt-dim);text-underline-offset:4px}
+
+/* =====================================================================
+   type split: belion radego only for the big display lines; everything
+   else in atkinson hyperlegible, a sans designed to be easy to read.
+   ===================================================================== */
+:root{--read:"Atkinson Hyperlegible","Segoe UI",system-ui,-apple-system,sans-serif}
+body{font-family:var(--read);font-size:17px;line-height:1.55}
+nav a,.btn,.card,.slot .card,.word strong,.pool li,.check,.small-pair,.board th,.ladder summary,.help-btn,.or,
+.big-in,#bridge-input,.side input,h2,.game h2,.lobbies h2,.win-line,.lbl,.note,.meta,.summary,.players li,.lob,.help li{
+  font-family:var(--read)}
+nav a{font-weight:700;font-size:15px;letter-spacing:0}
+.btn{font-weight:700;font-size:17px;letter-spacing:.01em}
+.card,.slot .card{font-weight:700;font-size:18px}
+.slot .card{font-size:21px}
+.word strong{font-weight:700;font-size:clamp(22px,6vw,30px)}
+.pool li{font-weight:700}
+.check{font-weight:700;font-size:19px}
+.small-pair{font-weight:700}
+.big-in,#bridge-input,.side input{font-weight:700;font-size:22px}
+.board th{font-weight:700;font-size:13px;letter-spacing:.02em}
+.ladder summary{font-weight:700;font-size:16px}
+.help-btn{font-weight:700;font-size:14px}
+.or{font-size:14px}
+h2,.game h2,.lobbies h2{font-weight:700;font-size:16px}
+.win-line{font-weight:700}
+/* big display lines keep belion radego */
+.mark,h1,.help-title,.win-word,.lobby .code{font-family:var(--display);font-weight:400}
+.lobby .code{letter-spacing:.02em}
+
+/* coins: a small gold moon-and-star coin */
+.coin{width:18px;height:18px;flex:none;vertical-align:-3px;filter:drop-shadow(0 0 4px #c9a86a66)}
+.coins{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;color:var(--gilt)}
+.coins b{font-weight:700;color:var(--gilt);font-variant-numeric:tabular-nums}
+.coins.none{opacity:.55}.coins.none .coin{filter:grayscale(.6)}
+.win-soul{color:var(--gilt)}
+.win-soul .coin{width:34px;height:34px;animation:float 2.4s ease-in-out 1s infinite}
+
+/* alignment */
+.wrap{width:100%}
+.meta{display:grid;grid-template-columns:1fr auto;align-items:center;gap:6px 12px}
+.meta .who{grid-column:1 / -1;grid-row:2;text-align:center;justify-self:center}
+.meta > span:last-child{justify-self:end}
+@media (min-width:560px){
+  .meta{grid-template-columns:auto 1fr auto}
+  .meta .who{grid-column:2;grid-row:1}
+}
+.deck{gap:12px}
+.pair,.words{max-width:520px;margin-inline:auto;width:100%}
+.field{margin-inline:auto;width:100%}
+.entry,.lobby,.lobbies,.ladder{margin-inline:auto;width:100%;max-width:440px}
+
+/* leaderboard: a table on wide screens, stacked rows on phones so nothing is cut off */
+@media (max-width:560px){
+  .board-wrap{overflow:visible}
+  .board thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  .board,.board tbody{display:block;width:100%}
+  .board tr{display:grid;grid-template-columns:auto 1fr auto;gap:4px 12px;align-items:center;padding:12px 10px;border-bottom:1px solid #c9a86a30}
+  .board tr.mine{background:#2a0f3a}
+  .board td{display:block;padding:0;border:0;background:transparent!important;white-space:normal}
+  .board td.pos{grid-row:1 / span 2;align-self:center;color:var(--dim)}
+  .board td.pair-cell{grid-column:2}
+  .board td.rank{grid-column:3;text-align:right}
+  .board td[data-label]{grid-column:2 / -1;display:inline-flex;align-items:center;gap:6px;text-align:left}
+  .board td[data-label]::before{content:attr(data-label);color:var(--dim);font-size:13px}
+  .board tr{grid-auto-rows:auto}
+  .board td[data-label="success"]{grid-row:2;grid-column:2}
+  .board td[data-label="coins"]{grid-row:2;grid-column:3;justify-content:flex-end}
+  .board td[data-label="failed"]{grid-row:3;grid-column:2}
+  .board td[data-label="guesses"]{grid-row:3;grid-column:3;justify-content:flex-end}
+}
+
+/* =====================================================================
+   consistency pass
+   type:   --deco (belion radego) only on the five big lines below;
+           every other line of text is atkinson hyperlegible.
+   colour: mist = text, dim = secondary text, gilt = anything you can
+           press or that marks the current thing, green = match / here,
+           red = miss. lilac only as glow.
+   ===================================================================== */
+:root{--deco:"Belion Radego",Georgia,serif;--display:var(--read)}
+.mark,h1,.help-title,.win-word,.lobby .code{font-family:var(--deco);font-weight:400}
+.rn,.meta b,.chain b,.to,.tag,.pair-cell,.rank,.field label,.word small,.small-pair,.pool li,.check,.lob b,.summary,.board td{font-family:var(--read)}
+
+/* sizes: one scale. 13 meta · 15 labels · 17 body · 19–30 emphasis */
+.note,.summary,.lbl,.field label,.word small,.players small,.board small,.tag{font-size:14px}
+.rn{font-size:14px;font-weight:700}
+.chain{font-size:15px}
+.chain b{font-weight:700}
+.to{font-size:18px;font-weight:700}
+.tag{font-weight:700;letter-spacing:.02em}
+.rank{font-size:15px;font-weight:700;color:var(--dim)}
+.rank.t7,.rank.t8,.rank.t9,.rank.t10,.rank.t11{color:var(--mist)}
+.pair-cell{font-size:15px;font-weight:700}
+.meta{font-size:15px}
+
+/* colour roles */
+h1{color:var(--mist)}
+h2,.game h2,.lobbies h2{color:var(--mist)}
+.game h2 i,.small-pair i{color:var(--gilt-dim)}
+.lobby .code{color:var(--gilt);text-shadow:0 0 18px #c9a86a40}
+.lob b{color:var(--gilt)}
+.lbl,.field label,.note,.summary,.word small,.chain,.rn{color:var(--dim)}
+.chain b,.pool li.new,.word strong,.card{color:var(--mist)}
+.pool li{color:var(--dim)}
+.win-line span:first-child,.help b,.help li::before{color:var(--gilt)}
+.help b.r{color:var(--right)}
+.check{color:var(--dim)}.check.right,.to.right,.tag.right{color:var(--right)}.check.wrong,.to.wrong,.tag.wrong{color:#ef8a9b}
+.players li.me{border-left-color:var(--gilt)}
+.card .soul,.card::before,.card::after{color:var(--gilt-dim)}
+
+/* win: an opaque veil, so nothing behind it competes */
+#win{background:radial-gradient(circle at 50% 45%,#2a0f3a 0,#0d0713 70%)}
+
+/* alignment details */
+.summary{text-align:center;text-wrap:balance}
+.game h2{text-align:left}
+.rounds li{align-items:center}
+.lbl{text-align:left;width:100%}
+.board td:first-child,.board td:last-child{border-radius:0}
