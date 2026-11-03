@@ -1,0 +1,63 @@
+/* spookee rank icons, generated from icons/*.svg. One per rank, lowest (fog) to highest (the crystal ball). */
+window.SPOOKEE_ICONS = [
+ {
+  "key": "fog",
+  "name": "in the fog",
+  "svg": "<path d=\"M3 8.5c2-1.6 4-1.6 6 0s4 1.6 6 0 4-1.6 6 0\"/><path d=\"M5 12.5c1.7-1.3 3.3-1.3 5 0s3.3 1.3 5 0 3.3-1.3 5 0\" opacity=\".7\"/><path d=\"M3 16.5c2-1.6 4-1.6 6 0s4 1.6 6 0 4-1.6 6 0\" opacity=\".45\"/>"
+ },
+ {
+  "key": "dabbler",
+  "name": "dabbler",
+  "svg": "<path d=\"M12 3c2.6 3.4 4.3 5.6 4.3 7.9a4.3 4.3 0 0 1-8.6 0C7.7 8.6 9.4 6.4 12 3z\"/><path d=\"M10.4 11.6a1.8 1.8 0 0 0 1.4 1.5\"/><ellipse cx=\"12\" cy=\"19.6\" rx=\"7.5\" ry=\"1.7\"/><path d=\"M8 19.6h8\" opacity=\".45\"/>"
+ },
+ {
+  "key": "leaf",
+  "name": "leaf reader",
+  "svg": "<path d=\"M5 11h11v1.5a5.5 5.5 0 0 1-11 0z\"/><path d=\"M16 12.2h1.4a1.9 1.9 0 0 1 0 3.8h-2\"/><path d=\"M3.5 20.5h15\"/><path d=\"M8.6 8.4c.1-2.6 1.9-4.3 4.7-4.6-.2 2.7-2 4.4-4.7 4.6z\"/><path d=\"M8.6 8.4l2.6-2.4\"/>"
+ },
+ {
+  "key": "candle",
+  "name": "candle keeper",
+  "svg": "<path d=\"M12 3c1.8 2 2.4 3.2 2.4 4.3a2.4 2.4 0 0 1-4.8 0C9.6 6.2 10.2 5 12 3z\"/><path d=\"M12 9.7v1.3\"/><rect x=\"9\" y=\"11\" width=\"6\" height=\"8.5\" rx=\".6\"/><path d=\"M5.5 20.5h13\"/><path d=\"M15 13.5c.8.2 1.2.8 1.2 1.6\" opacity=\".6\"/>"
+ },
+ {
+  "key": "palm",
+  "name": "palm reader",
+  "svg": "<path d=\"M7.6 12.2V6.4a1.2 1.2 0 0 1 2.4 0v4.4V4.9a1.2 1.2 0 0 1 2.4 0v5.9V5.6a1.2 1.2 0 0 1 2.4 0v5.6V8a1.2 1.2 0 0 1 2.4 0v6.6c0 3.6-2.5 6.4-5.6 6.4-2.2 0-3.6-1-4.7-2.8l-2-3.4a1.3 1.3 0 0 1 2.1-1.5z\"/><path d=\"M10.4 18c1.6-.4 2.9-1.5 3.4-3.2\" opacity=\".7\"/><circle cx=\"13.2\" cy=\"13.6\" r=\".7\" fill=\"currentColor\" stroke=\"none\"/>"
+ },
+ {
+  "key": "card",
+  "name": "card reader",
+  "svg": "<rect x=\"6\" y=\"3\" width=\"12\" height=\"18\" rx=\"1.2\"/><rect x=\"8.2\" y=\"5.2\" width=\"7.6\" height=\"13.6\" rx=\".4\" opacity=\".55\"/><path d=\"M12 8.6l.9 2.5 2.5.9-2.5.9-.9 2.5-.9-2.5-2.5-.9 2.5-.9z\"/>"
+ },
+ {
+  "key": "seance",
+  "name": "séance holder",
+  "svg": "<path d=\"M12 3.2c4.3 0 7.3 3.8 7.3 7.6 0 3.9-3.4 7.7-7.3 9.6-3.9-1.9-7.3-5.7-7.3-9.6 0-3.8 3-7.6 7.3-7.6z\"/><circle cx=\"12\" cy=\"9.8\" r=\"2.4\"/><circle cx=\"8.4\" cy=\"15\" r=\".8\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"15.6\" cy=\"15\" r=\".8\" fill=\"currentColor\" stroke=\"none\"/>"
+ },
+ {
+  "key": "medium",
+  "name": "medium",
+  "svg": "<path d=\"M12 21c-3.6 0-6-2.4-6-5.4 0-3.8 4.3-4.9 4.3-8.6 0-1.2-.5-2.4-1.3-3.4 3.6.6 6.9 3.9 6.9 8.2 0 1-.2 1.9-.7 2.8.9-.3 1.6-.9 2.1-1.7.5.8.7 1.7.7 2.7 0 3-2.4 5.4-6 5.4z\"/><circle cx=\"11.6\" cy=\"16.4\" r=\"1.6\"/>"
+ },
+ {
+  "key": "seer",
+  "name": "seer",
+  "svg": "<path d=\"M2.5 13s3.6-6 9.5-6 9.5 6 9.5 6-3.6 6-9.5 6-9.5-6-9.5-6z\"/><circle cx=\"12\" cy=\"13\" r=\"3\"/><circle cx=\"12\" cy=\"13\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M12 3.2v1.8M6.4 4.6l1 1.5M17.6 4.6l-1 1.5\"/>"
+ },
+ {
+  "key": "wraith",
+  "name": "wraith",
+  "svg": "<path d=\"M12 3c-3.9 0-6.2 3.2-6.2 7.2V21l2.1-1.6 2 1.6 2.1-1.6 2.1 1.6 2-1.6 2.1 1.6V10.2C18.2 6.2 15.9 3 12 3z\"/><path d=\"M9.3 12.2c0-1.9 1.2-3.3 2.7-3.3s2.7 1.4 2.7 3.3v2.4H9.3z\" opacity=\".75\"/><circle cx=\"10.9\" cy=\"12.6\" r=\".55\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"13.1\" cy=\"12.6\" r=\".55\" fill=\"currentColor\" stroke=\"none\"/>"
+ },
+ {
+  "key": "stargazer",
+  "name": "star gazer",
+  "svg": "<path d=\"M4.6 14.6l9.8-5.7 1.7 2.9-9.8 5.7z\"/><path d=\"M14.4 8.9l2.2-1.3 1.7 2.9-2.2 1.3\"/><path d=\"M3.4 15.3l1.2-.7 1.7 2.9-1.2.7z\"/><path d=\"M10.4 15.2l-2 5.6M10.4 15.2l2.6 5.6\"/><path d=\"M19.2 2.8l.6 1.6 1.6.6-1.6.6-.6 1.6-.6-1.6-1.6-.6 1.6-.6z\"/>"
+ },
+ {
+  "key": "ball",
+  "name": "the crystal ball",
+  "svg": "<circle cx=\"12\" cy=\"10.2\" r=\"6.6\"/><path d=\"M8.8 7.6a4.4 4.4 0 0 1 2.7-1.9\"/><path d=\"M14.4 9.6l.5 1.3 1.3.5-1.3.5-.5 1.3-.5-1.3-1.3-.5 1.3-.5z\"/><path d=\"M7.6 16.2h8.8l1.6 4.3H6z\"/><path d=\"M6 20.5h12\" opacity=\".6\"/>"
+ }
+];

@@ -8,11 +8,11 @@ Two players share a **lobby**. Cards are dealt the moment a lobby exists, so who
 
 1. **choose... your fate...** Each player gets their own five cards from a 400-word pool. The two hands never overlap, and no word comes back until the pool runs low.
 2. Both lock in, then **poof**: both cards show.
-3. **pick a word.. any word..** Each player types one word that connects them, locks in, then poof.
+3. **pick a word.. any word..** Each player types one word that connects them, locks in, then both words show.
 4. The game checks the two words itself (there are no right/wrong buttons):
    - **the same:** identical once case, accents, "a/an/the" and punctuation are ignored; the same root word ("night" / "nights", "run" / "running"); or a one-letter typo (two letters for words of 8+).
    - **close enough:** words that mean about the same, looked up with the free Datamuse word API ("ocean" / "sea"). If Datamuse can't be reached, only the spelling checks count.
-   - **match:** both players win a **coin** (the points) and see "spookee, you guys said the same thing!". A new reading starts with new cards.
+   - **match:** both players see "spookee, you guys said the same thing!" and the pair's score goes up. A new reading starts with new cards.
    - **no match in round i or ii:** the two guesses become a new **row** under the cards, and the next word has to fit every row, the bottom (newest) one most. The lilies in the background wither back to buds for a moment.
    - **no match in round iii (final):** the reading fails: "the vision fades" plays for both players and the lilies wither back to bare stems, then grow again.
 
@@ -22,26 +22,46 @@ The **what do i do?** link next to the spookee wordmark opens a short how-to for
 
 ### Tabs
 
-- **see yourself** Your lobbies are listed here, the ones waiting on you first (green "your move"), then the rest, with a "new lobby" button. A green number on this tab counts lobbies that need you. Type a name, then make a lobby (you get a code like `oak-46` and a link to send) or join one. Each lobby is one pair, and its coins and history stay with the code. A third person opening the code can only watch. "play on any device" signs your player in with Google: the same player, and the same list of lobbies, on every device you sign in on (kept in `users/<id>` in Firestore).
+- **see yourself** Your best rank across every lobby sits here, as a card with your name, the rank's icon, who it's with and its line (beside the page on wide screens). Your lobbies are listed here, the ones waiting on you first (green "your move"), then the rest, with a "new lobby" button. A green number on this tab counts lobbies that need you. Type a name, then make a lobby (you get a code like `oak-46` and a link to send) or join one. Each lobby is one pair, and its score and history stay with the code. A third person opening the code can only watch. "play on any device" signs your player in with Google: the same player, and the same list of lobbies, on every device you sign in on (kept in `users/<id>` in Firestore).
 - **see the orb** The game. The words so far are stacked one row per try: cards, then i, ii, iii, under each player's name.
 - **see the past** Every reading in this lobby, in the same rows: who drew which card, each round's words with "same", "close enough" or "not quite", and the final word as success or fail.
-- **see the others** A vertical spectrum of every rank on the left (highest at the top, with how many readings each needs and how many pairs sit there), and the leaderboard: every lobby's success rate, coins, fails, guesses and rank. On phones each pair is a stacked row so nothing is cut off.
+- **see the others** A vertical spectrum of every rank on the left (highest at the top, with how many readings each needs and how many pairs sit there), and the leaderboard: every lobby's rank (with its icon), success rate, fails and guesses. On phones each pair is a stacked row so nothing is cut off.
+
+### The big lines
+
+No "poof". Each screen's heading nudges instead, picked per reading so it doesn't flicker: when the cards show ("do you have a connection?", "anything coming to you?", "what's the thread?"), while typing ("think about it bro...", "don't think too much", "keep it simple..?", "pick a word.. any word.."), and when the words show ("you guys tapped in?", "same wavelength?", "did you link up?"). Edit them in `LINES` in `game.js`.
+
+### Brilliant
+
+Rarely, a typed word reaches both words above it by a road nobody takes, like **bottle** for storm + water (lightning in a bottle, a water bottle). Then the word's box swells with a teal ring and a **!!** mark, like a brilliant move in chess, the crystal ball flares behind it, and the line under it names the saying it came from. It's marked !! in "see the past" too.
+
+How it's decided (`brilliance()` in `game.js`, using Datamuse):
+
+1. The word must be linked to both words above it: it appears in each one's association list (meaning-alike plus statistically linked words), or it belongs to a phrase that contains that word or one of its top 60 associations.
+2. It must not be an obvious answer: not in the top 15 associations of either word.
+3. At least one link must be a saying or phrase, or the word must sit deep (past the top 40) in both lists.
+4. Kept rare: at most one brilliant word in any five readings of a lobby.
+
+If Datamuse can't be reached, nothing is ever brilliant.
 
 ### Ranks
 
-Ranks follow Deadlock's ladder shape: 11 tiers with subranks I–VI, plus unranked. The names are crystal-ball themed, lowest to highest:
+Ranks follow Deadlock's ladder shape: 11 tiers with subranks I–VI, plus unranked. The names are crystal-ball themed, lowest to highest, each with its own icon (`icons/`, see `icons/index.html` for the sheet) and a line shown on your rank card:
 
-1. dabbler
-2. leaf reader
-3. candle keeper
-4. palm reader
-5. card reader
-6. séance holder
-7. medium
-8. seer
-9. wraith
-10. star gazer
-11. the crystal ball
+| rank | icon | line |
+|---|---|---|
+| in the fog | `fog.svg`, three drifting lines | "you are obscured." |
+| dabbler | `dabbler.svg`, a drop over a ripple | "dipping a toe in the unknown. the water's warm." |
+| leaf reader | `leaf.svg`, a teacup with a leaf | "the tea leaves spell out "nice". probably." |
+| candle keeper | `candle.svg`, a lit candle | "you keep the flame. don't let it go out." |
+| palm reader | `palm.svg`, an open hand with a life line | "your palms say a really good boba is in your near future." |
+| card reader | `card.svg`, a tarot card with a star | "you drew the card that says you're on a roll." |
+| séance holder | `seance.svg`, a planchette | "the spirits rsvp'd. you're hosting now." |
+| medium | `medium.svg`, a rising spirit flame | "not small, not large. perfectly attuned." |
+| seer | `seer.svg`, an eye with lashes of light | "you see things in a unique way." |
+| wraith | `wraith.svg`, a hooded figure | "half here, half beyond. the veil thins for you." |
+| star gazer | `stargazer.svg`, a telescope and a star | "the stars gaze back at you." |
+| the crystal ball | `ball.svg`, a crystal ball on a stand | "you are the pinnacle, the one with all in vision." |
 
 Under 5 readings a pair is "in the fog". The rating is the success rate, with agreement in round i worth more than in round iii, smoothed so a few lucky readings don't top the board.
 
@@ -81,8 +101,7 @@ Dark velvet: black and deep purple with a lilac accent.
 - **Victorian finish:** square engraved plates instead of pills; tabs are separate plates, the current one filled in gilt, antique-gilt double rules, ✥ corner ornaments, a ❦ under the current tab, tarot-style cards, ruled ledger lists.
 - **Cards:** five cards to choose from. Both flip at once on "poof".
 - **The pool:** a line of words, with the newest two set largest.
-- **Coins:** a small gold line icon (a crescent moon and star) with the count beside it, one per win; never the word "coins". Shown in the game header, history, "your lobbies" and the leaderboard.
-- **Win screen:** a burst of ✦ around the shared word, and "+1 coin" rising.
+- **Win screen:** a burst of ✦ around the shared word.
 - **Background:** ASCII lilies by chernobayv, now growing inside a crystal ball on a stand and recoloured into the velvet palette. The ball slowly clouds over and clears: fog banks drift inside it, the flowers fade in and out with the mist, and the edge of the glass is darker so the middle glows.
 
 ### How the ASCII background is made (bouquet.js)
@@ -120,6 +139,7 @@ spookee/
   bouquet.js          ASCII lilies background, adapted from chernobayv/asciiFlowers (used with permission)
   words.js            the 400-word card pool
   lexicon.js          the ecology of lexicon (force-directed word map)
+  icons/              rank icons: one .svg per rank, icons.js (what the game loads), index.html (the icon sheet)
   firebase-config.js  Firebase web config (project spookee-bcf91; public by design)
   online.js           lobbies, hidden picks and the leaderboard on Firebase (loads only when configured)
   game.js             the game: state, rules, screens, keyboard, help dialog

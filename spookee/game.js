@@ -22,9 +22,9 @@ root.innerHTML = `<div class="wrap">
   <p class="help-title" id="help-title">what do i do?</p>
   <ol>
     <li><span>you each pick a card. nobody sees the other's.</span></li>
-    <li><span><b>poof</b>, both cards show.</span></li>
+    <li><span>both cards show at once.</span></li>
     <li><span>you each type one word that connects them.</span></li>
-    <li><span>the same word, or close enough? <b class="r">spookee</b>. you win a coin.</span></li>
+    <li><span>the same word, or close enough? <b class="r">spookee</b>.</span></li>
     <li><span>not the same? your two words become a new row. the next word has to fit every row, the bottom one most.</span></li>
     <li><span>three tries per pair of cards.</span></li>
   </ol>
@@ -98,14 +98,26 @@ function rankOf(st){
   return { name:TIERS[tier - 1], tier, sub, need:0 };
 }
 const rankLabel = r => r.tier ? `${r.name} ${ROMAN[r.sub]}` : r.name;
-
-/* ---------- coins: what you win ---------- */
-const COIN = `<svg class="coin" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 3.6a8.5 8.5 0 1 0 4.9 12.9A7 7 0 0 1 15.5 3.6z"/><path d="M17.6 6.2l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z" fill="currentColor" stroke-width="1"/></svg>`;
-function souls(n){
-  n = n || 0;
-  const label = `${n} ${n === 1 ? "coin" : "coins"}`;
-  return `<span class="coins${n ? "" : " none"}" aria-label="${label}">${COIN}<b>${n}</b></span>`;
+const ICONS = window.SPOOKEE_ICONS || [];
+function rankIcon(r, cls){
+  const ic = ICONS[(r && r.tier) || 0];
+  return ic ? `<svg class="rk t${(r && r.tier) || 0}${cls ? " " + cls : ""}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="${esc(ic.name)}">${ic.svg}</svg>` : "";
 }
+// something to say about each rank, lowest to highest
+const RANK_LINES = [
+  "you are obscured.",
+  "dipping a toe in the unknown. the water's warm.",
+  "the tea leaves spell out \"nice\". probably.",
+  "you keep the flame. don't let it go out.",
+  "your palms say a really good boba is in your near future.",
+  "you drew the card that says you're on a roll.",
+  "the spirits rsvp'd. you're hosting now.",
+  "not small, not large. perfectly attuned.",
+  "you see things in a unique way.",
+  "half here, half beyond. the veil thins for you.",
+  "the stars gaze back at you.",
+  "you are the pinnacle, the one with all in vision.",
+];
 
 /* ---------- the checker: same word, a near spelling, or a word that means the same ---------- */
 function norm(w){
@@ -150,6 +162,46 @@ async function judge(a, b){
   if (ra.has(sb) || rb.has(sa)) return { v:"right", how:"close" };
   return { v:"wrong", how:"different" };
 }
+// ordered association lists from Datamuse (meaning-alike + statistically linked), and phrases a word appears in
+const assocs = {}, phr = {};
+async function dm(params){
+  try {
+    const ctl = new AbortController(); setTimeout(() => ctl.abort(), 3500);
+    return await fetch("https://api.datamuse.com/words?" + params, { signal:ctl.signal }).then(r => r.json());
+  } catch { return []; }
+}
+function assoc(w){
+  return assocs[w] || (assocs[w] = (async () => {
+    const [ml, trg] = await Promise.all([dm(`ml=${encodeURIComponent(w)}&max=300`), dm(`rel_trg=${encodeURIComponent(w)}&max=150`)]);
+    const out = [];
+    for (const x of ml.concat(trg)) { if (!/\s/.test(x.word)) { const k = stem(norm(x.word)); if (!out.includes(k)) out.push(k); } }
+    return out;
+  })());
+}
+function phrasesOf(w){
+  return phr[w] || (phr[w] = (async () => (await dm(`ml=${encodeURIComponent(w)}&max=300`)).map(x => norm(x.word)).filter(p => /\s/.test(p)))());
+}
+// A word is brilliant when it reaches both words above it, but by a road nobody takes:
+//  - it's linked to both (in each one's association list, or through a saying it belongs to),
+//  - it is NOT an obvious answer for either (not in the top 15 for either side),
+//  - and at least one link is a saying/phrase, or it sits deep in both lists.
+async function brilliance(w, A, B){
+  const W = norm(w), a = norm(A), b = norm(B);
+  if (W.length < 3 || !a || !b) return null;
+  const sw = stem(W), sa = stem(a), sb = stem(b);
+  if (sw === sa || sw === sb) return null;
+  const [la, lb, ps] = await Promise.all([assoc(a), assoc(b), phrasesOf(W)]);
+  if (!la.length || !lb.length) return null;
+  const ra = la.indexOf(sw), rb = lb.indexOf(sw);
+  const near = (list, s0) => t => t !== sw && (t === s0 || list.slice(0, 60).includes(t));
+  const pa = ps.find(p => p.split(" ").map(stem).some(near(la, sa))) || "";
+  const pb = ps.find(p => p.split(" ").map(stem).some(near(lb, sb))) || "";
+  const linkA = ra >= 0 || !!pa, linkB = rb >= 0 || !!pb;
+  if (!linkA || !linkB) return null;
+  if ((ra >= 0 && ra < 15) || (rb >= 0 && rb < 15)) return null;
+  if (!(pa || pb) && !(ra > 40 && rb > 40)) return null;
+  return { phrase: pa || pb || "" };
+}
 const verdicts = {};      // reading-round -> {v, how} once checked
 let judging = "";
 function autoJudge(){
@@ -160,11 +212,19 @@ function autoJudge(){
   if (judging === key) return;
   judging = key;
   const t0 = Date.now(), r = game.reading, rd = game.round;
-  judge(pub.a, pub.b).then(res => {
+  const above = rd === 1 ? [(game.cards || {}).a, (game.cards || {}).b] : (() => { const t = (game.attempts || [])[rd - 2] || {}; return [t.a, t.b]; })();
+  // kept rare: at most one brilliant word in any five readings of a lobby
+  const recent = lineage.filter(x => x.reading >= r - 4).some(x => (x.attempts || []).some(t => t.brill));
+  Promise.all([judge(pub.a, pub.b),
+    recent ? null : brilliance(pub.a, above[0], above[1]), recent ? null : brilliance(pub.b, above[0], above[1])]).then(([res, ba, bb]) => {
+    const bs = ba ? "a" : bb ? "b" : "";
+    if (bs) res = { ...res, brill:bs, phrase:(ba || bb).phrase };
     verdicts[key] = res; render();
-    if (res.v === "wrong" && window.spookeeBloom) window.spookeeBloom.wither("miss");
-    // let both words sit on screen a moment before moving on
-    setTimeout(() => { if (game && game.reading === r && game.round === rd && game.stage === "bridge") verdict(res.v, res.how); }, Math.max(900, 2400 - (Date.now() - t0)));
+    if (bs && window.spookeeBloom) window.spookeeBloom.surge();
+    else if (res.v === "wrong" && window.spookeeBloom) window.spookeeBloom.wither("miss");
+    // let both words sit on screen a moment before moving on (longer for a brilliant one)
+    setTimeout(() => { if (game && game.reading === r && game.round === rd && game.stage === "bridge") verdict(res.v, res.how, bs, res.phrase); },
+      Math.max(900, (bs ? 4600 : 2400) - (Date.now() - t0)));
   });
 }
 
@@ -310,14 +370,14 @@ function toBridge(){
 }
 // A reading is one pair of chosen cards, with up to three rounds to agree on a word:
 // right ends it (+1, new cards, round i), wrong tries again, wrong in round iii fails it.
-function verdict(v, how){
+function verdict(v, how, brill, phrase){
   const g = game, r = g.reading, rd = g.round;
   pick = null; draft = "";
   let rec = null;
   write(async () => {
     const ok = await store.transact(cur => {
       if (!cur || cur.reading !== r || cur.round !== rd || cur.stage !== "bridge" || !cur.bridge || !cur.bridge.a || !cur.bridge.b) return null;
-      const attempts = (cur.attempts || []).concat([{ round:rd, a:cur.bridge.a, b:cur.bridge.b, verdict:v, how:how || "" }]);
+      const attempts = (cur.attempts || []).concat([{ round:rd, a:cur.bridge.a, b:cur.bridge.b, verdict:v, how:how || "", ...(brill ? { brill, phrase:phrase || "" } : {}) }]);
       if (v === "right" || rd >= 3) {
         const result = v === "right" ? "right" : "wrong";
         rec = { reading:r, names:{...cur.names}, cards:{...cur.cards}, attempts, result, at:Date.now() };
@@ -379,6 +439,43 @@ function updateBadge(){
   if (!b) { b = document.createElement("b"); b.className = "badge"; a.appendChild(b); }
   b.textContent = n; b.setAttribute("aria-label", n + (n === 1 ? " lobby needs you" : " lobbies need you"));
 }
+// your best rank across every lobby you play in
+const boardRows = {};
+function fetchMyBoards(){
+  if (mode !== "online" || !online.getBoard) return;
+  myLobbies().forEach(l => {
+    if (l.code in boardRows) return;
+    boardRows[l.code] = null;
+    online.getBoard(l.code).then(r => { boardRows[l.code] = r; if (tab() === "who") render(); }).catch(() => {});
+  });
+}
+function bestRank(){
+  const cands = [];
+  if (mode === "online") {
+    fetchMyBoards();
+    myLobbies().forEach(l => {
+      const row = boardRows[l.code] || board.find(b => b.id === l.code);
+      if (row) { const d = lobbyLive[l.code], seats = (d && d.seats) || {}, me = seats.a === uid ? "a" : seats.b === uid ? "b" : null;
+        cands.push({ rk:rankOf(row), names:row.names || {}, me, code:l.code }); }
+    });
+    if (lobbyCode && lineage.length) cands.push({ rk:rankOf(statsOf(lineage)), names:(game && game.names) || {}, me:seat, code:lobbyCode });
+  } else if (lineage.length) cands.push({ rk:rankOf(statsOf(lineage)), names:names(), me:seat, code:"" });
+  cands.sort((x, y) => (y.rk.tier * 10 + y.rk.sub) - (x.rk.tier * 10 + x.rk.sub));
+  return cands[0] || { rk:rankOf({ readings:0 }), names:{}, me:null, code:"" };
+}
+function rankCard(){
+  const b = bestRank();
+  const myName = (b.me && b.names[b.me]) || entry.name || (seat && nm(seat)) || "you";
+  const partner = b.me && b.names[other(b.me)];
+  return `<aside class="rankcard" aria-label="your best rank">
+    ${rankIcon(b.rk, "big")}
+    <div class="rc-text">
+      <p class="rc-name">${esc(myName)}</p>
+      <p class="rc-rank">${esc(rankLabel(b.rk))}${partner ? ` <span>with ${esc(partner)}</span>` : ""}</p>
+      <p class="rc-line">${esc(RANK_LINES[b.rk.tier] || RANK_LINES[0])}</p>
+    </div>
+  </aside>`;
+}
 function lobbiesPanel(){
   if (mode !== "online") return "";
   watchLobbies();
@@ -389,7 +486,7 @@ function lobbiesPanel(){
       <b>${esc(r.code)}</b>
       <span class="who-line">${esc(r.names.a || "?")} & ${esc(r.names.b || "…")}</span>
       <span class="state">${r.mv === "your move" ? "your move" : esc(r.mv || "…")}${r.code === lobbyCode ? " · open" : ""}</span>
-      ${souls(r.score)}</button></li>`;
+      </button></li>`;
   return `<section class="lobbies">
     <div class="lobbies-head"><h2>your lobbies</h2>${lobbyCode ? `<button class="btn ghost" data-act="leave">new lobby</button>` : ""}</div>
     ${yours.length ? `<p class="group">waiting on you</p><ul>${yours.map(item).join("")}</ul>` : ""}
@@ -540,10 +637,10 @@ function whoView(){
         <input id="name-${s}" data-name="${s}" value="${esc(names()[s])}" maxlength="16" autocomplete="off" placeholder="your name" aria-label="name for ${FALLBACK[s]}">
         <button class="btn ${seat === s ? "" : "ghost"}" data-seat="${s}" ${(names()[s] || "").trim() ? "" : "disabled"}>${seat === s ? "this is me" : "i'm " + esc(nm(s))}</button>
       </section>`;
-    return page(`<h1>see yourself</h1><div class="sides">${side("a")}${side("b")}</div>`);
+    return page(`<h1>see yourself</h1>${rankCard()}<div class="sides">${side("a")}${side("b")}</div>`);
   }
   if (!lobbyCode) {
-    return page(`<h1>see yourself</h1>
+    return page(`<h1>see yourself</h1>${rankCard()}
       <form class="entry" id="entry-form" autocomplete="off">
         <label class="lbl" for="entry-name">your name</label>
         <input id="entry-name" class="big-in" value="${esc(entry.name)}" maxlength="16" spellcheck="false">
@@ -557,13 +654,13 @@ function whoView(){
       ${accountLine()}
       ${lobbiesPanel()}`);
   }
-  if (!loaded) return page(`<h1>see yourself</h1><p class="note">opening ${esc(lobbyCode)}…</p>`);
+  if (!loaded) return page(`<h1>see yourself</h1>${rankCard()}<p class="note">opening ${esc(lobbyCode)}…</p>`);
   const full = !seat;
   const row = s => {
     const has = game && game.seats && game.seats[s];
     return `<li class="${seat === s ? "me" : ""}">${dot(s)}<span>${has ? esc(nm(s)) : "…"}</span>${seat === s ? `<small>you</small>` : ""}</li>`;
   };
-  return page(`<h1>see yourself</h1>
+  return page(`<h1>see yourself</h1>${rankCard()}
     <section class="lobby">
       <p class="lbl">lobby</p>
       <p class="code">${esc(lobbyCode)}</p>
@@ -597,7 +694,7 @@ async function google(){
   }
 }
 function header(){
-  const right = souls(game.score);
+  const right = `<span class="rankchip">${rankIcon(rankOf(statsOf(lineage)))}</span>`;
   const left = `<span>round <b>${ROMAN[game.round] || "III"}</b> of III${game.round === 3 ? " · final" : ""}</span>`;
   const who = mode === "local"
     ? `<span class="who">you are <b>${esc(nm(seat))}</b> · <button class="link" data-act="switch">switch</button></span>`
@@ -610,6 +707,13 @@ const awayNote = them => mode === "local" ? "" : alone()
   ? `<div class="invite"><p class="note">send them <b>${esc(lobbyCode)}</b></p><button class="btn ghost" data-act="copy">copy link</button></div>`
   : `<p class="note">come back anytime</p>`;
 
+// the big line on each screen, picked per reading and round so it doesn't flicker
+const LINES = {
+  cards: ["do you have a connection?", "anything coming to you?", "what's the thread?"],
+  type:  ["think about it bro...", "don't think too much", "keep it simple..?", "pick a word.. any word.."],
+  words: ["you guys tapped in?", "same wavelength?", "did you link up?"],
+};
+function line(kind, salt){ const l = LINES[kind]; return l[((game.reading || 1) * 7 + (salt || 0) * 3) % l.length]; }
 function checkLine(){
   const res = verdicts[game.reading + "-" + game.round];
   if (!res) return `<p class="check">reading the words…</p>`;
@@ -641,14 +745,14 @@ function ballView(){
   if (st === "cards") {
     if (bothOut) {
       const key = "c" + game.reading, anim = lastReveal !== key ? "flip" : ""; lastReveal = key;
-      body = `<h1>poof</h1>
+      body = `<h1>${line("cards")}</h1>
         <div class="pair">
           <div class="slot"><div class="card static ${anim}">${esc(pub.a)}</div>${esc(nm("a"))}</div>
           <div class="slot"><div class="card static ${anim}" style="animation-delay:.15s">${esc(pub.b)}</div>${esc(nm("b"))}</div>
         </div>
         <div class="row"><button class="btn" data-act="bridge">pick a word.. any word..</button></div>`;
     } else if (mineIn) {
-      body = `<h1>${theirsIn ? "poof is coming…" : alone() ? "waiting for someone to join" : "waiting for " + esc(nm(them))}</h1>
+      body = `<h1>${theirsIn ? "the orb is stirring…" : alone() ? "waiting for someone to join" : "waiting for " + esc(nm(them))}</h1>
         <div class="pair">
           <div class="slot"><div class="card static">${esc(myWord)}</div>${esc(nm(me))}</div>
           <div class="slot"><div class="card static back" aria-label="${esc(nm(them))}'s card, hidden">✦</div>${alone() ? "…" : esc(nm(them)) + (theirsIn ? " · locked" : " · choosing")}</div>
@@ -672,20 +776,20 @@ function ballView(){
     </div>`;
     if (bothOut) {
       const key = "b" + game.reading + "-" + game.round, anim = lastReveal !== key ? "flip" : ""; lastReveal = key;
-      body = `${pairLine}<h1>poof</h1>
-        <div class="words">
-          <div class="word ${anim}"><small>${esc(nm("a"))}</small><strong>${esc(pub.a)}</strong></div>
-          <div class="word ${anim}" style="animation-delay:.15s"><small>${esc(nm("b"))}</small><strong>${esc(pub.b)}</strong></div>
-        </div>
+      body = `${pairLine}<h1>${line("words", game.round)}</h1>
+        ${(() => { const res = verdicts[game.reading + "-" + game.round] || {}, br = res.brill;
+          const cell = (s, delay) => `<div class="word ${anim}${br === s ? " brilliant" : ""}"${delay ? ` style="animation-delay:${delay}"` : ""}>${br === s ? `<span class="bang" aria-hidden="true">!!</span>` : ""}<small>${esc(nm(s))}</small><strong>${esc(pub[s])}</strong></div>`;
+          return `<div class="words${br ? " has-brilliant" : ""}">${cell("a")}${cell("b", ".15s")}</div>
+          ${br ? `<p class="brill-line"><b>!! brilliant</b> ${esc(nm(br))} found a rare thread${res.phrase ? `: <i>${esc(res.phrase)}</i>` : ""}</p>` : ""}`; })()}
         ${checkLine()}`;
     } else if (mineIn) {
-      body = `${pairLine}<h1>${theirsIn ? "poof is coming…" : "waiting for " + esc(nm(them))}</h1>
+      body = `${pairLine}<h1>${theirsIn ? "the orb is stirring…" : "waiting for " + esc(nm(them))}</h1>
         <div class="words">
           <div class="word"><small>${esc(nm(me))}</small><strong>${esc(myWord)}</strong></div>
           <div class="word"><small>${esc(nm(them))}</small><strong style="color:var(--orchid)">✦</strong></div>
         </div>${handoff(them)}${awayNote(them)}`;
     } else {
-      body = `<h1>pick a word.. any word..</h1>${pairLine}
+      body = `<h1>${line("type", game.round)}</h1>${pairLine}
         <form class="field" id="bridge-form" autocomplete="off">
           <label for="bridge-input">${theirsIn ? esc(nm(them)) + " locked in" : esc(nm(them)) + " is thinking"}</label>
           <input id="bridge-input" value="${esc(draft)}" maxlength="24" spellcheck="false">
@@ -700,7 +804,7 @@ function pastView(){
   const list = lineage.filter(r => r.attempts).sort((a,b) => b.reading - a.reading);
   const nmOf = (r, s) => ((r.names && r.names[s]) || "").trim() || FALLBACK[s];
   const st = statsOf(list), rk = rankOf(st);
-  const summary = (game && list.length) ? `<p class="summary">${lobbyCode ? esc(lobbyCode) + " · " : ""}${esc(nm("a"))} & ${esc(nm("b"))} · ${souls(st.successes)} · ${esc(rankLabel(rk))}</p>` : "";
+  const summary = (game && list.length) ? `<p class="summary">${lobbyCode ? esc(lobbyCode) + " · " : ""}${esc(nm("a"))} & ${esc(nm("b"))} · ${esc(rankLabel(rk))}</p>` : "";
   if (!list.length) return page(`<h1>see the past</h1>
     <div class="empty"><p class="note" style="margin:0">nothing yet</p>
     <a class="btn ghost" href="#ball" style="text-decoration:none">see the orb</a></div>`);
@@ -712,7 +816,7 @@ function pastView(){
         <div class="rows past" role="table" aria-label="reading ${r.reading}">
           <div class="prow head" role="row"><span role="columnheader"></span><span role="columnheader">${esc(nmOf(r,"a"))}</span><span role="columnheader">${esc(nmOf(r,"b"))}</span><span role="columnheader"></span></div>
           <div class="prow" role="row"><span class="rl" role="rowheader">cards</span><span role="cell">${esc(r.cards.a)}</span><span role="cell">${esc(r.cards.b)}</span><span role="cell"></span></div>
-          ${r.attempts.map(t => `<div class="prow" role="row"><span class="rl" role="rowheader">${ROMAN[t.round].toLowerCase()}</span><span role="cell">${esc(t.a)}</span><span role="cell">${esc(t.b)}</span>
+          ${r.attempts.map(t => `<div class="prow" role="row"><span class="rl" role="rowheader">${ROMAN[t.round].toLowerCase()}</span><span role="cell">${esc(t.a)}${t.brill === "a" ? ` <b class="bang-s" title="${esc(t.phrase || "brilliant")}">!!</b>` : ""}</span><span role="cell">${esc(t.b)}${t.brill === "b" ? ` <b class="bang-s" title="${esc(t.phrase || "brilliant")}">!!</b>` : ""}</span>
             <span class="tag ${t.verdict}" role="cell">${t.verdict === "right" ? (t.how === "close" ? "close enough" : "same") : "not quite"}</span></div>`).join("")}
           <div class="prow final ${r.result}" role="row"><span class="rl" role="rowheader">✦</span><span class="to ${r.result}" role="cell">${final}</span>
             <span class="tag ${r.result}" role="cell">${r.result === "right" ? "success" : "fail"}</span></div>
@@ -736,7 +840,7 @@ function ranksView(){
   const tiers = TIERS.map((t, i) => ({ name:t, tier:i + 1, min:TIER_MIN[i] })).reverse().concat([{ name:UNRANKED, tier:0, min:0 }]);
   const spectrum = `<ol class="spectrum" aria-label="the ranks, highest first">
     ${tiers.map(t => `<li class="t${t.tier}${mine && mine.rk.tier === t.tier ? " you" : ""}${t.tier === 8 ? " gate" : ""}">
-      <span class="sn">${esc(t.name)}</span>
+      <span class="sn">${rankIcon({ tier:t.tier })}${esc(t.name)}</span>
       <span class="sm">${t.tier ? t.min + "+" : ""}${here[t.tier] ? `<b>${here[t.tier]}</b>` : ""}</span>
       ${mine && mine.rk.tier === t.tier ? `<span class="you-mark">you${mine.rk.tier ? " · " + ROMAN[mine.rk.sub].toLowerCase() : ""}</span>` : ""}
     </li>`).join("")}
@@ -746,13 +850,12 @@ function ranksView(){
   return page(`<h1>see the others</h1>
     <div class="ranks-layout">${spectrum}<div class="ranks-main">${nextLine}
     <div class="board-wrap"><table class="board">
-      <thead><tr><th scope="col">#</th><th scope="col">pair</th><th scope="col">rank</th><th scope="col" class="num">success</th><th scope="col" class="num"><span class="coins" aria-label="coins">${COIN}</span></th><th scope="col" class="num">failed</th><th scope="col" class="num">guesses</th></tr></thead>
+      <thead><tr><th scope="col">#</th><th scope="col">pair</th><th scope="col">rank</th><th scope="col" class="num">success</th><th scope="col" class="num">failed</th><th scope="col" class="num">guesses</th></tr></thead>
       <tbody>${rows.map((r, i) => `<tr class="${r.mine ? "mine" : ""}">
         <td class="num pos">${i + 1}</td>
         <td class="pair-cell">${esc(((r.names || {}).a || "?"))} & ${esc(((r.names || {}).b || "?"))}${r.mine ? ` <small>you</small>` : ""}</td>
-        <td class="rank t${r.rk.tier}">${esc(rankLabel(r.rk))}</td>
+        <td class="rank t${r.rk.tier}">${rankIcon(r.rk)}${esc(rankLabel(r.rk))}</td>
         <td class="num" data-label="success"><b>${Math.round(r.rate * 100)}%</b></td>
-        <td class="num" data-icon="coins">${souls(r.successes)}</td>
         <td class="num" data-label="failed">${r.fails}</td>
         <td class="num" data-label="guesses">${r.guesses}</td></tr>`).join("")}</tbody>
     </table></div></div></div>`);
@@ -842,7 +945,6 @@ function maybeCelebrate(){
       <div class="sparks" aria-hidden="true">${sparks}</div>
       <p class="win-word">${esc(w.word)}</p>
       <p class="win-line"><span>spookee,</span> <span>you guys said the same thing!</span></p>
-      <p class="win-soul">${COIN}<span>+1 coin</span></p>
     </div>`;
   el.onclick = closeWin;
   document.body.appendChild(el);
@@ -915,5 +1017,5 @@ const slowTimer = setTimeout(() => { slow = true; if (!loaded) { loaded = true; 
 })();
 
 // exposed for tests only
-window.__spookee = { statsOf, rankOf, TIERS };
+window.__spookee = { statsOf, rankOf, TIERS, brilliance, assocs, phr };
 })();

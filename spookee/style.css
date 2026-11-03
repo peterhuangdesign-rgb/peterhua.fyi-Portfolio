@@ -678,3 +678,52 @@ nav a .badge{position:absolute;top:-8px;right:-6px;min-width:20px;height:20px;pa
 .lob.needs.here .state{background:var(--right);border-color:var(--right)}
 .prow > span:nth-child(n+2){overflow-wrap:break-word;hyphens:auto}
 @media (max-width:480px){ .rows.past .prow{font-size:15px;grid-template-columns:2.8em 1fr 1fr 5.6em;gap:8px} .prow{gap:8px} }
+
+/* =====================================================================
+   rank icons (icons/*.svg) and your best rank
+   ===================================================================== */
+.rk{width:20px;height:20px;flex:none;color:var(--gilt);vertical-align:-4px;margin-right:7px}
+.rk.t0{color:var(--dim)}
+.rk.t1,.rk.t2,.rk.t3{color:#b9a6d2}
+.rk.t4,.rk.t5,.rk.t6,.rk.t7{color:#d9bf8c}
+.rk.t8,.rk.t9,.rk.t10{color:var(--gilt)}
+.rk.t11{color:#fbeec4;filter:drop-shadow(0 0 6px #c9a86a99)}
+.rk.big{width:52px;height:52px;margin:0;vertical-align:0}
+.rankchip .rk{width:24px;height:24px;margin:0}
+.spectrum .sn{display:inline-flex;align-items:center}
+.spectrum .sn .rk{width:16px;height:16px;margin-right:6px}
+.board td.rank{white-space:nowrap}
+.rankcard{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;align-items:center;padding:16px 18px;
+  border:1px solid #c9a86a55;background:#1c0b26cc;box-shadow:inset 0 0 0 4px #1c0b26,inset 0 0 0 5px #c9a86a33;font-family:var(--read)}
+.rankcard p{margin:0}
+.rc-name{font:400 26px/1.1 var(--deco);color:var(--gilt)}
+.rc-rank{font-weight:700;font-size:16px;color:var(--mist)}
+.rc-rank span{font-weight:400;color:var(--dim)}
+.rc-line{grid-column:1 / -1;font-size:15px;line-height:1.45;color:var(--dim);font-style:italic}
+.rankcard .rk.big{grid-row:1 / span 2}
+@media (min-width:1340px){
+  .wrap{position:relative}
+  .rankcard{position:absolute;left:calc(100% + 32px);top:230px;width:250px;grid-template-columns:1fr;justify-items:start}
+  .rankcard .rk.big{grid-row:auto}
+}
+
+/* =====================================================================
+   brilliant: a rare word that really does connect both sides
+   ===================================================================== */
+.word{position:relative;overflow:visible}
+.word.brilliant{z-index:2;animation:brill-in 1.1s cubic-bezier(.2,1.5,.35,1) .35s both;
+  box-shadow:inset 0 0 0 1px #4fd1c5,0 0 0 1px #4fd1c588,0 0 40px #4fd1c566}
+.word.brilliant strong{color:#bff6ef;text-shadow:0 0 18px #4fd1c5aa}
+.word.brilliant::after{content:"";position:absolute;inset:-6px;border:2px solid #4fd1c5;opacity:0;animation:ring 1.6s ease-out .5s 2;pointer-events:none;z-index:-1}
+.bang{position:absolute;top:-14px;right:-10px;width:34px;height:34px;display:grid;place-items:center;background:#4fd1c5;color:#062421;
+  font:800 17px/1 var(--read);letter-spacing:-1px;transform:rotate(-8deg);box-shadow:0 0 0 3px var(--ink),0 0 24px #4fd1c5;animation:bang 1s cubic-bezier(.2,1.8,.4,1) .7s both}
+.brill-line{margin:0;text-align:center;font:400 16px/1.4 var(--read);color:var(--mist);animation:rise .6s ease-out 1s both}
+.brill-line b{color:#4fd1c5;margin-right:6px}
+.brill-line i{color:#bff6ef}
+.bang-s{color:#4fd1c5;font-size:13px;cursor:help}
+@keyframes brill-in{0%{transform:scale(1)}45%{transform:scale(1.14)}100%{transform:scale(1.05)}}
+@media (max-width:480px){.word.brilliant{animation-name:brill-in-s}.bang{right:-4px}}
+@keyframes brill-in-s{0%{transform:scale(1)}45%{transform:scale(1.07)}100%{transform:scale(1.02)}}
+@keyframes ring{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(1.35)}}
+@keyframes bang{0%{opacity:0;transform:scale(0) rotate(-40deg)}100%{opacity:1;transform:scale(1) rotate(-8deg)}}
+.words.has-brilliant{margin-block:10px}

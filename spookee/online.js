@@ -64,6 +64,7 @@ window.SpookeeOnline = (async () => {
       return "ok";
     }),
     saveBoard: (code, row) => setDoc(doc(db, "board", code), row),
+    getBoard: async code => { try { const s = await getDoc(doc(db, "board", code)); return s.exists() ? { id: code, ...s.data() } : null; } catch { return null; } },
     onBoard: (cb, err) => onSnapshot(query(collection(db, "board"), orderBy("rank", "desc"), limit(50)),
       qs => cb(qs.docs.map(d => ({ id: d.id, ...d.data() }))), err),
     exists: async code => (await getDoc(roomRef(code))).exists(),

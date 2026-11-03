@@ -611,6 +611,16 @@
   // holds there a moment, then lets it grow again from that point.
   let wither = null;
   window.spookeeBloom = {
+    // a brilliant word: the ball swells and flares, like a brilliant move in chess
+    surge() {
+      if (reduce) return;
+      screen.style.transition = 'transform 1.4s cubic-bezier(.2,.9,.2,1), filter 1.4s ease, opacity 1.4s ease';
+      screen.style.transform = 'scale(1.12)';
+      screen.style.filter = 'brightness(1.9) saturate(1.4) hue-rotate(-18deg)';
+      screen.style.opacity = '.75';
+      setTimeout(() => { screen.style.transition = 'transform 2.4s ease, filter 2.4s ease, opacity 2.4s ease';
+        screen.style.transform = ''; screen.style.filter = ''; screen.style.opacity = ''; }, 2600);
+    },
     wither(kind) {
       if (reduce) return;
       const now = performance.now(), cur = Math.min((now - t0) / 1000, 15);
