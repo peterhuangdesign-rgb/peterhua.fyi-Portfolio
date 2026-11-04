@@ -130,7 +130,7 @@ Every project, job and résumé entry has one **context line** on its own line, 
 | Chorvivo (work) | design + research / a startup building a rehearsal-capture app for choreographers |
 | Designity (work) | ui/ux design + user research / a "creativity as a service" agency, remote |
 | DOROT | behavioral data research / social programs for older adults, new york city |
-| Nordoff-Robbins | clinical observational research / music therapy for mental health, new york city |
+| Nordoff-Robbins | clinical observational research / music therapy for children with disabilities, new york city |
 | NOVA Kitchen and Bar (résumé only) | operations / a restaurant in orange, california |
 
 Work context lines were written from Peter's descriptions; he should confirm them.
@@ -149,7 +149,7 @@ Work context lines were written from Peter's descriptions; he should confirm the
 - Theme switch: all colours change in the same frame, and the background redraws on every switch.
 
 ### Home (opens every visit; no intro)
-1. **Hero:** greeting "Hello! I'm Peter Huang." left, two-line intro that types in about 1 s (`TYPE_MS`, no blinking caret), smiling photo right (`me-smile.jpg`). Intro (25 Oct, Peter's words): "I'm a UX researcher trained in psychology and human-computer interaction at NYU. I'm curious about how we design safer systems and more effective experiences." No underline or box on NYU. Under the intro, a **fact row** (25 Oct; NYU direction 5): Education — NYU, B.S. Applied Psychology · GPA 3.6 / Minor: Integrated Design & Media (HCI) · Now — Founding Designer at Chorvivo · Next — Human Factors and Graduate Study. Three columns between rules when the text column is at least 600 px wide, otherwise one fact per line. Replaced the "Currently working at Chorvivo." line. "Founding Designer" is Peter's title everywhere (Home, Profile, résumé page, PDF); recruiters skim titles first. **Nothing else in the hero.**
+1. **Hero:** greeting "Hello! I'm Peter Huang." left, two-line intro that types in about 1 s (`TYPE_MS`, no blinking caret), smiling photo right (`me-smile.jpg`). Intro (25 Oct, Peter's words): "I'm a UX researcher trained in psychology and human-computer interaction at NYU. I'm curious about how we design safer systems and more effective experiences." No underline or box on NYU. Under the intro, a **fact row** (25 Oct; NYU direction 5): Education — NYU, B.S. Applied Psychology · GPA 3.57 / GPA in major: 3.73 / Minor: Integrated Design & Media (HCI) · Now — Founding Designer at Chorvivo · Next — Human Factors and Graduate Study. Three columns between rules when the text column is at least 600 px wide, otherwise one fact per line. Replaced the "Currently working at Chorvivo." line. "Founding Designer" is Peter's title everywhere (Home, Profile, résumé page, PDF); recruiters skim titles first. **Nothing else in the hero.**
 2. **Featured work**, in this order (edit `FEATURED` in `site/app.js`; context comes from the project's `ctx`):
    1. **Technology and well-being: an independent interview study**. Image: `paper-codebook.webp` (top of the Appendix B codebook).
    2. **Wayfarer**. Image: `wayfarer/hero.webp`, uncropped.
@@ -193,7 +193,7 @@ Wayfarer and Glenergy (both done, Peter's text and images).
 - Sections: Education, Experience, Research, Strengths, Skills (25 Oct). Same data and renderers as Profile (`eduHTML`, `xpHTML`), so organisations, roles, dates, context lines, notes and bullets always match. Reached from the rail, Home on phones, Profile and Contact.
 - Order: Chorvivo, Designity, DOROT, Nordoff-Robbins, NOVA Kitchen and Bar (NOVA is `group: other`, résumé only).
 - Job titles in Title Case (25 Oct): Founding Designer, UI/UX Intern, Research & Operations Assistant, Clinical Observational Researcher, Operations Intern. Bullets are the full ones from Peter's human factors résumé, in past tense. A Research section lists the three papers. Skills: Research methods, UX design (Figma, Adobe Illustrator, InDesign, Photoshop), UX research (SPSS, Excel, R, Salesforce, qual + quant).
-- **PDF** is generated from the same `RESUME` data by `design/notes/build-resume-pdf.js` (Node + Playwright). **Any change to `RESUME` means rebuilding the PDF** so Profile, the résumé page and the download stay identical. Last rebuilt 25 Oct: education first, Strengths and Skills side by side, contact in three lines, one page, real text, brand fonts, contact line "Orange County, CA · (949) 933-0073 · peterhuangdesign@gmail.com · peterhua.fyi · linkedin.com/in/peterhuaux". GPA 3.6 (3.567, rounded; Peter, 3 Nov) on the education line.
+- **PDF** is generated from the same `RESUME` data by `design/notes/build-resume-pdf.js` (Node + Playwright). **Any change to `RESUME` means rebuilding the PDF** so Profile, the résumé page and the download stay identical. Last rebuilt 25 Oct: education first, Strengths and Skills side by side, contact in three lines, one page, real text, brand fonts, contact line "Orange County, CA · (949) 933-0073 · peterhuangdesign@gmail.com · peterhua.fyi · linkedin.com/in/peterhuaux". GPA "3.57 overall / 3.73 major" on the education line (Peter, 4 Nov; replaces 3.6).
 
 ### LinkedIn banner (24 Oct)
 - 1584 × 396, exported at 2× (3168 × 792), Land and Sea versions. On the brand canvas, Applications page.
@@ -246,7 +246,7 @@ Ranked by how much a research hiring team would weigh it.
 ### Content and decisions needed from Peter
 - [ ] **Confirm** the mission timeline sentences (chapters 3–7) and the Chorvivo confidential note wording.
 - [ ] **Confirm** the paper title, "school project" for Glenergy, the Key finding sentences, and the work context lines.
-- [x] **GPA**: 3.6 (3.567 rounded), on Home fact row, Profile, résumé page and PDF (3 Nov).
+- [x] **GPA**: 3.57 overall / 3.73 major on Profile, résumé page and PDF; Home fact row shows GPA 3.57 with "GPA in major: 3.73" under it (4 Nov).
 - [ ] **Theme switching**: Peter saw visibility problems; not reproduced in Chromium. If it still happens, note the page and browser (Safari untested).
 - [ ] **Palette decision** (§5). Choose one, then apply it in one pass.
 - [ ] **Designity**: 2–3 specific projects and one concrete result (feeds review item 1).
