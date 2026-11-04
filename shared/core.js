@@ -202,7 +202,7 @@ const RESUME={
     ["Personality, resilience, and life satisfaction","Mixed methods: survey of 52, regression and mediation analysis, 1 interview","Aug 2025"],
     ["Career within spirituality and religion","Ethnography: semi-structured interview and workplace observation","Apr 2025"]
   ],
-  education:{school:"New York University",unit:"Steinhardt School of Culture, Education, and Human Development",degree:"B.S. Applied Psychology",minors:"Minor: Integrated Design & Media (HCI/UX)",when:"May 2026",extra:"Dean’s List, Spring 2024",courses:"Human-Centered Research Methods I & II, Statistics for Behavioral Sciences, Agile Product Design, Ideation & Prototyping, Dark Patterns, Seminar I & II"},
+  education:{school:"New York University",unit:"Steinhardt School of Culture, Education, and Human Development",degree:"B.S. Applied Psychology",gpa:"3.6",minors:"Minor: Integrated Design & Media (HCI/UX)",when:"May 2026",extra:"Dean’s List, Spring 2024",courses:"Human-Centered Research Methods I & II, Statistics for Behavioral Sciences, Agile Product Design, Ideation & Prototyping, Dark Patterns, Seminar I & II"},
   /* Strengths: Peter's traits, each with one line of context drawn from his own work. Shown on Profile, the résumé page and the PDF. */
   strengths:[
     ["Cross-functional collaboration","With a founder and engineer at Chorvivo, licensed therapists at Nordoff-Robbins, and stakeholders at Designity"],
@@ -298,7 +298,7 @@ const PROFILE={
 const strengthsHTML=()=>`<ul class="strengths">${RESUME.strengths.map(([t,d])=>`<li><b>${esc(t)}</b><span>${esc(d)}</span></li>`).join("")}</ul>`;
 function eduHTML(){const E=RESUME.education;
   return `<article class="xp edu"><div class="cv-h"><b>${esc(E.school)}</b><span>${esc(E.when)}</span></div>
-    <p class="cv-role"><b>${esc(E.degree)}</b></p><p class="cv-role">${esc(E.minors)}</p><p class="edu-unit">${esc(E.unit)}</p>
+    <p class="cv-role"><b>${esc(E.degree)}</b>${E.gpa?` · GPA ${esc(E.gpa)}`:""}</p><p class="cv-role">${esc(E.minors)}</p><p class="edu-unit">${esc(E.unit)}</p>
     <ul class="xp-pts"><li>${esc(E.extra)}</li><li>Coursework: ${esc(E.courses)}</li></ul></article>`}
 function xpHTML(e){
   return `<article class="xp${e.now?" now":""}"><div class="cv-h"><b>${e.now?`<span class="now-tag">Now</span>`:""}${esc(e.org)}</b><span>${esc(e.when)}</span></div>
@@ -336,7 +336,7 @@ function profileHTML(opts={}){
     <div class="seekbar"><input type="range" min="0" max="1000" value="0" step="1" aria-label="Seek" data-seek><span data-time>0:00</span></div>
     <audio preload="none"></audio></div></section>`:""}
   <section class="c-sec"><h2 class="c-h">Photography</h2><ul class="photos">${DATA.photos.map((p,i)=>`<li><button class="ph" data-set="photos" data-i="${i}" aria-label="Open ${esc(p.alt)}"><img src="${p.src}" alt="${esc(p.alt)}" loading="lazy" width="400" height="400"></button></li>`).join("")}</ul></section>
-  <p class="spk"><a href="spookee/">spookee</a></p>`;
+  <div class="spk"><a class="btn" href="spookee/">spookee</a><p>A word association game for two people to play asynchronously.</p></div>`;
 }
 const fmt=s=>!isFinite(s)?"–:––":`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,"0")}`;
 function wireProfile(root){

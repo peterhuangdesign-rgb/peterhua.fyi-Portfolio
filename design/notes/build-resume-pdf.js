@@ -30,7 +30,7 @@ ul{margin:2px 0 0;padding-left:14px}li{margin:0 0 1px}
 <header>${mark}<span class="div"></span><div><h1>Peter Huang</h1><div class="role">UX research / human factors</div></div>
 <div class="contact">${(c=>[c[0]+" · "+c[1],c[2],c[3]+" · "+c[4]].map(e).join("<br>"))(RES.contact.split(" · "))}</div></header>
 <h2>Education</h2>
-<div class="it"><div class="hd"><b>${e(RES.education.school)}</b><span>${e(RES.education.when)}</span></div><div class="sub"><b style="font-weight:500">${e(RES.education.degree)}</b> · ${e(RES.education.minors)}</div><div class="sub" style="color:#585E62">${e(RES.education.unit)} · ${e(RES.education.extra)}</div><div class="sub" style="color:#585E62">Coursework: ${e(RES.education.courses)}</div></div>
+<div class="it"><div class="hd"><b>${e(RES.education.school)}</b><span>${e(RES.education.when)}</span></div><div class="sub"><b style="font-weight:500">${e(RES.education.degree)}</b> · GPA ${e(RES.education.gpa)} · ${e(RES.education.minors)}</div><div class="sub" style="color:#585E62">${e(RES.education.unit)} · ${e(RES.education.extra)}</div><div class="sub" style="color:#585E62">Coursework: ${e(RES.education.courses)}</div></div>
 <h2>Experience</h2>
 ${RES.experience.map(x=>`<div class="it"><div class="hd"><b>${e(x.org)}</b><span>${e(x.when)}</span></div><div class="sub">${e(x.role)} <span class="ctx">· ${x.ctx.map(e).join(" / ")}</span></div><ul>${x.pts.map(p=>`<li>${e(p)}</li>`).join("")}</ul></div>`).join("")}
 <h2>Research</h2>

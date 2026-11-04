@@ -1,6 +1,6 @@
 # spookee
 
-A small two-player word game by Peter Huang. It lives at `peterhua.fyi/spookee/` and is linked only by a small "spookee" text link at the very end of the Profile page. It is not part of the portfolio design.
+A small two-player word game by Peter Huang. It lives at `peterhua.fyi/spookee/` and is linked only by a "spookee" button at the very end of the Profile page. It is not part of the portfolio design.
 
 ## How the game works
 

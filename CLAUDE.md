@@ -7,7 +7,7 @@ UX research + design portfolio for peterhua.fyi. The live site is the repo root 
 - **Owner:** Peter Huang. B.S. Applied Psychology (NYU, 2026), minor in Integrated Design & Media (HCI/UX). No Philosophy minor (not completed).
 - **Positioning:** researcher first, designer second. Targets: human factors engineer roles and UX research master's programs; UX research jobs.
 - **Contact:** peterhuangdesign@gmail.com · linkedin.com/in/peterhuaux · Orange County, California.
-- **Résumés:** three versions (human factors PDF, NY PDF, Pages with HereNow). The site uses the human factors one (`media/resume-human-factors.pdf`). GPA differs across versions (3.57 / 3.54 / 3.56), so the site leaves it out. The PDF still shows the NYU email and Irvine.
+- **Résumés:** three versions (human factors PDF, NY PDF, Pages with HereNow). The site uses the human factors one (`media/resume-human-factors.pdf`). GPA is 3.6 (3.567 rounded), shown on Home, Profile, the résumé page and the PDF. The PDF still shows the NYU email and Irvine.
 - **Reader:** a hiring researcher or design lead with ~90 seconds. They need to find: what Peter studies, how he studies it, one proof of outcome. Everything else is optional depth.
 
 ## Content (source of truth lives in the Portfolio Master File doc — sync from there, never invent)
@@ -114,7 +114,7 @@ shared/core.js      all content (DATA, PROFILE, RESUME, CONTACT), themes, backgr
 shared/core.css     base tokens and shared components
 media/              signature.png, portrait.jpg, me-0N.jpg, resume PDF (real); photo-0N.jpg + track-0N.mp3 (placeholders)
 CNAME  .nojekyll    GitHub Pages custom domain; serve files as-is
-spookee/            side game at /spookee/, linked only by the small spookee link at the end of Profile; self-contained, see spookee/README.md
+spookee/            side game at /spookee/, linked only by the spookee button at the end of Profile; self-contained, see spookee/README.md
 design/concepts.html  seven low-fi motion concepts (reference only)
 design/archive/     retired directions and branches (may not render; their shared files were replaced)
 design/notes/       HANDOFF, first-visitor navigation test, design-grade report
