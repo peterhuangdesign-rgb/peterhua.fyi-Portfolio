@@ -236,7 +236,13 @@ Wayfarer and Glenergy (both done, Peter's text and images).
 - Case section headers are now the display face at 24 px in ink (were 12 px caps in graphite); 40 px between sections (32 on phones). Applies to every `.c-sec` (cases, Profile, résumé page).
 - Redundancy pass: research case pages no longer show the `line` under the key finding when the first section is the research question (the list pages still use `line`); Technology study stat triplet removed (it repeated the lede); its Outcome paragraph on "foundation for design" removed (Design implications says it); Resilience "Finding" now "Result" with only the R² line; Wayfarer pivot callout removed (it repeated the key finding); Glenergy takeaways no longer open with the key finding.
 - Practitioner's summary added to Personality & resilience (before Limitations) and Career & faith (after Themes), drawn from each paper's findings, each with a caution line. **Peter to confirm the wording.**
-- Left to Peter: photos of team work; charts (mockups on a separate canvas).
+- Left to Peter: photos of team work.
+
+### 9 Nov, second round (live)
+- **Headings:** every section heading is one capitalized word (Question, Problem, Rationale, Process, Participants, Themes, Findings, Outcome, Implications, Paper, Measures, Result, Applications, Limitations, Next, Reflexivity, Prompt, Purpose, Testing, Solution, Future, Gallery, Constraints, Takeaways, Role, Pitch; Profile: Values, Interests, Music, Photography; Home label: Projects).
+- **No explainer text, anywhere.** Rule recorded in CLAUDE.md (hard rule 9).
+- **Charts** (`VIZ` in `shared/core.js`): process timelines (all cases; vertical when a step is long), participant screen-time bars, theme tree (from `themes`), diverging findings (from `split`), Cronbach's alpha bars with the .70 line, variance explained and r on its scale, upbringing → themes → work map (Career & faith), squares out of 5 (Glenergy, replacing its stat boxes). Each chart with data has "Show data". Colours: Land `#00839C` / `#BA5F1A`, Sea `#18A39B` / `#CC7E38` (CVD and contrast validated). This is the minimum standard (CLAUDE.md hard rule 11).
+- **Profile** is now the personal half only; education, work, research experience, strengths and skills are on the Résumé page.
 
 ### Hiring-team review: to change (24 Oct)
 Ranked by how much a research hiring team would weigh it.

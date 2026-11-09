@@ -115,7 +115,7 @@ const PAGES={
     <dl class="hi-facts"><div><dt>Education</dt><dd>NYU, B.S. Applied Psychology · GPA 3.57<span class="hi-sub">GPA in major: 3.73</span><span class="hi-sub">Minor: Integrated Design &amp; Media (HCI)</span></dd></div><div><dt>Now</dt><dd>Founding Designer at Chorvivo</dd></div><div><dt>Next</dt><dd>Human Factors and Graduate Study</dd></div></dl>
     <div class="hi-act">${ctaPair()}</div></div>
     <img class="hi-photo" src="media/me-smile.jpg" alt="Peter Huang, smiling, in a cap" width="556" height="520"></div>
-    <h2 class="label feat-h">Featured work</h2>${featBlocks()}
+    <h2 class="label feat-h">Projects</h2>${featBlocks()}
     <p class="fw-more"><a href="#research">All research</a><a href="#design">All design</a></p>`,
   research:()=>`<h1 class="ph1">Research</h1>${DATA.research.map(workBlock).join("")}`,
   design:()=>`<h1 class="ph1">Design</h1>${DATA.design.map(workBlock).join("")}`,
