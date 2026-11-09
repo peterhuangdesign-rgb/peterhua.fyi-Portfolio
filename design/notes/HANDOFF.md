@@ -149,7 +149,7 @@ Work context lines were written from Peter's descriptions; he should confirm the
 - Theme switch: all colours change in the same frame, and the background redraws on every switch.
 
 ### Home (opens every visit; no intro)
-1. **Hero:** greeting "Hello! I'm Peter Huang." left, two-line intro that types in about 1 s (`TYPE_MS`, no blinking caret), smiling photo right (`me-smile.jpg`). Intro (25 Oct, Peter's words): "I'm a UX researcher trained in psychology and human-computer interaction at NYU. I'm curious about how we design safer systems and more effective experiences." No underline or box on NYU. Under the intro, a **fact row** (25 Oct; NYU direction 5): Education — NYU, B.S. Applied Psychology · GPA 3.57 / GPA in major: 3.73 / Minor: Integrated Design & Media (HCI) · Now — Founding Designer at Chorvivo · Next — Human Factors and Graduate Study. Three columns between rules when the text column is at least 600 px wide, otherwise one fact per line. Replaced the "Currently working at Chorvivo." line. "Founding Designer" is Peter's title everywhere (Home, Profile, résumé page, PDF); recruiters skim titles first. **Nothing else in the hero.**
+1. **Hero:** greeting "Hello! I'm Peter Huang." left, two-line intro that types in about 1 s (`TYPE_MS`, no blinking caret), smiling photo right (`me-smile.jpg`). Intro (25 Oct, Peter's words): "I'm a UX researcher trained in psychology and human-computer interaction at NYU. I'm curious about how we design safer systems and more effective experiences." No underline or box on NYU. Under the intro, a **fact row** (25 Oct; NYU direction 5): Education — NYU, B.S. Applied Psychology · GPA 3.57 / Minor: Integrated Design & Media (HCI) · Now — Founding Designer at Chorvivo · Next — Human Factors and Graduate Study. Three columns between rules when the text column is at least 600 px wide, otherwise one fact per line. Replaced the "Currently working at Chorvivo." line. "Founding Designer" is Peter's title everywhere (Home, Profile, résumé page, PDF); recruiters skim titles first. **Nothing else in the hero.**
 2. **Featured work**, in this order (edit `FEATURED` in `site/app.js`; context comes from the project's `ctx`):
    1. **Technology and well-being: an independent interview study**. Image: `paper-codebook.webp` (top of the Appendix B codebook).
    2. **Wayfarer**. Image: `wayfarer/hero.webp`, uncropped.
@@ -259,7 +259,7 @@ Ranked by how much a research hiring team would weigh it.
 ### Content and decisions needed from Peter
 - [ ] **Confirm** the mission timeline sentences (chapters 3–7) and the Chorvivo confidential note wording.
 - [ ] **Confirm** the paper title, "school project" for Glenergy, the Key finding sentences, and the work context lines.
-- [x] **GPA**: 3.57 overall / 3.73 major on Profile, résumé page and PDF; Home fact row shows GPA 3.57 with "GPA in major: 3.73" under it (4 Nov).
+- [x] **GPA**: 3.57 overall / 3.73 major on Profile, résumé page and PDF; Home fact row shows GPA 3.57 only; major GPA 3.73 is on the résumé (9 Nov).
 - [ ] **Theme switching**: Peter saw visibility problems; not reproduced in Chromium. If it still happens, note the page and browser (Safari untested).
 - [ ] **Palette decision** (§5). Choose one, then apply it in one pass.
 - [ ] **Designity**: 2–3 specific projects and one concrete result (feeds review item 1).
