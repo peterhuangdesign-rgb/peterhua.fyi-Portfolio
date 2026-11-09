@@ -288,7 +288,7 @@ function caseHTML(p,opts={}){
       if(b.items)h+=`<ol class="c-items">${b.items.map(([t,d])=>`<li><b>${esc(t)}</b><p>${esc(d)}</p></li>`).join("")}</ol>`;
       (b.pull||[]).forEach(q=>h+=`<blockquote class="c-pull">“${esc(q)}”</blockquote>`);
       if(b.note)h+=`<p class="c-note">${esc(b.note)}</p>`;
-      if(b.steps)h+=`<ol class="c-flow${b.steps.some(x=>x.length>44)?" v":""}">${b.steps.map((x,k)=>`<li><b>${String(k+1).padStart(2,"0")}</b>${esc(x)}</li>`).join("")}</ol>`;
+      if(b.steps)h+=`<ol class="c-flow${b.steps.every(x=>x.length<=44)?" h":""}">${b.steps.map((x,k)=>`<li><span class="f-n" aria-hidden="true">${String(k+1).padStart(2,"0")}</span><span class="f-t">${esc(x)}</span></li>`).join("")}</ol>`;
       if(b.split)h+=`<div class="c-div">${b.split.map(([t,xs],k)=>`${k?'<span class="ax" aria-hidden="true"></span>':""}<div class="${k?"r":"l"}"><p class="v-t">${esc(t)}</p><ul>${xs.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`).join("")}</div>`;
       if(b.chips)h+=`<ul class="c-chips">${b.chips.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`;
       (b.p2||[]).forEach(x=>h+=`<p>${esc(x)}</p>`);
