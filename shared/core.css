@@ -48,11 +48,12 @@ a{color:var(--ink);text-underline-offset:4px}
 .fig{aspect-ratio:4/3;max-width:100%;border:1px solid var(--ink);display:grid;place-items:end start;padding:12px;margin:0 0 32px;
   background:repeating-linear-gradient(135deg,transparent 0 11px,#15181A1c 11px 12px);
   font:500 12px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--graphite)}
-.c-sec{display:grid;grid-template-columns:120px minmax(0,1fr);gap:8px 24px;padding:20px 0;border-top:1px solid var(--rule)}
-.c-sec .c-h{margin:0;font:500 12px/1.6 var(--body);text-transform:uppercase;letter-spacing:.14em;color:var(--graphite)}
+/* section headers (9 Nov feedback): display face at 24px in ink, so each section reads as its own block; more air between sections */
+.c-sec{display:grid;grid-template-columns:200px minmax(0,1fr);gap:12px 32px;padding:40px 0;border-top:1px solid var(--rule)}
+.c-sec .c-h{margin:0;font:500 24px/1.1 var(--display);text-wrap:balance;color:var(--ink)}
 .c-sec p{margin:0;max-width:62ch}
 .c-paper{margin:24px 0 0}
-@media (max-width:560px){.c-sec{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:560px){.c-sec{grid-template-columns:minmax(0,1fr);padding:32px 0}}
 
 /* profile */
 .pf-top{display:grid;grid-template-columns:150px minmax(0,1fr);gap:24px;align-items:start;margin:0 0 12px}
@@ -126,6 +127,7 @@ a{color:var(--ink);text-underline-offset:4px}
 
 /* research case: steps, table, themes, findings, implications, paper */
 .c-note{color:var(--graphite)}
+.c-items+.c-note{margin-top:16px}
 .c-steps{margin:0;padding:0;list-style:none;counter-reset:st;display:grid;gap:0;max-width:62ch}
 .c-steps li{counter-increment:st;display:grid;grid-template-columns:36px minmax(0,1fr);padding:12px 0;border-bottom:1px solid var(--rule)}
 .c-steps li:first-child{padding-top:0}

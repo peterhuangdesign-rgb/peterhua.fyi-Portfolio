@@ -232,6 +232,12 @@ Wayfarer and Glenergy (both done, Peter's text and images).
 - [ ] Tick Enforce HTTPS once the Pages domain check passes.
 - [ ] After it's live: open peterhua.fyi on phone and desktop, check favicon, Résumé download, Email button, theme switch.
 
+### Reviewer feedback (9 Nov): done on `feature/feedback-hierarchy`
+- Case section headers are now the display face at 24 px in ink (were 12 px caps in graphite); 40 px between sections (32 on phones). Applies to every `.c-sec` (cases, Profile, résumé page).
+- Redundancy pass: research case pages no longer show the `line` under the key finding when the first section is the research question (the list pages still use `line`); Technology study stat triplet removed (it repeated the lede); its Outcome paragraph on "foundation for design" removed (Design implications says it); Resilience "Finding" now "Result" with only the R² line; Wayfarer pivot callout removed (it repeated the key finding); Glenergy takeaways no longer open with the key finding.
+- Practitioner's summary added to Personality & resilience (before Limitations) and Career & faith (after Themes), drawn from each paper's findings, each with a caution line. **Peter to confirm the wording.**
+- Left to Peter: photos of team work; charts (mockups on a separate canvas).
+
 ### Hiring-team review: to change (24 Oct)
 Ranked by how much a research hiring team would weigh it.
 - [ ] **1. Professional research on the page.** All three research pieces are coursework; Designity and DOROT have no case and no result. Write one short case (DOROT or Designity): question, method, finding, what changed. Needs Peter's facts.

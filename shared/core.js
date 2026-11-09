@@ -16,7 +16,6 @@ const DATA={
       finding:"Mindful, purposeful, and social use of technology led to beneficial outcomes; lack of awareness, social comparison, and degraded critical thinking led to negative outcomes in subjective well-being.",
       line:"How Gen Z’s ubiquitous use of technology relates to mental health and well-being. The themes are technology, social connection, and life satisfaction.",
       lede:"I interviewed 7 participants aged 19–24, analyzed their pain points with qualitative data, and translated the insights into an academic research paper after receiving critique from 2 psychology professionals.",
-      stats:[["7","Semi-structured interviews"],["3","Themes from grounded-theory coding"],["2","Psychology professionals gave critique"]],
       meta:[["Role","UX researcher, customer discovery, interviewer"],["Timeline","2 months, Oct – Nov 2025"],["Team","Peter H"],["Tools","Zoom"]],
       body:[
         {h:"Research question",quote:"To what extent do relationships through technology relate to levels of subjective life satisfaction among emerging adults?"},
@@ -41,9 +40,8 @@ const DATA={
         {h:"Findings",p:["Technology that Gen Z utilized consisted of AI, social media, and software."],
           split:[["Led to beneficial outcomes",["Mindful use","Purposeful use","Social use"]],["Led to negative outcomes in subjective well-being",["Lack of awareness","Social comparison","Degraded critical thinking skills"]]]},
         {h:"The outcome",p:["This study extended existing literature on tech use, grounded in modern constructs such as AI. Some individuals felt lonely, some felt stuck, and this study sought to explain why users felt this way and how to counteract these stressors.",
-          "For future directions, this comprehensive user research forms the basis for holistic and human-centric design. This structured process of finding participants, interviewing them to discover pain points, and identifying insights is key to the foundation of product design and UX design.",
           "With more time and financial support, I would pursue this project further by designing interventions to bolster well-being among Gen Z."]},
-        {h:"Design implications",p:["Research informs design. These insights inform various design directions related to addiction, ethicality, and mental wellness. Some design directions are:"],
+        {h:"Design implications",p:["These insights point to design directions related to addiction, ethicality, and mental wellness:"],
           chips:["An ethical scrolling mechanism","A social connectivity app","An easy-access mental wellness wearable","A third-space encouraging program"],
           p2:["Amidst the massive structural change of AI, students may also feel a sense of fear related to future directions in their careers and relationships. Companies are now identifying ways to utilize AI in their employees and workflow. This research connects to companies or students, informing many different design directions for different end goals.",
           "The research here acts as the foundation for any direction of design, led by the stakeholders in the business or problem."]},
@@ -64,11 +62,16 @@ const DATA={
         {h:"Measures",table:{cap:"Table 1. Validated scales and their internal consistency",cols:["Construct","Scale","Items","Alpha"],num:[2,3],
           rows:[["Neuroticism (predictor)","Mini IPIP","4",".676"],["Life satisfaction (outcome)","Satisfaction with Life Scale","5",".889"],["Resilience (mediator)","Brief Resilience Scale","6",".883"]]}},
         {h:"My process",steps:["Ran a Cronbach’s alpha reliability test on each scale","Built scale scores, reverse-coding the required items","Ran descriptive statistics and bivariate Pearson correlations","Followed Baron & Kenny: two simple regressions and one simultaneous regression, then a Sobel’s test","Interviewed one young adult over Zoom, matching the survey’s age range","Coded the interview into three themes and combined both sets of findings"]},
-        {h:"Finding",p:["Neuroticism was significantly, moderately, and negatively correlated with life satisfaction (r = −.474, p < .001), explaining about 22% of the variance in life satisfaction scores (R² = .225)."]},
+        {h:"Result",p:["Neuroticism explained about 22% of the variance in life satisfaction scores (R² = .225)."]},
         {h:"Interview themes",items:[
           ["Resilience as maturity, expressed through action","“Resilience, to me, is like being able to deal with setbacks in a positive way.”"],
           ["Neuroticism as a prerequisite for resilience","“Maybe you just get so used to being neurotic that you become, like, highly resilient, because you learn how to solve problems that are insignificant very fast.”"],
           ["Life satisfaction is subjective","“You definitely can’t judge someone’s satisfaction from a third person perspective.”"]]},
+        {h:"Practitioner’s summary",items:[
+          ["Wellness and student-support products","Emotional stability tracked closely with how satisfied young adults felt with life. Tools that help people manage worry and stress, not only log their mood, address a factor tied to well-being."],
+          ["Measuring satisfaction","The scale and the interview described satisfaction differently (theme 3). When satisfaction is the outcome, pair a validated scale with a short interview."],
+          ["Designing for setbacks","The interviewee described resilience as action, not a feeling. Features that prompt one small, concrete step after a setback may match how young adults cope better than reflection alone: a direction to test."]],
+          note:"Correlational, 52 young adults, one interview: these are directions to test, not proven effects."},
         {h:"Limitations",p:["Quantitative: a low Cronbach’s alpha for the four-item neuroticism scale, selection and sampling bias, and confounding variables such as socioeconomic status. Qualitative: interviewer, selection, and cultural bias, since the interviewee is a close friend."]},
         {h:"What I’d do next",p:["I would give this research an Expansion purpose. Life satisfaction is difficult to quantify, and an Expansion purpose can explore it as it relates to spirituality, impermanence, and love."]}
       ]},
@@ -86,6 +89,11 @@ const DATA={
           ["Perfectionism","Striving for a perfect relationship with God carries into other parts of life, such as his organized system at work."],
           ["Family tradition","Religion isn’t explicit at work; it is focused internally and expressed through service to others."],
           ["Systemic values","“Just to be a decent human being, pretty much. It’s like Ethics 101.” He treats common ethical standards as separate from religion."]]},
+        {h:"Practitioner’s summary",items:[
+          ["Managers, HR and career services","For this participant, faith showed in how he worked (an organized system, service to others), not in anything explicit at work. Asking about the values behind someone’s work surfaces motivation that questions about religious identity miss."],
+          ["Career tools for second-generation students","His career path was shaped by family tradition and acculturation, not individual choice alone. Career guidance that makes room for family expectations is likely to fit students like him better."],
+          ["Researchers studying values at work","Religion stayed internal at his job. Pair workplace observation with a social or religious setting to see how values show up."]],
+          note:"One participant: these are directions to explore, not general findings."},
         {h:"Reflexivity",p:["I share a religious upbringing and a second-generation immigrant experience with the participant, which may have led to assumptions. I believe that, in holding a fluid stance towards religion, I can approach research and analysis holistically."]},
         {h:"Limitations",p:["A single researcher and a single subject limit generalizability. A stronger observation site would have been a social and religious setting, such as a Sunday service or a university club."]}
       ]}
@@ -108,8 +116,7 @@ const DATA={
           figs:[{src:"media/wayfarer/sketches.webp",alt:"Nine hand-drawn screen sketches: message, friend profile, home, login, onboarding, profile, walk summary, walk tracking and walk visualization pages",cap:"Initial screen sketches",w:3200,h:506},
                 {src:"media/wayfarer/user-flow.webp",alt:"User flow diagram from the welcome page through onboarding, login, home, walk tracking, walk summary, profile, friends and sharing",cap:"Wireframe ideation",w:2800,h:1167}]},
         {h:"Usability testing",p:["I conducted moderated usability testing on my initial prototype, which relied heavily on text-based journaling and live social feeds.",
-          "The users rejected the initial design. They noted that stopping to type a journal entry pulled them out of their physical environment, defeating the app’s purpose. They also found social notifications highly disruptive to the sanctuary of their walk."],
-          pivot:"I immediately pivoted the UX strategy away from “active journaling” toward “frictionless capture” and “somatic grounding,” prioritizing screen-off interactions."},
+          "The users rejected the initial design. They noted that stopping to type a journal entry pulled them out of their physical environment, defeating the app’s purpose. They also found social notifications highly disruptive to the sanctuary of their walk."]},
         {h:"The solution",items:[
           ["Frictionless capture","A home-screen widget and Apple Watch integration that allows users to record ambient audio or voice memos in two taps, bypassing the keyboard entirely to keep their eyes on the city."],
           ["Opt-in, asynchronous social","Social features are strictly opt-in and asynchronous. Friends' traces are left on the map to be discovered organically, transforming the city into a shared canvas without the pressure of a live feed."],
@@ -152,7 +159,7 @@ const DATA={
                  {src:"media/glenergy/chatbot.webp",alt:"Five chatbot messages that shift from guilt-tripping at 5% to praise at 0 to 1%, showing escalating pressure to give up employer match",cap:"Manipulative AI chatbot iterations",w:1376,h:700}]},
         {h:"The outcome",p:["Through user testing and a client meeting, our team identified user pushback on the manipulative design: users felt reduced trust in using the portal, software, and business. We then translated the results into the next steps for more human-centered design."],
           pull:["I feel like AI is everywhere, and incorporating it here would be great, but I don’t know how much I would trust or rely on it for my financials.","Tell me more where my money is going? Explain more about the charities and why I should donate to certain charity."]},
-        {h:"User interview takeaways",p:["The data revealed a critical business trade-off: while the aggressive designs successfully skewed user choices toward cost-saving options, they triggered a severe drop in employer trust. Users recognized the manipulation, demonstrating that short-term financial gains via dark patterns create long-term risks to employee retention and brand perception."],
+        {h:"User interview takeaways",p:["The data revealed a critical business trade-off. Users recognized the manipulation, demonstrating that short-term financial gains via dark patterns create long-term risks to employee retention and brand perception."],
           figs:[{src:"media/glenergy/ba-home.webp",alt:"Home page before and after feedback: before has competing calls to action and a chatbot prompt; after shows the chosen plans and no pending actions",cap:"Before / after: home page",w:1418,h:800},
                 {src:"media/glenergy/ba-retirement.webp",alt:"Retirement plan page before and after feedback: before is a bare dropdown; after shows three clearly labelled investment options",cap:"Before / after: retirement plan page",w:1403,h:736}],
           pair:[{src:"media/glenergy/hifi-choice.webp",alt:"High-fidelity Select Your Retirement Plan page: contribution choices, an employer-match slider and investment option",cap:"High-fidelity choice page",w:1728,h:3062},
@@ -227,7 +234,7 @@ function caseHTML(p,opts={}){
   const H=opts.h||"h2";
   const title=opts.noTitle?"":`<${H} class="c-t${p.t.length>24?" long":""}">${esc(p.t)}</${H}>`;
   /* the project label rides at the start of the line under the title: lowercase, parts split by " / " as in the logo lockup */
-  const lineHTML=`${ctxHTML(p.ctx)}${p.finding?`<p class="c-find"><span class="label">Key finding</span>${esc(p.finding)}</p>`:""}${p.line?`<p class="c-line">${esc(p.line)}</p>`:""}`;
+  const lineHTML=`${ctxHTML(p.ctx)}${p.finding?`<p class="c-find"><span class="label">Key finding</span>${esc(p.finding)}</p>`:""}${p.line&&!(p.body&&p.body[0]&&p.body[0].quote)?`<p class="c-line">${esc(p.line)}</p>`:""}`;
   const imgs=[];const reg=f=>{imgs.push(f);return imgs.length-1};
   if(p.body){
     const hero=p.hero?figHTML(p.hero,reg(p.hero)).replace('class="cf"','class="cf cf-hero"'):"";
